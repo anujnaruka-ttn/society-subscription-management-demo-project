@@ -20,7 +20,7 @@ type Notification = {
     time: string;
 };
 
-export function NotificationsPopover({
+export default function NotificationsPopover({
     notifications,
 }: {
     notifications: Notification[];

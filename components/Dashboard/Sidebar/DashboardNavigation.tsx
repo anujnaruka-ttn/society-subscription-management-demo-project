@@ -20,7 +20,18 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-
+{/*
+    ROUTES: 
+    /admin/login
+    /admin/dashboard
+    /admin/flats
+    /admin/subscriptions
+    /admin/monthly-records
+    /admin/payment-entry
+    /admin/reports
+    /admin/(settings)/notifications
+    /admin/(settings)/profile
+*/}
 export default function DashboardNavigation({ routes }: { routes: Route[] }) {
     const { state } = useSidebar();
     const isCollapsed = state === "collapsed";
@@ -37,7 +48,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                         {hasSubRoutes ? (
                             <Collapsible
                                 open={isOpen}
-                                onOpenChange={(open) =>
+                                onOpenChange={(open: boolean) =>
                                     setOpenCollapsible(open ? route.id : null)
                                 }
                                 className="w-full"
@@ -84,7 +95,10 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                                             prefetch={true}
                                                             className="flex items-center rounded-md px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-muted hover:text-foreground"
                                                         >
-                                                            {subRoute.title}
+                                                            {subRoute.icon}
+                                                            <span className="ml-2">
+                                                                {subRoute.title}
+                                                            </span>
                                                         </Link>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>

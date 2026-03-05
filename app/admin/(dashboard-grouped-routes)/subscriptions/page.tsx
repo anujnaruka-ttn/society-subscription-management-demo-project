@@ -1,9 +1,9 @@
 import DashboardLayoutClient from "@/components/Dashboard/DashboardLayoutClient"
 
-export default function AdminDashboardPage() {
+export default function AdminSubscriptionsPage() {
     return (
         <DashboardLayoutClient>
-            <h1>Admin Dashboard Page</h1>
+            <h1>Admin Subscriptions Page</h1>
         </DashboardLayoutClient>
     )
 }

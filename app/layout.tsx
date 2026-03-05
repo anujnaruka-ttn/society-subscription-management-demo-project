@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Alexandria, Aoboshi_One, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import ThemeProvider from "@/components/providers/ThemeProvider";
 
 const fontSans = Alexandria({
   subsets: ["latin"],
@@ -26,6 +27,20 @@ const fontMono = DM_Mono({
 export const metadata: Metadata = {
   title: "Society Subscription Management",
   description: "Society Subscription Management is a web application designed to help manage and track subscriptions for various societies. It provides features such as subscription tracking, payment management, and member management to streamline the subscription process for society administrators and members.",
+  openGraph: {
+    type: "website",
+    url: "https://ssm-ttn-demo-project.vercel.app",
+    siteName: "SSM",
+    images: [
+      {
+        url: "/public/assets/og-image.png",
+        width: 300,
+        height: 250,
+        alt: "SSM",
+      },
+    ],
+  },
+  metadataBase: new URL("https://ssm-ttn-demo-project.vercel.app"),
 };
 
 export default function RootLayout({
@@ -34,12 +49,24 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+
+      <head>
+        <meta name="apple-mobile-web-app-title" content="SSM - Society Subscription Management" />
+      </head>
+
       <body className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased w-screen h-screen overflow-x-hidden overflow-y-auto
       flex justify-center-safe items-center-safe`}>
-        <TooltipProvider>
-          {children}
-        </TooltipProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

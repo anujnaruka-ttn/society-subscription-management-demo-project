@@ -1,5 +1,5 @@
 'use client'
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardAction,
@@ -8,12 +8,12 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@/components/ui/card"
-import GoogleIcon from "@/public/google.svg"
-import { formType } from "@/types/formType"
-import Image from "next/image"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+} from "@/components/ui/card";
+import GoogleIcon from "@/public/assets/google.svg";
+import { formType } from "@/types/formType";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface AuthCommonProps {
     children: React.ReactElement,
