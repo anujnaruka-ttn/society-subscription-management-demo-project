@@ -4,7 +4,4 @@ export interface FlatData {
     email: string;
     phone: string;
     flatAddress: string;
-    status: "completed" | "pending" | "processing" | "cancelled";
-    amount: string;
-    date: string;
 }

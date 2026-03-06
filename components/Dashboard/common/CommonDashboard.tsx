@@ -17,7 +17,7 @@ const CommonDashboard = (
     return (
         <Card className="w-full max-h-[calc(100vh-64px)] mx-auto flex flex-row justify-center gap-3 border-none shadow-none bg-transparent rounded-t-none">
             {/* left side */}
-            <Card className="w-[80%] h-full p-6">
+            <Card className="w-[70%] h-full p-6">
                 <CardContent className="px-0 h-full flex flex-col gap-y-3">
                     <ChartAreaInteractive />
                     <DayWiseChart />
@@ -25,7 +25,7 @@ const CommonDashboard = (
             </Card>
 
             {/* right side */}
-            <Card className="w-[18%] h-full">
+            <Card className="w-[25%] h-full">
 
                 {/* money collected */}
                 <Card className="h-fit bg-transparent border-none shadow-none py-1.5">
@@ -42,8 +42,19 @@ const CommonDashboard = (
                     </CardContent>
                 </Card>
 
-                {/* pending payment table */}
-                <DataTable />
+                <Card className="h-fit bg-transparent border-none shadow-none py-1.5 gap-0 overflow-hidden">
+                    <CardHeader className="border-b border-border">
+                        <CardTitle>
+                            Pending Payment
+                        </CardTitle>
+                        <CardDescription>
+                            Showing pending payment
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="p-0">
+                        <DataTable />
+                    </CardContent>
+                </Card>
             </Card>
 
         </Card>

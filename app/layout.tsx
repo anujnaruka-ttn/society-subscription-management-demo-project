@@ -4,7 +4,6 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/common/Navbar";
-import { use } from "react";
 import { headers } from "next/headers";
 
 const fontSans = Alexandria({
@@ -46,13 +45,13 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://ssm-ttn-demo-project.vercel.app"),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
 
-  const headersList = use(headers());
+  const headersList = await headers();
   const pathname = headersList.get("referer");
   // console.log(pathname?.split("/").includes("login") || pathname?.split("/").includes("register"))
   return (
@@ -72,8 +71,7 @@ export default function RootLayout({
         >
           <TooltipProvider>
             {
-              (pathname?.split("/").includes("login") || pathname?.split("/").includes("register")) &&
-              <Navbar />
+              (pathname?.split("/").includes("login") || pathname?.split("/").includes("register")) && <Navbar />
             }
             <main className="w-full h-full flex justify-center-safe items-center-safe">
               {children}

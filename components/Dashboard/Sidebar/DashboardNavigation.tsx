@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { Route } from "@/types/routes";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 {/*
@@ -33,15 +34,18 @@ import { useState } from "react";
     /admin/(settings)/profile
 */}
 export default function DashboardNavigation({ routes }: { routes: Route[] }) {
+
+    const activePathname = usePathname();
     const { state } = useSidebar();
     const isCollapsed = state === "collapsed";
     const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
-
+    const isActive = (pathname: string): boolean => pathname === activePathname;
     return (
         <SidebarMenu>
-            {routes.map((route) => {
+            {routes.map((route: Route) => {
                 const isOpen = !isCollapsed && openCollapsible === route.id;
                 const hasSubRoutes = !!route.subs?.length;
+                const isActiveRoute = isActive(route.link);
 
                 return (
                     <SidebarMenuItem key={route.id}>
@@ -108,7 +112,8 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                 )}
                             </Collapsible>
                         ) : (
-                            <SidebarMenuButton tooltip={route.title} asChild>
+                            <SidebarMenuButton tooltip={route.title} asChild
+                                isActive={isActiveRoute}>
                                 <Link
                                     href={route.link}
                                     prefetch={true}
