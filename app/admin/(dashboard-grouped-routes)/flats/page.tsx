@@ -1,9 +1,7 @@
-import DashboardLayoutClient from "@/components/Dashboard/DashboardLayoutClient"
+import FlatsClient from "@/components/Dashboard/Admin/FlatsClient";
 
 export default function AdminFlatsPage() {
     return (
-        <DashboardLayoutClient>
-            <h1>Admin Flats Page</h1>
-        </DashboardLayoutClient>
+        <FlatsClient />
     )
 }

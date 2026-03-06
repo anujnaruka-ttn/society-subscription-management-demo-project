@@ -103,18 +103,18 @@ const dashboardRoutes: Route[] = [
       {
         title: "Profile",
         link: "/admin/profile",
-        icon: <TiUserOutline className="size-4" />
+        icon: <TiUserOutline className="size-4 dark:text-white" />
       },
       {
         title: "Notifications",
         link: "/admin/notifications",
-        icon: <BellIcon className="size-4" />
+        icon: <BellIcon className="size-4 dark:text-white" />
       },
     ],
   },
 ];
 
-export function DashboardSidebar() {
+export default function DashboardSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 

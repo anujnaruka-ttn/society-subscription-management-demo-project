@@ -1,7 +1,8 @@
 "use client";
 
 import { SidebarInset, SidebarProvider } from "../ui/sidebar";
-import { DashboardSidebar } from "./Sidebar/DashboardSidebar";
+import DashboardHeader from "./common/DashboardHeader";
+import DashboardSidebar from "./Sidebar/DashboardSidebar";
 
 export default function DashboardLayoutClient({
     children,
@@ -10,12 +11,13 @@ export default function DashboardLayoutClient({
 }) {
     return (
         <SidebarProvider>
-            <div className="relative flex h-dvh w-full">
+            <main className="relative flex h-dvh w-full overflow-hidden">
                 <DashboardSidebar />
                 <SidebarInset className="flex flex-col">
+                    <DashboardHeader />
                     {children}
                 </SidebarInset>
-            </div>
+            </main>
         </SidebarProvider>
     );
 }

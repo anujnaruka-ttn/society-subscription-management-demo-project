@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@/app/globals.css";
 import { headers } from "next/headers";
 import { OpenGraph } from "next/dist/lib/metadata/types/opengraph-types";
+import DashboardLayoutClient from "@/components/Dashboard/DashboardLayoutClient";
 
 export async function generateMetadata(): Promise<Metadata> {
 
@@ -50,8 +51,8 @@ export default function DashboardLayout({
 }) {
 
     return (
-        <main className="w-full h-full overflow-hidden flex flex-col justify-center items-center">
+        <DashboardLayoutClient>
             {children}
-        </main>
+        </DashboardLayoutClient>
     );
 }

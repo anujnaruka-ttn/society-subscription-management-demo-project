@@ -3,6 +3,9 @@ import { Alexandria, Aoboshi_One, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "@/components/providers/ThemeProvider";
+import Navbar from "@/components/common/Navbar";
+import { use } from "react";
+import { headers } from "next/headers";
 
 const fontSans = Alexandria({
   subsets: ["latin"],
@@ -48,6 +51,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  const headersList = use(headers());
+  const pathname = headersList.get("referer");
+  // console.log(pathname?.split("/").includes("login") || pathname?.split("/").includes("register"))
   return (
     <html lang="en" suppressHydrationWarning>
 
@@ -56,7 +63,7 @@ export default function RootLayout({
       </head>
 
       <body className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased w-screen h-screen overflow-x-hidden overflow-y-auto
-      flex justify-center-safe items-center-safe`}>
+      flex flex-col items-center-safe`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -64,7 +71,13 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            {children}
+            {
+              (pathname?.split("/").includes("login") || pathname?.split("/").includes("register")) &&
+              <Navbar />
+            }
+            <main className="w-full h-full flex justify-center-safe items-center-safe">
+              {children}
+            </main>
           </TooltipProvider>
         </ThemeProvider>
       </body>

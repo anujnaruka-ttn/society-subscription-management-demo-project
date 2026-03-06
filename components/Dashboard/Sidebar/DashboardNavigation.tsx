@@ -93,7 +93,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                                         <Link
                                                             href={subRoute.link}
                                                             prefetch={true}
-                                                            className="flex items-center rounded-md px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-muted hover:text-foreground"
+                                                            className="flex items-center rounded-md  px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-sidebar-muted hover:text-foreground"
                                                         >
                                                             {subRoute.icon}
                                                             <span className="ml-2">

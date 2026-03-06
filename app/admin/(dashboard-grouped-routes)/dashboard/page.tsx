@@ -1,9 +1,7 @@
-import DashboardLayoutClient from "@/components/Dashboard/DashboardLayoutClient"
+import CommonDashboard from "@/components/Dashboard/common/CommonDashboard";
 
 export default function AdminDashboardPage() {
     return (
-        <DashboardLayoutClient>
-            <h1>Admin Dashboard Page</h1>
-        </DashboardLayoutClient>
+        <CommonDashboard props={{ role: "admin" }} />
     )
 }
