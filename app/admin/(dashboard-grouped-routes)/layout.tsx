@@ -14,7 +14,7 @@ export async function generateMetadata(): Promise<Metadata> {
         ?.join(" ");
 
     const metadata: Metadata = {
-        title: `SSM | ${currentRoute}`,
+        title: `SSM | ${currentRoute || "Admin"}`,
         description: `
                 Society Subscription Management is a web application designed to help manage 
                 and track subscriptions for various societies. 

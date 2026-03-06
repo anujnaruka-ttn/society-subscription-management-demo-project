@@ -1,6 +1,7 @@
+import SubscriptionClient from "@/components/Dashboard/Admin/SubscriptionClient";
 
 export default function AdminSubscriptionsPage() {
     return (
-        <h1>Admin Subscriptions Page</h1>
+        <SubscriptionClient />
     )
 }
