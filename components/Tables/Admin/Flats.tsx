@@ -36,14 +36,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 import { FlatData } from "@/types/flatData";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { usePathname } from "next/navigation";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GoPlusCircle } from "react-icons/go";
 import dynamic from "next/dynamic";
 
-const FlatDetailDialog = dynamic(() => import("../Dialogs/FlatDetailDialog"), {
+const FlatDetailDialog = dynamic(() => import("@/components/Dialogs/FlatDetailDialog"), {
     ssr: false,
     loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
 })
@@ -203,129 +202,10 @@ const data: FlatData[] = [
         phone: "+91 9876543219",
         flatAddress: "Tower B, 1010",
     },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    }
 ];
 
 
-export default function DataTable() {
+export default function FlatsTable() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState("");
@@ -353,51 +233,49 @@ export default function DataTable() {
 
     const pageCount = table.getPageCount();
     const currentPage = table.getState().pagination.pageIndex + 1;
-    const pathname = usePathname();
 
     return (
-        <Card className="w-full max-h-[75%] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent p-6">
-            {
-                pathname !== "/admin/dashboard" &&
-                <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-3 border-b">
-                    <div className="flex items-center gap-2 md:w-[70%] w-full">
-                        <span className="text-sm text-muted-foreground">Show</span>
-                        <Select
-                            value={String(table.getState().pagination.pageSize)}
-                            onValueChange={(value) => table.setPageSize(Number(value))}
-                        >
-                            <SelectTrigger className="h-8 w-18">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {[10, 20, 50].map((size) => (
-                                    <SelectItem key={size} value={String(size)}>
-                                        {size}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        <span className="text-sm text-muted-foreground">entries</span>
-                    </div>
-                    <Input
-                        placeholder="Search..."
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        className="h-8 md:w-full w-64 md:flex-1"
-                    />
-                    <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add Flat" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
-                        <Button
-                            variant="outline"
-                            size="icon-lg"
-                            className="w-full md:w-fit px-3 ml-auto h-8"
-                        >
-                            <GoPlusCircle />
-                            Add Flat
-                        </Button>
-                    </FlatDetailDialog>
+        <Card className="w-full max-h-[calc(100vh-64px)] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent p-6">
+
+            <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-3 border-b">
+                <div className="flex items-center gap-2 md:w-[70%] w-full">
+                    <span className="text-sm text-muted-foreground">Show</span>
+                    <Select
+                        value={String(table.getState().pagination.pageSize)}
+                        onValueChange={(value) => table.setPageSize(Number(value))}
+                    >
+                        <SelectTrigger className="h-8 w-18">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[10, 20, 50].map((size) => (
+                                <SelectItem key={size} value={String(size)}>
+                                    {size}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <span className="text-sm text-muted-foreground">entries</span>
                 </div>
-            }
-            <div className="max-h-full w-full overflow-auto">
+                <Input
+                    placeholder="Search..."
+                    value={globalFilter}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
+                    className="h-8 md:w-full w-64 md:flex-1"
+                />
+                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add Flat" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
+                    <Button
+                        variant="outline"
+                        size="icon-lg"
+                        className="w-full md:w-fit px-3 ml-auto h-8"
+                    >
+                        <GoPlusCircle />
+                        Add Flat
+                    </Button>
+                </FlatDetailDialog>
+            </div>
+
+            <div className="max-h-[90%] w-full overflow-auto">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -446,60 +324,57 @@ export default function DataTable() {
                 </Table>
             </div>
 
-            {
-                pathname !== "/admin/dashboard" &&
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-pretty text-sm text-muted-foreground">
-                        Showing{" "}
-                        {table.getState().pagination.pageIndex *
-                            table.getState().pagination.pageSize +
-                            1}{" "}
-                        to{" "}
-                        {Math.min(
-                            (table.getState().pagination.pageIndex + 1) *
-                            table.getState().pagination.pageSize,
-                            table.getFilteredRowModel().rows.length
-                        )}{" "}
-                        of {table.getFilteredRowModel().rows.length} entries
-                    </p>
-                    <div className="flex items-center gap-1">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-pretty text-sm text-muted-foreground">
+                    Showing{" "}
+                    {table.getState().pagination.pageIndex *
+                        table.getState().pagination.pageSize +
+                        1}{" "}
+                    to{" "}
+                    {Math.min(
+                        (table.getState().pagination.pageIndex + 1) *
+                        table.getState().pagination.pageSize,
+                        table.getFilteredRowModel().rows.length
+                    )}{" "}
+                    of {table.getFilteredRowModel().rows.length} entries
+                </p>
+                <div className="flex items-center gap-1">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => table.previousPage()}
+                        disabled={!table.getCanPreviousPage()}
+                        aria-label="Previous page"
+                    >
+                        <ChevronLeft className="h-4 w-4" />
+                        <span className="sr-only">Previous page</span>
+                    </Button>
+                    {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
                         <Button
-                            variant="outline"
+                            key={page}
+                            variant={currentPage === page ? "default" : "outline"}
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => table.previousPage()}
-                            disabled={!table.getCanPreviousPage()}
-                            aria-label="Previous page"
+                            onClick={() => table.setPageIndex(page - 1)}
+                            aria-label={`Go to page ${page}`}
                         >
-                            <ChevronLeft className="h-4 w-4" />
-                            <span className="sr-only">Previous page</span>
+                            {page}
                         </Button>
-                        {Array.from({ length: pageCount }, (_, i) => i + 1).map((page) => (
-                            <Button
-                                key={page}
-                                variant={currentPage === page ? "default" : "outline"}
-                                size="icon"
-                                className="h-8 w-8"
-                                onClick={() => table.setPageIndex(page - 1)}
-                                aria-label={`Go to page ${page}`}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => table.nextPage()}
-                            disabled={!table.getCanNextPage()}
-                            aria-label="Next page"
-                        >
-                            <ChevronRight className="h-4 w-4" />
-                            <span className="sr-only">Next page</span>
-                        </Button>
-                    </div>
+                    ))}
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => table.nextPage()}
+                        disabled={!table.getCanNextPage()}
+                        aria-label="Next page"
+                    >
+                        <ChevronRight className="h-4 w-4" />
+                        <span className="sr-only">Next page</span>
+                    </Button>
                 </div>
-            }
+            </div>
         </Card>
     );
 }

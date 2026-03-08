@@ -1,10 +1,10 @@
 'use client'
 
-import DataTable from "@/components/common/DataTable";
+import FlatsTable from "@/components/Tables/Admin/Flats";
 
 const FlatsClient = () => {
     return (
-        <DataTable />
+        <FlatsTable />
     )
 }
 

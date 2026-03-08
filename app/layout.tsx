@@ -4,7 +4,6 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/common/Navbar";
-import { headers } from "next/headers";
 
 const fontSans = Alexandria({
   subsets: ["latin"],
@@ -51,9 +50,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
 
-  const headersList = await headers();
-  const pathname = headersList.get("referer");
-  // console.log(pathname?.split("/").includes("login") || pathname?.split("/").includes("register"))
   return (
     <html lang="en" suppressHydrationWarning>
 
@@ -70,9 +66,7 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
-            {
-              (pathname?.split("/").includes("login") || pathname?.split("/").includes("register")) && <Navbar />
-            }
+            <Navbar />
             <main className="w-full h-full flex justify-center-safe items-center-safe">
               {children}
             </main>

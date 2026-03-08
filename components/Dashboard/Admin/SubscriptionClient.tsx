@@ -3,6 +3,7 @@
 import { PlusCircle, Edit2, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 
 const subscriptionData = [
     {
@@ -24,6 +25,12 @@ const subscriptionData = [
 ]
 
 const SubscriptionClient = () => {
+
+    const [disableSubscriptionUpdation, setdisableSubscriptionUpdation] = useState({
+        flatType: "",
+        disable: true
+    });
+
     return (
         <Card className='w-full h-full bg-transparent border-none shadow-none p-6'>
             <CardHeader className='w-full px-0 pt-0 pb-8 flex flex-row justify-between items-center'>
@@ -69,12 +76,11 @@ const SubscriptionClient = () => {
                                     <div className="pl-3 pr-2 text-muted-foreground">
                                         <IndianRupee className="size-4" />
                                     </div>
-                                    <input
-                                        className='border-none shadow-none focus:outline-none focus:ring-0 text-lg font-medium w-full h-full p-0 bg-transparent'
-                                        defaultValue={item.subscriptionRate}
-                                        type="number"
-                                        name='rate'
-                                    />
+                                    <div
+                                        className='border-none shadow-none focus:outline-none focus:ring-0 text-lg font-medium w-full h-full flex items-center-safe p-0 bg-transparent text-muted-foreground'
+                                    >
+                                        {item.subscriptionRate}
+                                    </div>
                                 </div>
                             </div>
                         </div>

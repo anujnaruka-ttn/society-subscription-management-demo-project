@@ -3,6 +3,7 @@ import { ChartAreaInteractive } from "../Charts/ChartAreaInteractive";
 import MoneyCollectedChart from "../Charts/MoneyCollectedChart";
 import { DayWiseChart } from "../Charts/DayWiseChart";
 import DataTable from "@/components/common/DataTable";
+import PendingPaymentsTable from "@/components/Tables/Admin/PendingPayments";
 
 type CommonDashboardProps = {
     role: "admin" | "user"
@@ -28,7 +29,7 @@ const CommonDashboard = (
             <Card className="w-[25%] h-full">
 
                 {/* money collected */}
-                <Card className="h-fit bg-transparent border-none shadow-none py-1.5">
+                <Card className="h-[40%] bg-transparent border-none shadow-none py-1.5">
                     <CardHeader className="border-b border-border">
                         <CardTitle>
                             Money Collected
@@ -42,8 +43,8 @@ const CommonDashboard = (
                     </CardContent>
                 </Card>
 
-                <Card className="h-fit bg-transparent border-none shadow-none py-1.5 gap-0 overflow-hidden">
-                    <CardHeader className="border-b border-border">
+                <Card className="h-[60%] bg-transparent border-none shadow-none py-1.5 gap-0 overflow-hidden">
+                    <CardHeader className="border-b border-border flex-1">
                         <CardTitle>
                             Pending Payment
                         </CardTitle>
@@ -51,8 +52,8 @@ const CommonDashboard = (
                             Showing pending payment
                         </CardDescription>
                     </CardHeader>
-                    <CardContent className="p-0">
-                        <DataTable />
+                    <CardContent className="p-1.5 h-[85%]">
+                        <PendingPaymentsTable />
                     </CardContent>
                 </Card>
             </Card>

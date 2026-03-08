@@ -16,18 +16,9 @@ import DashboardNavigation from "./DashboardNavigation";
 import NotificationsPopover from "./Notifications";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  TbBuildingCommunity,
-  TbCreditCardPay,
-  TbReport,
-  TbSettings
-} from "react-icons/tb";
-import { MdOutlineCardMembership } from "react-icons/md";
-import { FcOvertime } from "react-icons/fc";
-import { TiUserOutline } from "react-icons/ti";
-import { BellIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import NavFooter from "./NavFooter";
+import { dashboardRoutes } from "@/lib/dashboard-nav";
 
 
 
@@ -63,62 +54,14 @@ const user = {
   avatar: "/avatars/01.png",
 }
 
-const dashboardRoutes: Route[] = [
-  {
-    id: "flats",
-    title: "Flats",
-    icon: <TbBuildingCommunity className="size-4" />,
-    link: "/admin/flats",
-  },
-  {
-    id: "subscriptions",
-    title: "Subscriptions",
-    icon: <MdOutlineCardMembership className="size-4" />,
-    link: "/admin/subscriptions",
-  },
-  {
-    id: "monthly-records",
-    title: "Monthly Records",
-    icon: <FcOvertime className="size-4" />,
-    link: "/admin/monthly-records",
-  },
-  {
-    id: "payment-entry",
-    title: "Payment Entry",
-    icon: <TbCreditCardPay className="size-4" />,
-    link: "/admin/payment-entry",
-  },
-  {
-    id: "reports",
-    title: "Reports",
-    icon: <TbReport className="size-4" />,
-    link: "/admin/reports",
-  },
-  {
-    id: "settings",
-    title: "Settings",
-    icon: <TbSettings className="size-4" />,
-    link: "/admin/profile",
-    subs: [
-      {
-        title: "Profile",
-        link: "/admin/profile",
-        icon: <TiUserOutline className="size-4 dark:text-white" />
-      },
-      {
-        title: "Notifications",
-        link: "/admin/notifications",
-        icon: <BellIcon className="size-4 dark:text-white" />
-      },
-    ],
-  },
-];
+
 
 export default function DashboardSidebar() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const path = usePathname();
+  const isAdmin = true;
+  const routes = isAdmin ? dashboardRoutes.admin : dashboardRoutes.resident;
 
   return (
     <Sidebar variant="inset" collapsible="icon">
@@ -131,7 +74,7 @@ export default function DashboardSidebar() {
         )}
       >
         <Link
-          href={` ${path.split("/").includes("admin") ? "/admin/dashboard" : "/dashboard"} `}
+          href={` ${isAdmin ? "/admin/dashboard" : "/dashboard"} `}
           className="flex items-center gap-2"
         >
           <Image src={Logo} alt="Logo" width={24} height={24} className="size-12" />
@@ -159,7 +102,7 @@ export default function DashboardSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="gap-4 px-2 py-4">
-        <DashboardNavigation routes={dashboardRoutes} />
+        <DashboardNavigation routes={routes} />
       </SidebarContent>
       <NavFooter user={user} />
     </Sidebar>

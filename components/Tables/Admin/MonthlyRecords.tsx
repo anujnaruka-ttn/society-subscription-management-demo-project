@@ -14,8 +14,10 @@ import {
 import {
     ChevronLeft,
     ChevronRight,
-    Trash2Icon,
-    FileTextIcon,
+    CreditCard,
+    CheckCircle2,
+    AlertCircle,
+    Eye
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -36,20 +38,16 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Card } from "../ui/card";
-import { FlatData } from "@/types/flatData";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { Card } from "@/components/ui/card";
+import { MonthlyRecords } from "@/types/MonthlyRecords";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePathname } from "next/navigation";
-import { GoPlusCircle } from "react-icons/go";
-import dynamic from "next/dynamic";
+import { cn } from "@/lib/utils";
+import { ConfigProvider, DatePicker, theme as antdtheme } from "antd";
+import { useTheme } from "next-themes";
 
-const FlatDetailDialog = dynamic(() => import("../Dialogs/FlatDetailDialog"), {
-    ssr: false,
-    loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
-})
-
-
-const columns: ColumnDef<FlatData>[] = [
+const columns: ColumnDef<MonthlyRecords>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -73,10 +71,10 @@ const columns: ColumnDef<FlatData>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "owner",
-        header: "Owner",
+        accessorKey: "resident",
+        header: "Resident",
         cell: ({ row }) => (
-            <span className="font-medium text-nowrap">{row.getValue("owner")}</span>
+            <span className="font-medium text-nowrap">{row.getValue("resident")}</span>
         ),
     },
     {
@@ -92,243 +90,177 @@ const columns: ColumnDef<FlatData>[] = [
         header: "Flat Address",
     },
     {
+        accessorKey: "paymentStatus",
+        header: "Status",
+        cell: ({ row }) => {
+            const status = row.getValue("paymentStatus") as string;
+            return (
+                <Badge
+                    variant={status === "paid" ? "outline" : "destructive"}
+                    className={cn(
+                        "capitalize gap-1 px-2 py-0.5",
+                        status === "paid" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : ""
+                    )}
+                >
+                    {status === "paid" ? (
+                        <CheckCircle2 className="size-3" />
+                    ) : (
+                        <AlertCircle className="size-3" />
+                    )}
+                    {status}
+                </Badge>
+            );
+        },
+    },
+    {
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => (
-            <div className="flex items-center gap-1">
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 text-destructive"
-                            aria-label="Delete"
-                        >
-                            <Trash2Icon className="size-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger>
-                        <FlatDetailDialog dialogProps={{ title: "View Details", description: "View details of the flat" }}
-                            flatDetails={row.original}>
+        cell: ({ row }) => {
+            const status = row.original.paymentStatus;
+            return (
+                <div className="flex items-center gap-2">
+                    <Tooltip>
+                        <TooltipTrigger asChild>
                             <Button
-                                variant="outline"
+                                variant="ghost"
                                 size="icon"
                                 className="h-8 w-8"
-                                aria-label="View details"
                             >
-                                <FileTextIcon className="size-4" />
+                                <Eye className="size-4" />
                             </Button>
-                        </FlatDetailDialog>
-                    </TooltipTrigger>
-                    <TooltipContent>View Details</TooltipContent>
-                </Tooltip>
-            </div>
-        ),
-    },
+                        </TooltipTrigger>
+                        <TooltipContent>View Details</TooltipContent>
+                    </Tooltip>
+
+                    {status === "due" && (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-8 w-8 text-primary border-primary/20 hover:bg-primary/10"
+                                >
+                                    <CreditCard className="size-4" />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>Pay Now</TooltipContent>
+                        </Tooltip>
+                    )}
+                </div>
+            );
+        },
+    }
 ];
 
-const data: FlatData[] = [
+const data: MonthlyRecords[] = [
     {
         id: "1",
-        owner: "Anuj Naruka",
+        resident: "Anuj Naruka",
         email: "anuj@example.com",
         phone: "+91 9876543210",
         flatAddress: "Tower A, 101",
+        paymentStatus: "paid",
     },
     {
         id: "2",
-        owner: "John Doe",
+        resident: "John Doe",
         email: "john@example.com",
         phone: "+91 9876543211",
         flatAddress: "Tower B, 202",
+        paymentStatus: "due",
     },
     {
         id: "3",
-        owner: "Alice Smith",
+        resident: "Alice Smith",
         email: "alice@example.com",
         phone: "+91 9876543212",
         flatAddress: "Tower C, 303",
+        paymentStatus: "paid",
     },
     {
         id: "4",
-        owner: "Bob Johnson",
+        resident: "Bob Johnson",
         email: "bob@example.com",
         phone: "+91 9876543213",
         flatAddress: "Tower D, 404",
+        paymentStatus: "due",
     },
     {
         id: "5",
-        owner: "Emma Wilson",
+        resident: "Emma Wilson",
         email: "emma@example.com",
         phone: "+91 9876543214",
         flatAddress: "Tower A, 505",
+        paymentStatus: "paid",
     },
     {
         id: "6",
-        owner: "Michael Brown",
+        resident: "Michael Brown",
         email: "michael@example.com",
         phone: "+91 9876543215",
         flatAddress: "Tower B, 606",
+        paymentStatus: "due",
     },
     {
         id: "7",
-        owner: "Sarah Davis",
+        resident: "Sarah Davis",
         email: "sarah@example.com",
         phone: "+91 9876543216",
         flatAddress: "Tower C, 707",
-
+        paymentStatus: "paid",
     },
     {
         id: "8",
-        owner: "David Clark",
+        resident: "David Clark",
         email: "david@example.com",
         phone: "+91 9876543217",
         flatAddress: "Tower D, 808",
-
+        paymentStatus: "due",
     },
     {
         id: "9",
-        owner: "James Miller",
+        resident: "James Miller",
         email: "james@example.com",
         phone: "+91 9876543218",
         flatAddress: "Tower A, 909",
+        paymentStatus: "paid",
     },
     {
         id: "10",
-        owner: "Linda White",
+        resident: "Linda White",
         email: "linda@example.com",
         phone: "+91 9876543219",
         flatAddress: "Tower B, 1010",
+        paymentStatus: "due",
     },
     {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
+        id: "11",
+        resident: "Robert Taylor",
+        email: "robert@example.com",
+        phone: "+91 9876543220",
+        flatAddress: "Tower C, 1101",
+        paymentStatus: "paid",
     },
     {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
+        id: "12",
+        resident: "Patricia Moore",
+        email: "patricia@example.com",
+        phone: "+91 9876543221",
+        flatAddress: "Tower D, 1202",
+        paymentStatus: "due",
     }
 ];
 
 
-export default function DataTable() {
+export default function MonthlyRecordsTable() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState("");
+
+    const { theme: nextTheme } = useTheme();
+
+    const { defaultAlgorithm, darkAlgorithm } = antdtheme;
+
 
     const table = useReactTable({
         data,
@@ -356,7 +288,7 @@ export default function DataTable() {
     const pathname = usePathname();
 
     return (
-        <Card className="w-full max-h-[75%] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent p-6">
+        <Card className="w-full max-h-[calc(100vh-64px)] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent p-6">
             {
                 pathname !== "/admin/dashboard" &&
                 <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-3 border-b">
@@ -379,22 +311,22 @@ export default function DataTable() {
                         </Select>
                         <span className="text-sm text-muted-foreground">entries</span>
                     </div>
-                    <Input
-                        placeholder="Search..."
-                        value={globalFilter}
-                        onChange={(e) => setGlobalFilter(e.target.value)}
-                        className="h-8 md:w-full w-64 md:flex-1"
-                    />
-                    <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add Flat" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
-                        <Button
-                            variant="outline"
-                            size="icon-lg"
-                            className="w-full md:w-fit px-3 ml-auto h-8"
-                        >
-                            <GoPlusCircle />
-                            Add Flat
-                        </Button>
-                    </FlatDetailDialog>
+                    <ConfigProvider
+                        theme={{
+                            algorithm: nextTheme === "dark" ? darkAlgorithm : defaultAlgorithm,
+                        }}
+                    >
+                        <DatePicker
+                            style={{
+                                backgroundColor: "transparent",
+                            }}
+                            picker="month"
+                            onChange={(value) => table.setGlobalFilter(value)}
+                            className="h-8 md:w-full w-64 md:flex-1"
+                        />
+
+                    </ConfigProvider>
+
                 </div>
             }
             <div className="max-h-full w-full overflow-auto">
