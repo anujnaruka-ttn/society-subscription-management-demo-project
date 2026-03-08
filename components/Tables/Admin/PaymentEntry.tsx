@@ -15,12 +15,13 @@ import {
     ChevronLeft,
     ChevronRight,
     Trash2Icon,
-    FileTextIcon,
+    CreditCard,
+    Plus,
+    HelpCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -37,18 +38,11 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { FlatData } from "@/types/flatData";
+import { PaymentEntryData } from "@/types/PaymentEntryData";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { GoPlusCircle } from "react-icons/go";
-import dynamic from "next/dynamic";
+import { Input } from "@/components/ui/input";
 
-const FlatDetailDialog = dynamic(() => import("@/components/Dialogs/FlatDetailDialog"), {
-    ssr: false,
-    loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
-})
-
-
-const columns: ColumnDef<FlatData>[] = [
+const columns: ColumnDef<PaymentEntryData>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -72,23 +66,44 @@ const columns: ColumnDef<FlatData>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "owner",
-        header: "Owner",
+        accessorKey: "resident",
+        header: "Resident",
         cell: ({ row }) => (
-            <span className="font-medium text-nowrap">{row.getValue("owner")}</span>
+            <div className="flex flex-col">
+                <span className="font-medium text-nowrap">{row.getValue("resident")}</span>
+                <span className="text-xs text-muted-foreground">{(row.original as any).email}</span>
+            </div>
         ),
-    },
-    {
-        accessorKey: "email",
-        header: "Email",
-    },
-    {
-        accessorKey: "phone",
-        header: "Phone",
     },
     {
         accessorKey: "flatAddress",
         header: "Flat Address",
+    },
+    {
+        id: "payment-record",
+        header: "Payment Record",
+        cell: ({ row }) => {
+            const paymentRecord = row.original.paymentRecord;
+            return (
+                <div className="flex items-center gap-2">
+                    {paymentRecord ? (
+                        <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-secondary text-secondary-foreground text-xs font-medium capitalize">
+                            {paymentRecord === "cash" ? <CreditCard className="size-3" /> : <Plus className="size-3" />}
+                            {paymentRecord}
+                        </div>
+                    ) : (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div className="text-muted-foreground/50">
+                                    <HelpCircle className="size-4" />
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>No payment record found</TooltipContent>
+                        </Tooltip>
+                    )}
+                </div>
+            );
+        },
     },
     {
         id: "actions",
@@ -100,112 +115,90 @@ const columns: ColumnDef<FlatData>[] = [
                         <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 text-destructive"
-                            aria-label="Delete"
+                            className="h-8 w-8"
+                            aria-label="Quick Pay"
                         >
-                            <Trash2Icon className="size-4" />
+                            <Plus className="size-4" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger>
-                        <FlatDetailDialog dialogProps={{ title: "View Details", description: "View details of the flat" }}
-                            flatDetails={row.original}>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8"
-                                aria-label="View details"
-                            >
-                                <FileTextIcon className="size-4" />
-                            </Button>
-                        </FlatDetailDialog>
-                    </TooltipTrigger>
-                    <TooltipContent>View Details</TooltipContent>
+                    <TooltipContent>Add Payment Record</TooltipContent>
                 </Tooltip>
             </div>
         ),
-    },
+    }
 ];
 
-const data: FlatData[] = [
+const data: PaymentEntryData[] = [
     {
         id: "1",
-        owner: "Anuj Naruka",
-        email: "anuj@example.com",
-        phone: "+91 9876543210",
+        resident: "Anuj Naruka",
         flatAddress: "Tower A, 101",
+        status: "pending",
+        paymentRecord: "cash",
     },
     {
         id: "2",
-        owner: "John Doe",
-        email: "john@example.com",
-        phone: "+91 9876543211",
+        resident: "John Doe",
         flatAddress: "Tower B, 202",
+        status: "pending",
+        paymentRecord: "upi",
     },
     {
         id: "3",
-        owner: "Alice Smith",
-        email: "alice@example.com",
-        phone: "+91 9876543212",
+        resident: "Alice Smith",
         flatAddress: "Tower C, 303",
+        status: "pending",
     },
     {
         id: "4",
-        owner: "Bob Johnson",
-        email: "bob@example.com",
-        phone: "+91 9876543213",
+        resident: "Bob Johnson",
         flatAddress: "Tower D, 404",
+        status: "pending",
+        paymentRecord: "cash",
     },
     {
         id: "5",
-        owner: "Emma Wilson",
-        email: "emma@example.com",
-        phone: "+91 9876543214",
+        resident: "Emma Wilson",
         flatAddress: "Tower A, 505",
+        status: "pending",
     },
     {
         id: "6",
-        owner: "Michael Brown",
-        email: "michael@example.com",
-        phone: "+91 9876543215",
+        resident: "Michael Brown",
         flatAddress: "Tower B, 606",
+        status: "pending",
+        paymentRecord: "upi",
     },
     {
         id: "7",
-        owner: "Sarah Davis",
-        email: "sarah@example.com",
-        phone: "+91 9876543216",
+        resident: "Sarah Davis",
         flatAddress: "Tower C, 707",
-
+        status: "pending",
     },
     {
         id: "8",
-        owner: "David Clark",
-        email: "david@example.com",
-        phone: "+91 9876543217",
+        resident: "David Clark",
         flatAddress: "Tower D, 808",
-
+        status: "pending",
+        paymentRecord: "cash",
     },
     {
         id: "9",
-        owner: "James Miller",
-        email: "james@example.com",
-        phone: "+91 9876543218",
+        resident: "James Miller",
         flatAddress: "Tower A, 909",
+        status: "pending",
     },
     {
         id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
+        resident: "Linda White",
         flatAddress: "Tower B, 1010",
+        status: "pending",
+        paymentRecord: "upi",
     },
 ];
 
 
-export default function FlatsTable() {
+export default function PaymentEntryTable() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState("");
@@ -214,9 +207,7 @@ export default function FlatsTable() {
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
         onSortingChange: setSorting,
         onRowSelectionChange: setRowSelection,
         onGlobalFilterChange: setGlobalFilter,
@@ -235,9 +226,10 @@ export default function FlatsTable() {
     const currentPage = table.getState().pagination.pageIndex + 1;
 
     return (
-        <Card className="w-full max-h-[calc(100vh-64px)] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent pt-1.5 pb-6 px-6">
+        <Card className="w-[98%] mx-auto max-h-full overflow-hidden space-y-1.5 
+        border-none shadow-none rounded-none bg-transparent gap-1.5 pt-0 pb-1.5 px-1.5">
 
-            <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-3 border-b">
+            <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-1.5 border-b">
                 <div className="flex items-center gap-2 md:w-[70%] w-full">
                     <span className="text-sm text-muted-foreground">Show</span>
                     <Select
@@ -263,19 +255,8 @@ export default function FlatsTable() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="h-8 md:w-full w-64 md:flex-1"
                 />
-                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add Flat" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
-                    <Button
-                        variant="outline"
-                        size="icon-lg"
-                        className="w-full md:w-fit px-3 ml-auto h-8"
-                    >
-                        <GoPlusCircle />
-                        Add Flat
-                    </Button>
-                </FlatDetailDialog>
             </div>
-
-            <div className="max-h-[90%] w-full overflow-auto">
+            <div className="max-h-full w-full overflow-auto">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

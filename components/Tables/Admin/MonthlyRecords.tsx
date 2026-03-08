@@ -288,7 +288,7 @@ export default function MonthlyRecordsTable() {
     const pathname = usePathname();
 
     return (
-        <Card className="w-full max-h-[calc(100vh-64px)] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent p-6">
+        <Card className="w-full max-h-[calc(100vh-64px)] overflow-hidden shadow-none space-y-4 border-none rounded-none gap-1.5 bg-transparent pt-1.5 pb-6 px-6">
             {
                 pathname !== "/admin/dashboard" &&
                 <div className="w-full flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-3 border-b">

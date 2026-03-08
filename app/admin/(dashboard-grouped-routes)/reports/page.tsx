@@ -1,6 +1,7 @@
+import ReportsClient from "@/components/Dashboard/Admin/ReportsClient";
 
 export default function AdminReportsPage() {
     return (
-        <h1>Admin Reports Page</h1>
+        <ReportsClient />
     )
 }

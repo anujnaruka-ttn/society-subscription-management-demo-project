@@ -1,6 +1,7 @@
+import PaymentEntryClient from "@/components/Dashboard/Admin/PaymentEntryClient";
 
 export default function AdminPaymentEntryPage() {
     return (
-        <h1>Admin Payment Entry Page</h1>
+        <PaymentEntryClient />
     )
 }
