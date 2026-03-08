@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   description: "Society Subscription Management is a web application designed to help manage and track subscriptions for various societies. It provides features such as subscription tracking, payment management, and member management to streamline the subscription process for society administrators and members.",
   openGraph: {
     type: "website",
-    url: "https://ssm-ttn-demo-project.vercel.app",
+    url: "https://society-subscription-management-dem.vercel.app/",
     siteName: "SSM",
     images: [
       {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
       },
     ],
   },
-  metadataBase: new URL("https://ssm-ttn-demo-project.vercel.app"),
+  metadataBase: new URL("https://society-subscription-management-dem.vercel.app/"),
 };
 
 export default async function RootLayout({

@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
                 It provides features such as subscription tracking, payment management, 
                 and member management to streamline the subscription process for society administrators and members.
             `,
-        metadataBase: new URL("https://ssm-ttn-demo-project.vercel.app"),
+        metadataBase: new URL("https://society-subscription-management-dem.vercel.app/"),
     }
 
     return {
@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
         openGraph: {
             ...metadata,
             type: "website",
-            url: "https://ssm-ttn-demo-project.vercel.app",
+            url: "https://society-subscription-management-dem.vercel.app/",
             siteName: "SSM",
             images: [
                 {
