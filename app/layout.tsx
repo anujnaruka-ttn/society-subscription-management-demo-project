@@ -34,9 +34,9 @@ export const metadata: Metadata = {
     siteName: "SSM",
     images: [
       {
-        url: "/public/assets/og-image.png",
-        width: 300,
-        height: 250,
+        url: "/assets/og-image.png",
+        width: 1200,
+        height: 630,
         alt: "SSM",
       },
     ],
