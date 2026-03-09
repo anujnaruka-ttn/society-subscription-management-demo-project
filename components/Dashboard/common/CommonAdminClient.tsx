@@ -15,7 +15,7 @@ const CommonAdminClient = ({ children, title, description }: { children: React.R
                     </CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className='p-0'>
+            <CardContent className='p-0 overflow-hidden'>
                 {children}
             </CardContent>
         </Card>

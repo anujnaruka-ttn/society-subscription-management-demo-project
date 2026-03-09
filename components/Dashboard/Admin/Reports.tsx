@@ -1,15 +1,10 @@
 "use client"
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
     Download,
     Eye,
-    FileText,
-    Calendar,
-    ChevronDown,
     CheckCircle2,
-    Database,
-    Zap
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -53,23 +48,12 @@ const Reports = () => {
     ]
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="w-full h-full flex flex-col gap-6">
             {/* Main Configuration Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex gap-6 w-full h-[40%]">
                 {/* Format and Preview Card */}
-                <Card className="md:col-span-2 border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden flex flex-col">
+                <Card className="w-[60%] border-border/50 bg-card/30 backdrop-blur-sm flex flex-col">
                     <div className="flex items-center justify-between p-4 border-b border-border/50 bg-muted/50">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 gap-1.5 px-2">
-                                <Zap className="size-3" />
-                                Report Config
-                            </Badge>
-                        </div>
-                        <Button variant="ghost" size="icon" className="size-8 rounded-full border border-border/50 hover:bg-background">
-                            <Download className="size-4" />
-                        </Button>
-                    </div>
-                    <CardContent className="flex-1 flex flex-col items-center justify-center py-10 gap-8">
                         <div className="flex items-center gap-4 bg-muted/50 p-1.5 rounded-xl border border-border/40">
                             <Button
                                 variant={format === 'pdf' ? 'default' : 'ghost'}
@@ -87,7 +71,11 @@ const Reports = () => {
                                 CSV
                             </Button>
                         </div>
-
+                        <Button variant="ghost" size="icon" className="size-8 rounded-full border border-border/50 hover:bg-background">
+                            <Download className="size-4" />
+                        </Button>
+                    </div>
+                    <CardContent className="flex-1 flex flex-col items-center justify-center py-10 gap-8">
                         <Button
                             className="group relative h-14 px-12 rounded-2xl bg-primary text-primary-foreground font-semibold text-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 overflow-hidden"
                             variant="default"
@@ -102,25 +90,25 @@ const Reports = () => {
                 </Card>
 
                 {/* Filters and Meta Card */}
-                <Card className="border-border/50 bg-card/30 backdrop-blur-sm flex flex-col">
+                <Card className="flex-1 border-border/50 bg-card/30 backdrop-blur-sm flex flex-col">
                     <CardContent className="p-6 flex flex-col h-full gap-8">
                         {/* Range Toggle */}
                         <div className="space-y-3">
                             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest pl-1">Reporting Period</span>
-                            <div className="grid grid-cols-2 gap-2 bg-muted/50 p-1 rounded-lg border border-border/40">
+                            <div className="flex gap-2 bg-muted/50 p-1 rounded-lg border border-border/40">
                                 <Button
-                                    variant={range === 'monthly' ? 'secondary' : 'ghost'}
+                                    variant={range === 'monthly' ? 'outline' : 'ghost'}
                                     size="sm"
                                     onClick={() => setRange('monthly')}
-                                    className={`h-8 text-xs font-semibold ${range === 'monthly' ? 'bg-background shadow-sm' : ''}`}
+                                    className={`w-[50%] h-8 text-xs hover: font-semibold transition-all duration-300 ${range === 'monthly' ? 'bg-background shadow-sm' : ''}`}
                                 >
                                     Monthly
                                 </Button>
                                 <Button
-                                    variant={range === 'yearly' ? 'secondary' : 'ghost'}
+                                    variant={range === 'yearly' ? 'outline' : 'ghost'}
                                     size="sm"
                                     onClick={() => setRange('yearly')}
-                                    className={`h-8 text-xs font-semibold ${range === 'yearly' ? 'bg-background shadow-sm' : ''}`}
+                                    className={`w-[50%] h-8 text-xs font-semibold transition-all duration-300 ${range === 'yearly' ? 'bg-background shadow-sm' : ''}`}
                                 >
                                     Yearly
                                 </Button>
@@ -150,8 +138,8 @@ const Reports = () => {
             </div>
 
             {/* Old Reports List */}
-            <Card className="border-border/50 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
-                <CardContent className="p-0 overflow-auto">
+            <Card className="w-full max-h-[50%] border-border/50 bg-card/30 backdrop-blur-sm shadow-sm overflow-hidden">
+                <CardContent className="p-0 overflow-hidden max-h-full">
                     <ReportsHistoryTable />
                 </CardContent>
             </Card>

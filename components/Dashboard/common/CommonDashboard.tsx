@@ -2,7 +2,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ChartAreaInteractive } from "../Charts/ChartAreaInteractive";
 import MoneyCollectedChart from "../Charts/MoneyCollectedChart";
 import { DayWiseChart } from "../Charts/DayWiseChart";
-import DataTable from "@/components/common/DataTable";
 import PendingPaymentsTable from "@/components/Tables/Admin/PendingPayments";
 
 type CommonDashboardProps = {
