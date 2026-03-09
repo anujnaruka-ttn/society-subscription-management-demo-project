@@ -35,10 +35,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { PendingPaymentData } from "@/types/PendingPayment";
+import { ReportType } from "@/types/reports";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const columns: ColumnDef<PendingPaymentData>[] = [
+const columns: ColumnDef<ReportType>[] = [
     {
         id: "select",
         header: ({ table }) => (
@@ -62,27 +62,31 @@ const columns: ColumnDef<PendingPaymentData>[] = [
         enableHiding: false,
     },
     {
-        accessorKey: "resident",
-        header: "Resident",
+        accessorKey: "reportDate",
+        header: "Report Date",
         cell: ({ row }) => (
-            <span className="font-medium text-nowrap">{row.getValue("resident")}</span>
+            <span className="font-medium text-nowrap">{row.getValue("reportDate")}</span>
         ),
     },
     {
-        accessorKey: "email",
-        header: "Email",
+        accessorKey: "reportType",
+        header: "Format",
+        cell: ({ row }) => (
+            <span className="uppercase text-xs font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                {row.getValue("reportType")}
+            </span>
+        ),
     },
     {
-        accessorKey: "phone",
-        header: "Phone",
+        accessorKey: "reportPeriod",
+        header: "Period",
+        cell: ({ row }) => (
+            <span className="capitalize">{row.getValue("reportPeriod")}</span>
+        ),
     },
     {
-        accessorKey: "flatAddress",
-        header: "Flat Address",
-    },
-    {
-        id: "status",
-        header: "Status",
+        id: "actions",
+        header: "Actions",
         cell: ({ row }) => (
             <div className="flex items-center gap-1">
                 <Tooltip>
@@ -96,94 +100,61 @@ const columns: ColumnDef<PendingPaymentData>[] = [
                             <Trash2Icon className="size-4" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
+                    <TooltipContent>Delete Report</TooltipContent>
                 </Tooltip>
-                <div>{row.getValue("status")}</div>
             </div>
         ),
     },
 ];
 
-const data: PendingPaymentData[] = [
+const data: ReportType[] = [
     {
         id: "1",
-        resident: "Anuj Naruka",
-        email: "anuj@example.com",
-        phone: "+91 9876543210",
-        flatAddress: "Tower A, 101",
-        status: "pending",
+        reportType: "pdf",
+        reportDate: "Mar 01, 2026",
+        reportPeriod: "monthly"
     },
     {
         id: "2",
-        resident: "John Doe",
-        email: "john@example.com",
-        phone: "+91 9876543211",
-        flatAddress: "Tower B, 202",
-        status: "pending",
+        reportType: "csv",
+        reportDate: "Feb 02, 2026",
+        reportPeriod: "monthly"
     },
     {
         id: "3",
-        resident: "Alice Smith",
-        email: "alice@example.com",
-        phone: "+91 9876543212",
-        flatAddress: "Tower C, 303",
-        status: "pending",
+        reportType: "pdf",
+        reportDate: "Jan 10, 2026",
+        reportPeriod: "yearly"
     },
     {
         id: "4",
-        resident: "Bob Johnson",
-        email: "bob@example.com",
-        phone: "+91 9876543213",
-        flatAddress: "Tower D, 404",
-        status: "pending",
+        reportType: "pdf",
+        reportDate: "Jan 05, 2026",
+        reportPeriod: "yearly"
     },
     {
         id: "5",
-        resident: "Emma Wilson",
-        email: "emma@example.com",
-        phone: "+91 9876543214",
-        flatAddress: "Tower A, 505",
-        status: "pending",
+        reportType: "csv",
+        reportDate: "Dec 15, 2025",
+        reportPeriod: "monthly"
     },
     {
         id: "6",
-        resident: "Michael Brown",
-        email: "michael@example.com",
-        phone: "+91 9876543215",
-        flatAddress: "Tower B, 606",
-        status: "pending",
+        reportType: "pdf",
+        reportDate: "Nov 20, 2025",
+        reportPeriod: "monthly"
     },
     {
         id: "7",
-        resident: "Sarah Davis",
-        email: "sarah@example.com",
-        phone: "+91 9876543216",
-        flatAddress: "Tower C, 707",
-        status: "pending",
+        reportType: "pdf",
+        reportDate: "Oct 10, 2025",
+        reportPeriod: "monthly"
     },
     {
         id: "8",
-        resident: "David Clark",
-        email: "david@example.com",
-        phone: "+91 9876543217",
-        flatAddress: "Tower D, 808",
-        status: "pending",
-    },
-    {
-        id: "9",
-        resident: "James Miller",
-        email: "james@example.com",
-        phone: "+91 9876543218",
-        flatAddress: "Tower A, 909",
-        status: "pending",
-    },
-    {
-        id: "10",
-        resident: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
-        status: "pending",
+        reportType: "csv",
+        reportDate: "Sep 05, 2025",
+        reportPeriod: "monthly"
     },
 ];
 
@@ -210,7 +181,7 @@ export default function ReportsHistoryTable() {
     // const currentPage = table.getState().pagination.pageIndex + 1;
 
     return (
-        <Card className="w-full max-h-full overflow-hidden shadow-none space-y-1.5 border-none rounded-none gap-1.5 bg-transparent pt-0 pb-1.5 px-3">
+        <Card className="w-full h-full overflow-hidden shadow-none space-y-1.5 border-none rounded-none gap-1.5 bg-transparent pt-0 pb-1.5 px-3">
             <div className="max-h-full w-full overflow-auto">
                 <Table>
                     <TableHeader>

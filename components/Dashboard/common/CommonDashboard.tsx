@@ -15,7 +15,7 @@ const CommonDashboard = (
         props: CommonDashboardProps
     }) => {
     return (
-        <Card className="w-full max-h-[calc(100vh-64px)] mx-auto flex flex-row justify-center gap-3 border-none shadow-none bg-transparent rounded-t-none">
+        <Card className="w-full h-full mx-auto flex flex-row justify-center gap-3 border-none shadow-none bg-transparent rounded-t-none">
             {/* left side */}
             <Card className="w-[70%] h-full p-6">
                 <CardContent className="px-0 h-full flex flex-col gap-y-3">
