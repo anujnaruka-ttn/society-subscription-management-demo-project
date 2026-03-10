@@ -5,12 +5,10 @@ import {
     TbReport,
     TbSettings,
     TbLayoutDashboard,
-    TbHistory
 } from "react-icons/tb";
 import { MdOutlineCardMembership, MdOutlineAdminPanelSettings } from "react-icons/md";
 import { FcOvertime } from "react-icons/fc";
 import { TiUserOutline } from "react-icons/ti";
-import { BellIcon } from "lucide-react";
 
 export const dashboardRoutes: { admin: Route[]; resident: Route[] } = {
     admin: [
@@ -59,12 +57,10 @@ export const dashboardRoutes: { admin: Route[]; resident: Route[] } = {
                 {
                     title: "Profile",
                     link: "/admin/profile",
-                    icon: <TiUserOutline className="size-4 dark:text-white" />,
                 },
                 {
                     title: "Notifications",
                     link: "/admin/notifications",
-                    icon: <BellIcon className="size-4 dark:text-white" />,
                 },
             ],
         },
@@ -77,28 +73,16 @@ export const dashboardRoutes: { admin: Route[]; resident: Route[] } = {
             link: "/dashboard",
         },
         {
-            id: "payment-history",
-            title: "Payment History",
-            icon: <TbHistory className="size-4" />,
-            link: "/payment-history",
+            id: "subscriptions",
+            title: "Subscriptions",
+            icon: <MdOutlineCardMembership className="size-4" />,
+            link: "/subscriptions",
         },
         {
-            id: "settings",
-            title: "Settings",
-            icon: <TbSettings className="size-4" />,
+            id: "profile",
+            title: "Profile",
+            icon: <TiUserOutline className="size-4" />,
             link: "/profile",
-            subs: [
-                {
-                    title: "Profile",
-                    link: "/profile",
-                    icon: <TiUserOutline className="size-4 dark:text-white" />,
-                },
-                {
-                    title: "Notifications",
-                    link: "/notifications",
-                    icon: <BellIcon className="size-4 dark:text-white" />,
-                },
-            ],
-        },
+        }
     ],
 };

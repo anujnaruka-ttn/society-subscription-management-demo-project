@@ -11,38 +11,10 @@ import { Button } from '@/components/ui/button'
 import ReportsHistoryTable from '@/components/Tables/Admin/ReportsHistory'
 import Image from 'next/image'
 import ogImage from "@/public/assets/og-image.png"
-// import { ReportType } from '@/types/reports'
 
 const Reports = () => {
     const [format, setFormat] = useState('pdf')
     const [range, setRange] = useState('monthly')
-
-    // const oldReports: ReportType[] = [
-    //     {
-    //         id: "1",
-    //         reportType: "pdf",
-    //         reportDate: "Mar 01, 2026",
-    //         reportPeriod: "monthly"
-    //     },
-    //     {
-    //         id: "2",
-    //         reportType: "csv",
-    //         reportDate: "Feb 02, 2026",
-    //         reportPeriod: "monthly"
-    //     },
-    //     {
-    //         id: "3",
-    //         reportType: "pdf",
-    //         reportDate: "Jan 10, 2026",
-    //         reportPeriod: "yearly"
-    //     },
-    //     {
-    //         id: "4",
-    //         reportType: "pdf",
-    //         reportDate: "Jan 05, 2026",
-    //         reportPeriod: "yearly"
-    //     }
-    // ]
 
     return (
         <div className="w-full h-full flex flex-col gap-6">
