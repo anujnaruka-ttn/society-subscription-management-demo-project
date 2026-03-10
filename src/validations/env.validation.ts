@@ -4,11 +4,12 @@ dotenv.config();
 
 const envSchema = z.object({
     NODE_ENV: z.enum(["production", "development"]).default("development"),
-    DATABASE_URL: z.url("Invalid Database Url")
+    DATABASE_URL: z.url("Invalid Database Url"),
+    PORT: z.coerce.number().default(4000)
 })
 
-const parsedEnv = envSchema.safeParse(process.env);
+const { success, data, error } = envSchema.safeParse(process.env);
 
-if (!parsedEnv.success) throw new Error(parsedEnv.error.message);
+if (!success) throw new Error(error.message);
 
-export const ENV = parsedEnv.data;
+export const ENV = data;
