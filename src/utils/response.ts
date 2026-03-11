@@ -38,3 +38,38 @@ const error = <T>(
     return res.status(statusCode).json(response);
 
 };
+
+const notFound = <T = null>(
+    res: Response,
+    message: string = "Record not found"
+): Response<IApiResponse<T>> => error(res, message, 404);
+
+const unauthorized = <T = null>(
+    res: Response,
+    message: string = "Unauthorized access"
+): Response<IApiResponse<T>> => error(res, message, 401);
+
+const forbidden = <T>(
+    res: Response,
+    message: string = "Forbidden access"
+): Response<IApiResponse<T>> => error(res, message, 403);
+
+const badRequest = <T>(
+    res: Response,
+    message: string = "Bad Request"
+): Response<IApiResponse<T>> => error(res, message, 400);
+
+const validationError = <T>(
+    res: Response,
+    message: string = "Validation Error"
+): Response<IApiResponse<T>> => error(res, message, 422);
+
+export {
+    success,
+    error,
+    notFound,
+    unauthorized,
+    forbidden,
+    badRequest,
+    validationError
+}
