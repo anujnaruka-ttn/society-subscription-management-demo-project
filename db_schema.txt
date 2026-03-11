@@ -1,0 +1,54 @@
+user (
+    id pk
+    name string
+    email string
+    password string
+    phone_number string
+    role enum(admin,resident)
+    created_at timestamp
+    updated_at timestamp
+    payment_id fk
+    subscription_id fk
+    flat_id fk
+)
+
+payment (
+    payment_id pk
+    subscription_id fk
+    flat_id fk
+    status enum(paid,pending)
+    payment_mode enum(cash,upi,offline)
+    payment_date timestamp
+    payment_amount int
+    created_at timestamp
+    updated_at timestamp
+)
+
+subscription (
+    subscription_id pk
+    amount int
+    flat_type enum(1BHK,2BHK,3BHK,4BHK)
+    created_at timestamp
+    updated_at timestamp
+)
+
+flat (
+    flat_id pk
+    owner_name string
+    owner_email string
+    owner_phone string
+    flat_number string
+    flat_type enum(1BHK,2BHK,3BHK,4BHK)
+    created_at timestamp
+    updated_at timestamp
+    residents [user_id --> role : resident]
+)
+
+notifications (
+    notification_id pk
+    title string
+    message string
+    user_id fk
+    created_at timestamp
+    paymentStatus enum(success,failure,pending)
+)
