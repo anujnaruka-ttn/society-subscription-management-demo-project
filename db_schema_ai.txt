@@ -9,7 +9,7 @@ This document presents an improved database schema designed to fulfill all requi
 | Original Table | Improved Table | Key Changes & Rationale |
 | :--- | :--- | :--- |
 | `user` | `users` | Added `auth0_id` for Google/Auth0 integration. Added `is_active` for soft deletion. |
-| `flat` | `flats` | Added `owner_id` (FK to users). `flat_type` linked to a Plan. |
+| `flat` | `flats` | Added `owner_id` (FK to users) and `resident_ids` (Array). Supports multiple residents per flat. |
 | `subscription` | `subscription_plans` | Renamed for clarity. Tracks rates *per flat type* with `effective_from` dates. |
 | `payment` | `payments` + `billing_records` | **CRITICAL:** Added `billing_records` to track monthly dues *independently* of payments. |
 | `notifications` | `notifications` | Standardized fields; added `type` (e.g., 'reminder', 'payment_success'). |
@@ -41,7 +41,8 @@ flats (
     flat_number VARCHAR(20) UNIQUE NOT NULL,
     floor_number INT,
     flat_type ENUM('1BHK', '2BHK', '3BHK', '4BHK') NOT NULL,
-    owner_id UUID REFERENCES users(id), -- Primary resident/owner
+    owner_id UUID REFERENCES users(id), -- The person accountable for bills
+    resident_ids UUID[], -- Array of user IDs living in the flat
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
@@ -143,3 +144,4 @@ This section shows how common operations look in the Original vs. Improved schem
 3.  **Financial Integrity**: Separating `payments` from `billing_records` handles cases where a user might pay partially, or where a payment fails but the bill remains pending.
 4.  **No Future Alters**: By including `flat_type` in a separate `subscription_plans` table with `effective_from`, you can change the society rates (e.g., from April 2026) without breaking historical payment records.
 5.  **Offline/Online support**: The `payment_mode` and `transaction_id` fields explicitly support both your Manual Payment Entry (Cash/UPI) and Razorpay/Stripe integrations.
+6.  **Shared View Logic**: Since both Owners and Residents are linked to the `flats` table, they can share the same login process. The frontend can fetch flat details based on the user's association, ensuring both see the same billing and history.
