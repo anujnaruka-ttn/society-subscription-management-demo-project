@@ -49,20 +49,21 @@ const unauthorized = <T = null>(
     message: string = "Unauthorized access"
 ): Response<IApiResponse<T>> => error(res, message, 401);
 
-const forbidden = <T>(
+const forbidden = <T = null>(
     res: Response,
     message: string = "Forbidden access"
 ): Response<IApiResponse<T>> => error(res, message, 403);
 
-const badRequest = <T>(
+const badRequest = <T = null>(
     res: Response,
     message: string = "Bad Request"
 ): Response<IApiResponse<T>> => error(res, message, 400);
 
-const validationError = <T>(
+const validationError = <T = null>(
     res: Response,
-    message: string = "Validation Error"
-): Response<IApiResponse<T>> => error(res, message, 422);
+    message: string = "Validation Error",
+    details?: any,
+): Response<IApiResponse<T>> => error(res, message, 422, details);
 
 export {
     success,
