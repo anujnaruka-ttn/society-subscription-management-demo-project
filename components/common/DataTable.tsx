@@ -48,7 +48,6 @@ const FlatDetailDialog = dynamic(() => import("../Dialogs/FlatDetailDialog"), {
     loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
 })
 
-
 const columns: ColumnDef<FlatData>[] = [
     {
         id: "select",

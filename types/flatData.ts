@@ -1,7 +1,7 @@
 export interface FlatData {
-    id: string;
-    owner: string;
-    email: string;
-    phone: string;
-    flatAddress: string;
+    id: string,
+    owner: string,
+    email: string,
+    phone: string,
+    flatAddress: string,
 }
