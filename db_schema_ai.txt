@@ -1,0 +1,145 @@
+# Society Subscription Management - Improved Database Schema (AI Draft)
+
+This document presents an improved database schema designed to fulfill all requirements in the README.md and ensure a robust foundation for both frontend and backend development.
+
+---
+
+## 1. Side-by-Side Comparison & Improvements
+
+| Original Table | Improved Table | Key Changes & Rationale |
+| :--- | :--- | :--- |
+| `user` | `users` | Added `auth0_id` for Google/Auth0 integration. Added `is_active` for soft deletion. |
+| `flat` | `flats` | Added `owner_id` (FK to users). `flat_type` linked to a Plan. |
+| `subscription` | `subscription_plans` | Renamed for clarity. Tracks rates *per flat type* with `effective_from` dates. |
+| `payment` | `payments` + `billing_records` | **CRITICAL:** Added `billing_records` to track monthly dues *independently* of payments. |
+| `notifications` | `notifications` | Standardized fields; added `type` (e.g., 'reminder', 'payment_success'). |
+
+---
+
+## 2. Detailed Schema Design (PostgreSQL / SQL style)
+
+### Users Table
+```sql
+users (
+    id UUID PRIMARY KEY,
+    auth0_id VARCHAR(255) UNIQUE, -- Support for Auth0 / Google Sign In
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone_number VARCHAR(20),
+    role ENUM('admin', 'resident') DEFAULT 'resident',
+    flat_id UUID REFERENCES flats(id), -- Nullable for admins
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+### Flats Table
+```sql
+flats (
+    id UUID PRIMARY KEY,
+    flat_number VARCHAR(20) UNIQUE NOT NULL,
+    floor_number INT,
+    flat_type ENUM('1BHK', '2BHK', '3BHK', '4BHK') NOT NULL,
+    owner_id UUID REFERENCES users(id), -- Primary resident/owner
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+### Subscription Plans Table
+```sql
+subscription_plans (
+    id UUID PRIMARY KEY,
+    flat_type ENUM('1BHK', '2BHK', '3BHK', '4BHK') NOT NULL,
+    monthly_rate DECIMAL(10, 2) NOT NULL,
+    effective_from DATE NOT NULL, -- To handle rate changes over time
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+### Billing Records Table (NEW)
+*This table tracks the "Invoice" for each month. It is generated automatically.*
+```sql
+billing_records (
+    id UUID PRIMARY KEY,
+    flat_id UUID REFERENCES flats(id) NOT NULL,
+    billing_month INT NOT NULL, -- 1 to 12
+    billing_year INT NOT NULL,
+    amount_due DECIMAL(10, 2) NOT NULL,
+    status ENUM('paid', 'pending', 'overdue') DEFAULT 'pending',
+    due_date DATE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(flat_id, billing_month, billing_year) -- Prevent duplicate bills
+)
+```
+
+### Payments Table
+```sql
+payments (
+    id UUID PRIMARY KEY,
+    bill_id UUID REFERENCES billing_records(id), -- Link to specific month
+    user_id UUID REFERENCES users(id), -- Who made the payment
+    amount_paid DECIMAL(10, 2) NOT NULL,
+    payment_mode ENUM('cash', 'upi', 'online_razorpay', 'online_stripe') NOT NULL,
+    transaction_id VARCHAR(255), -- ID from Razorpay/Stripe
+    payment_status ENUM('success', 'failed', 'pending') DEFAULT 'success',
+    receipt_url TEXT, -- Link to generated receipt
+    payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    remarks TEXT
+)
+```
+
+### Notifications Table
+```sql
+notifications (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('payment_reminder', 'announcement', 'system') DEFAULT 'system',
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)
+```
+
+---
+
+## 4. Side-by-Side Query Comparison
+
+This section shows how common operations look in the Original vs. Improved schema.
+
+### Query A: Get Total Pending Amount for Feb 2026
+*This is the most critical query for your Admin Dashboard.*
+
+| Original Schema (Hard) | Improved Schema (Easy/Reliable) |
+| :--- | :--- |
+| ```sql -- Must hope 'pending' rows were pre-inserted  SELECT SUM(payment_amount)  FROM payment  WHERE status = 'pending'  AND month(payment_date) = 2; ``` | ```sql -- Direct and accurate from Billing Records  SELECT SUM(amount_due)  FROM billing_records  WHERE status = 'pending'  AND billing_month = 2  AND billing_year = 2026; ``` |
+| **Flaw**: If a month hasn't started, there are no rows, so you can't predict future pending amounts easily. | **Benefit**: Billing records are independent of payment attempts. You can see what IS owed vs what WAS paid. |
+
+### Query B: Mark Manual Payment (Cash)
+*Used in the Admin Manual Payment Entry Page.*
+
+| Original Schema | Improved Schema |
+| :--- | :--- |
+| ```sql -- Update the existing 'pending' row  UPDATE payment  SET status = 'paid', payment_mode = 'cash', payment_date = NOW()  WHERE payment_id = 'XYZ'; ``` | ```sql -- 1. Record the payment  INSERT INTO payments (bill_id, amount_paid, payment_mode)  VALUES ('BILL_ID', 1500, 'cash');  -- 2. Update bill status  UPDATE billing_records  SET status = 'paid'  WHERE id = 'BILL_ID'; ``` |
+| **Flaw**: Overwrites the record. You lose the history of when it *was* pending. | **Benefit**: You keep a transaction log (`payments`) AND an invoice status (`billing_records`). |
+
+### Query C: Generate Reports (Monthly Collection)
+*Used in the Reports Page.*
+
+| Original Schema | Improved Schema |
+| :--- | :--- |
+| ```sql  SELECT payment_mode, SUM(payment_amount)  FROM payment  WHERE status = 'paid'  GROUP BY payment_mode; ``` | ```sql  SELECT payment_mode, SUM(amount_paid)  FROM payments  WHERE payment_status = 'success'  GROUP BY payment_mode; ``` |
+| **Flaw**: Hard to distinguish between "Offline Cash" and "Successful Online" without complex logic. | **Benefit**: Dedicated `payment_status` and `payment_mode` fields in the `payments` log make reporting trivial. |
+
+---
+
+## 5. Why this schema is better for your requirements:
+
+1.  **"Paid/Pending" Management**: The `billing_records` table allows the Admin Dashboard to instantly query for "Total Pending" by simply summing `amount_due` where `status = 'pending'`.
+2.  **Auth0 Integration**: The `auth0_id` field in the `users` table is standard practice for linking social logins to your local database users.
+3.  **Financial Integrity**: Separating `payments` from `billing_records` handles cases where a user might pay partially, or where a payment fails but the bill remains pending.
+4.  **No Future Alters**: By including `flat_type` in a separate `subscription_plans` table with `effective_from`, you can change the society rates (e.g., from April 2026) without breaking historical payment records.
+5.  **Offline/Online support**: The `payment_mode` and `transaction_id` fields explicitly support both your Manual Payment Entry (Cash/UPI) and Razorpay/Stripe integrations.
