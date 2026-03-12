@@ -71,5 +71,6 @@ The Admin wants to change a flat's status from "Pending" to "Paid" on the Monthl
    - Action: Admin clicks "Mark as Paid" on the Monthly Records page.
    - Backend Validation: Verifies the payment transaction exists.
    - Result: SUCCESS! The flat's subscription/bill status is officially updated to "Paid".
+   - **NOTIFICATION TRIGGER**: Backend inserts into `notifications` table and calls OneSignal API to update the Resident's UI in real-time.
 
 --- end ---

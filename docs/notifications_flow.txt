@@ -1,0 +1,40 @@
+# NOTIFICATION FLOW DOCUMENTATION (Notification & OneSignal Integration)
+
+## 1. Overview
+The notification system ensures Residents stay informed about their dues and payments. It utilizes a `notifications` table for persistence and `OneSignal` for real-time delivery.
+
+## 2. Notification Types
+- **Payment Success**: Sent when an Admin marks a bill as "Paid".
+- **Payment Reminder**: Sent manually by Admin or automatically for pending dues.
+- **System Announcement**: General updates for the society.
+
+## 3. Real-Time Delivery Flow (OneSignal)
+
+### Case A: Website is OPEN (Real-Time UI Update)
+1. **Trigger**: Backend performs a DB action (e.g., Marking a bill as "Paid").
+2. **Persistence**: Backend inserts a row into the `notifications` table.
+3. **Transmission**: Backend calls OneSignal API with `include_player_ids` (mapped to `users.onesignal_player_id`).
+4. **Client Reception**: OneSignal SDK in the browser receives the message.
+5. **UI Update**: 
+   - A real-time event is triggered in the frontend.
+   - The `NotificationsPopover` (Bell icon) increments the unread count.
+   - A toast notification (e.g., `sonner` or `toast`) appears with the message.
+
+### Case B: Website is CLOSED (Push Notification)
+1. **Trigger & Transmission**: Same as Case A (Steps 1-3).
+2. **Client Reception**: The OS (Windows/Android/iOS) receives the push notification via the browser's service worker.
+3. **User Action**: Clicking the notification opens the Website and navigates to the `/dashboard` or `/subscriptions` page.
+
+## 4. Integration Points
+
+### [Monthly Records Page]
+- When Admin clicks "Mark as Paid":
+  - **Action**: Backend updates `billing_records.status = 'paid'`.
+  - **Notification**: Backend triggers "Payment Success" flow for the flat's Owner/Residents.
+
+### [Payment Entry Page]
+- When Admin records a manual payment:
+  - **Action**: Backend inserts into `payments`.
+  - **Notification**: Backend triggers "Payment Received" notification.
+
+--- end ---

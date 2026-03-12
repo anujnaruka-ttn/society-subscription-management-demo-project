@@ -26,6 +26,7 @@ update flat (done) , create flat (done) , delete flat (done)
    - DB Action: Insert into `flats`.
    - DB Action: Update selected users with the new `flat_id`.
    - DB Action: Automatically generate the 1st `billing_record` for the flat.
+   - **NOTIFICATION TRIGGER**: Send welcome notification/reminder to new Owner/Residents via OneSignal (real-time/push).
 
 4. Add/Remove Residents (Update Flat):
    - Adding: Admin selects user from unassigned pool -> backend uses `array_append(resident_ids, new_id)` -> sets user's `flat_id = flat_uuid`.

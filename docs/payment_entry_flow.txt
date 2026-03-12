@@ -1,0 +1,33 @@
+Payment Entry Flow Documentation
+
+1. Overview:
+   The Payment Entry page allows Admins to manually record subscription payments (Cash, UPI, etc.) for residents. It serves as the bridge between identifying a missing payment in "Monthly Records" and officially logging a transaction.
+
+2. Access and Filter:
+   - Admin navigates to the Payment Entry page.
+   - Default view: Shows all residents with their flat addresses.
+   - Search: Admin can search by resident name or flat address.
+
+3. Payment Status Check:
+   - "Payment Record" column indicates if a payment for the target period already exists.
+   - If no record: Help icon with tooltip "No payment record found".
+   - If record exists: Shows mode (e.g., "cash", "upi").
+
+4. Adding a Payment:
+   - Action: Admin clicks the "Quick Pay" (Plus icon) button.
+   - Input: Selection of payment mode and recording date.
+   - DB Action: Insert into `payments` table.
+   - Consequence: This payment record now allows the flat to be marked as "Paid" in the Monthly Records flow.
+   - **NOTIFICATION TRIGGER**: Backend sends a "Payment Received" notification via OneSignal.
+
+--- update ---
+My Thought: 
+The integration with `Monthly Records` via URL search params (`flatId`, `month`, `year`) is critical. 
+1. The `PaymentEntryTable` should use `useSearchParams` to capture these values.
+2. If `flatId` is present, it should automatically filter the table or populate the search input to highlight only that flat.
+3. This "Context-Aware" navigation transforms the Payment Entry page from a standalone tool into a tactical extension of the financial ledger, reducing clicks and errors for the Admin.
+--- end ---
+
+--- Reference Flows ---
+- Refer to [flat_flow.xml] for flat/resident relationships.
+- Refer to [monthly_records_flow.xml] for the marking-as-paid validation logic.
