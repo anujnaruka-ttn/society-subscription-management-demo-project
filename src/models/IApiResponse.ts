@@ -2,5 +2,5 @@ export interface IApiResponse<T> {
     success: boolean,
     message: string,
     data?: T,
-    error?: Error
+    error?: Error | string
 }

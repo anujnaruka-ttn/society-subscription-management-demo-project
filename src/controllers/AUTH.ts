@@ -13,7 +13,7 @@ const adminLogin = catchAsync(
 
 const residentLogin = catchAsync(
     async (req: Request, res: Response) => {
-
+        
     }
 );
 

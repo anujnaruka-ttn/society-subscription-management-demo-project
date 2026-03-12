@@ -23,11 +23,14 @@ This document presents an improved database schema designed to fulfill all requi
 users (
     id UUID PRIMARY KEY,
     auth0_id VARCHAR(255) UNIQUE, -- Support for Auth0 / Google Sign In
+    password_hash VARCHAR(255), -- Support for Normal Email/Password Login
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    profile_image TEXT, -- URL or path to user's profile picture
     phone_number VARCHAR(20),
     role ENUM('admin', 'resident') DEFAULT 'resident',
     flat_id UUID REFERENCES flats(id), -- Nullable for admins
+    onesignal_player_id VARCHAR(255), -- Support for OneSignal push notifications
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -43,6 +46,7 @@ flats (
     flat_type ENUM('1BHK', '2BHK', '3BHK', '4BHK') NOT NULL,
     owner_id UUID REFERENCES users(id), -- The person accountable for bills
     resident_ids UUID[], -- Array of user IDs living in the flat
+    is_active BOOLEAN DEFAULT TRUE, -- Support for soft deletion
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

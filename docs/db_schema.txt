@@ -1,12 +1,15 @@
 user (
     id pk
+    auth0_id string
     name string
     email string
     password string
+    profile_image string
     phone_number string
     role enum(admin,resident)
     created_at timestamp
     updated_at timestamp
+    is_active boolean
     payment_id fk
     subscription_id fk
     flat_id fk
@@ -51,4 +54,4 @@ notifications (
     user_id fk
     created_at timestamp
     paymentStatus enum(success,failure,pending)
-)
+)   

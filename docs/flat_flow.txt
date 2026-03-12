@@ -1,0 +1,47 @@
+Admin comes first -> no user / resident / owner / flat data --> no other data initially
+then admin add flat data owner with residents owner 1 -> N residents
+admin update residents array add new resident id in user table
+admin update owner owner is in user table but now removed is acitve false for owner, 
+so new owner needs to be selected now if no resident default case means no owner no residents initial case.
+no data user needs to login.
+
+now if owner goes but `n`resident are there -> now n-1 residents , 1 owner 
+now to delete flats need to remove owner id , empty residents id , is active false.
+case 1: no owner in flat , no residents
+case 2: 1 owner, n residents
+case 3: 1 owner, no residents
+
+update flat (done) , create flat (done) , delete flat (done)
+
+---Updated Flow For Flats---
+
+1. Initial State: 
+   System starts with NO flats and NO users attached to flats.
+
+2. User Signup (Unassigned Pool): 
+   Owners and Residents register in the app (Google/Email). They are placed in the `users` table, but their `flat_id` is NULL. They wait for Admin assignment.
+
+3. Create Flat: 
+   Admin creates a new flat and selects 1 Owner and 0-to-N Residents from the unassigned pool.
+   - DB Action: Insert into `flats`.
+   - DB Action: Update selected users with the new `flat_id`.
+   - DB Action: Automatically generate the 1st `billing_record` for the flat.
+
+4. Add/Remove Residents (Update Flat):
+   - Adding: Admin selects user from unassigned pool -> backend uses `array_append(resident_ids, new_id)` -> sets user's `flat_id = flat_uuid`.
+   - Removing (Eviction): Admin removes a tenant -> backend uses `array_remove(resident_ids, old_id)` -> sets user's `flat_id = NULL` (they return to the unassigned pool).
+
+5. Change Owner (Update Flat):
+   - Admin reassigns the flat to a new Owner.
+   - DB Action: Old Owner's `flat_id` is set to NULL (they go back to the unassigned pool. DO NOT set their `is_active = FALSE`).
+   - DB Action: New Owner's `flat_id` is updated. 
+   - DB Action: `flats.owner_id` is updated to the new Owner.
+
+6. Delete Flat (Soft Deletion):
+   - Admin deletes a flat (e.g., if created by mistake or building restructure).
+   - DB Action: `flats.is_active` is set to FALSE.
+   - DB Action: `flats.owner_id = NULL` and `flats.resident_ids = {}`.
+   - DB Action: All associated users have their `flat_id = NULL` so they can be assigned elsewhere.
+   - Past billing records stay perfectly intact for financial history!
+
+---        (end)         ---

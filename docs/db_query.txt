@@ -1,0 +1,151 @@
+-- ==========================================
+-- SQL QUERIES FOR SOCIETY MANAGEMENT SYSTEM
+-- ==========================================
+
+-- ----------------------------------------------------
+-- 1. ADD NEW FLAT (Transaction to link everything)
+-- Use Case: Admin creates a flat, assigns Owner and Residents
+-- ----------------------------------------------------
+BEGIN;
+
+-- 1(a). Create the Flat
+INSERT INTO flats (id, flat_number, floor_number, flat_type, owner_id, resident_ids)
+VALUES ('uuid-flat-101', 'Flat 101', 1, '2BHK', 'uuid-owner-123', ARRAY['uuid-resident-456']);
+
+-- 1(b). Update the Owner
+UPDATE users SET flat_id = 'uuid-flat-101' WHERE id = 'uuid-owner-123';
+
+-- 1(c). Update the Residents (using ANY with the array)
+UPDATE users SET flat_id = 'uuid-flat-101' WHERE id = ANY(ARRAY['uuid-resident-456']);
+
+-- 1(d). Generate the First Bill immediately (Current Month & Year)
+INSERT INTO billing_records (flat_id, billing_month, billing_year, amount_due, status)
+VALUES ('uuid-flat-101', EXTRACT(MONTH FROM CURRENT_DATE), EXTRACT(YEAR FROM CURRENT_DATE), 2500.00, 'pending');
+
+COMMIT;
+
+
+-- ----------------------------------------------------
+-- 2. UPDATE FLAT
+-- Use Case: Adding a new resident to an existing flat
+-- ----------------------------------------------------
+BEGIN;
+
+-- 2(a). Append the new resident to the array
+UPDATE flats 
+SET resident_ids = array_append(resident_ids, 'uuid-new-resident'), updated_at = CURRENT_TIMESTAMP
+WHERE id = 'uuid-flat-101';
+
+-- 2(b). Link the new user's profile to the flat
+UPDATE users SET flat_id = 'uuid-flat-101' WHERE id = 'uuid-new-resident';
+
+COMMIT;
+
+
+-- ----------------------------------------------------
+-- 3. DELETE FLAT (Soft Deletion)
+-- Use Case: Admin removes a flat without destroying past billing history
+-- ----------------------------------------------------
+BEGIN;
+
+-- 3(a). Set the flat as inactive
+UPDATE flats 
+SET is_active = FALSE, updated_at = CURRENT_TIMESTAMP 
+WHERE id = 'uuid-flat-101';
+
+-- 3(b). Unassign the users from this flat so they show as "Unassigned" again
+UPDATE users 
+SET flat_id = NULL 
+WHERE flat_id = 'uuid-flat-101';
+
+COMMIT;
+
+
+-- ----------------------------------------------------
+-- 4. MONTHLY RECORD (Specific Month & Year, All Residents)
+-- Use Case: Admin wants to see ONLY residents for a specific month
+-- ----------------------------------------------------
+SELECT 
+    users.id AS resident_id,
+    users.name AS resident_name,
+    users.email AS resident_email,
+    flats.flat_number AS flat_address,
+    billing_records.status AS payment_status,
+    billing_records.amount_due
+FROM 
+    flats
+JOIN 
+    users ON users.id = ANY(flats.resident_ids)
+JOIN 
+    billing_records ON billing_records.flat_id = flats.id
+WHERE 
+    billing_records.billing_month = 3 
+    AND billing_records.billing_year = 2026
+    AND flats.is_active = TRUE
+    AND users.is_active = TRUE;
+
+
+-- ----------------------------------------------------
+-- 5. MONTHLY RECORD (Dynamic Filter - All / Specific)
+-- Use Case: Admin uses dropdowns to filter. 
+-- Pass parameters as $1 (month) and $2 (year). If NULL is passed, it ignores the filter.
+-- ----------------------------------------------------
+SELECT 
+    users.id AS resident_id,
+    users.name AS resident_name,
+    users.email AS resident_email,
+    users.phone_number AS resident_phone,
+    flats.flat_number AS flat_address,
+    billing_records.status AS payment_status,
+    billing_records.billing_month,
+    billing_records.billing_year,
+    billing_records.amount_due
+FROM 
+    flats
+JOIN 
+    users ON users.id = ANY(flats.resident_ids)
+JOIN 
+    billing_records ON billing_records.flat_id = flats.id
+WHERE 
+    ($1::int IS NULL OR billing_records.billing_month = $1::int)
+    AND ($2::int IS NULL OR billing_records.billing_year = $2::int)
+    AND flats.is_active = TRUE
+    AND users.is_active = TRUE
+ORDER BY 
+    billing_records.billing_year DESC,
+    billing_records.billing_month DESC;
+
+
+-- ----------------------------------------------------
+-- 6. ADMIN POWERS: Mark as Paid / Warning Check
+-- Use Case: Admin manually overriding a pending or overdue bill
+-- ----------------------------------------------------
+
+-- Step 6(a). Warning Verification Query (Run this before marking paid)
+-- Goal: Check the current status. If it's already 'paid', the UI prompts a warning to the Admin.
+SELECT id, status, amount_due 
+FROM billing_records 
+WHERE id = 'bill-uuid-123';
+
+-- Step 6(b). Force Update to Paid (Transaction)
+-- Goal: Overwrite the bill status AND create a manual log in the payments table.
+BEGIN;
+
+-- Create a manual payment log as proof the Admin did this
+INSERT INTO payments (id, bill_id, user_id, amount_paid, payment_mode, payment_status, remarks)
+VALUES ('payment-uuid-999', 'bill-uuid-123', 'admin-uuid-001', 2500.00, 'cash', 'success', 'Manually marked as paid by Admin');
+
+-- Change the billing record status
+UPDATE billing_records
+SET status = 'paid', updated_at = CURRENT_TIMESTAMP
+WHERE id = 'bill-uuid-123';
+
+COMMIT;
+
+-- ----------------------------------------------------
+-- 7. ADMIN POWERS: Update Status to Overdue or Send Notification
+-- Use Case: Cron job or manual action
+-- ----------------------------------------------------
+UPDATE billing_records
+SET status = 'overdue', updated_at = CURRENT_TIMESTAMP
+WHERE id = 'bill-uuid-123' AND status = 'pending';
