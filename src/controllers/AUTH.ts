@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
-import { badRequest, error, notFound, success } from "../utils/response";
+import { badRequest, error, notFound, success, unauthorized } from "../utils/response";
 import { comparePassword, hashPassword } from "../utils/password";
-import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId } from "../services/user.service";
+import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId, updateUserPassword, updateUserProfile } from "../services/user.service";
 import { IUser } from "../models/IUser";
 import { generateAuthResponse } from "../utils/generateAuthResponse";
+import { CustomRequest } from "../types/CustomRequest";
 
 const login = catchAsync(
     async (req: Request, res: Response) => {
@@ -60,10 +61,44 @@ const changePassword = catchAsync(
     async (req: Request, res: Response) => {
 
         const {
+            email,
             oldPassword,
             newPassword,
         } = req.body;
 
+        const user = (req as CustomRequest).user;
+
+        if (!user) return unauthorized(res, "User not logged in.");
+
+        const userData: IUser = await findUserByEmail(user.email);
+
+        if (!userData) return notFound(res, "User not found")
+
+        let isSamePassword: boolean;
+        try {
+            isSamePassword = await comparePassword(oldPassword, userData.password);
+        } catch (err: Error | unknown) {
+            return error(res, "Internal Server Error", 500, err)
+        }
+
+        if (!isSamePassword) return unauthorized(res, "Invalid Credentials");
+
+        let isSameNewPassword: boolean;
+        try {
+            isSameNewPassword = await comparePassword(newPassword, userData.password);
+        } catch (err: Error | unknown) {
+            return error(res, "Internal Server Error", 500, err)
+        }
+
+        if (isSameNewPassword) return badRequest(res, "New password cannot be same as old password");
+
+        const hashedPassword = await hashPassword(newPassword);
+
+        const updatedUser: IUser = await updateUserPassword({ email, newPassword: hashedPassword });
+
+        const responseData = generateAuthResponse(updatedUser);
+
+        return success(res, "Password changed successfully", responseData);
     }
 );
 
@@ -72,21 +107,31 @@ const changeProfile = catchAsync(
 
         const {
             name,
-            email,
-            password,
+            phone,
             profileImage,
         } = req.body;
+
+        const userData = (req as CustomRequest).user;
+
+        if (!userData) return error(res, "User not found", 404);
+
+        const user: IUser = await findUserByEmail(userData.email);
+
+        if (!user) return notFound(res, "User not found")
+
+        const updatedUser: IUser = await updateUserProfile(userData.email, { name, phone, profileImage });
+
+        return success(res, "Profile updated successfully", updatedUser);
 
     }
 );
 
 const loginGoogle = catchAsync(
     async (req: Request, res: Response) => {
-        const {
-            name,
-            email,
-            auth0_id, // NextAuth will send `account.providerAccountId` here
-        } = req.body;
+        const validation = loginGoogleZodSchema.safeParse(req.body);
+        if (!validation.success) return badRequest(res, validation.error.issues[0].message);
+
+        const { name, email, auth0_id } = validation.data; // NextAuth will send `account.providerAccountId` here
 
         // 1. Find user by email
         let user: IUser = await findUserByEmail(email);
