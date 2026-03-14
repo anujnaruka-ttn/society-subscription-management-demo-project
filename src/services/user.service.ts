@@ -8,14 +8,17 @@ import {
     UPDATE_USER_PASSWORD_QUERY,
     UPDATE_USER_PROFILE_QUERY
 } from "../queries/user.queries"
+import { comparePassword, hashPassword } from "../utils/password";
+import { ChangePasswordInput, LoginGoogleInput, RegisterInput, UpdateProfileInput } from "../validations/user.validation";
 
-
-const createNewUser = async (name: string, email: string, password: string): Promise<IUser> => {
+const createNewUser = async (data: RegisterInput): Promise<IUser> => {
+    const { name, email, password } = data;
     const profileImage = `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name)}`;
     const result = await query(CREATE_USER_QUERY, [name, email, password, profileImage]);
     return result.rows[0]
 }
-const createNewUserGoogle = async (name: string, email: string, auth0_id: string): Promise<IUser> => {
+const createNewUserGoogle = async (data: LoginGoogleInput): Promise<IUser> => {
+    const { name, email, auth0_id } = data;
     const profileImage = `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(name)}`;
     const result = await query(CREATE_USER_QUERY_GOOGLE, [name, email, auth0_id, profileImage]);
     return result.rows[0]
@@ -30,20 +33,25 @@ const updateAuthId = async (email: string, auth0_id: string | null): Promise<IUs
     return result.rows[0]
 }
 
-const updateUserPassword = async (data: { email: string, newPassword: string }): Promise<IUser> => {
+const updateUserPassword = async (data: ChangePasswordInput): Promise<IUser> => {
 
-    const { email, newPassword } = data;
-    const result = await query(UPDATE_USER_PASSWORD_QUERY, [newPassword, email]);
+    const { email, newPassword, oldPassword } = data;
+    let isSameNewPassword: boolean;
+    try {
+        isSameNewPassword = await comparePassword(newPassword, oldPassword);
+    } catch (err: Error | unknown) {
+        throw err;
+    }
+
+    if (isSameNewPassword) throw new Error("New password cannot be same as old password");
+    const hashedPassword = await hashPassword(newPassword);
+    const result = await query(UPDATE_USER_PASSWORD_QUERY, [hashedPassword, email]);
     return result.rows[0]
 }
 
 const updateUserProfile = async (
     email: string,
-    data: Partial<{
-        name: string,
-        phone: string,
-        profileImage: string
-    }>): Promise<IUser> => {
+    data: Partial<UpdateProfileInput>): Promise<IUser> => {
     const { name, phone, profileImage } = data;
     const result = await query(UPDATE_USER_PROFILE_QUERY, [name, phone, profileImage, email]);
     return result.rows[0]

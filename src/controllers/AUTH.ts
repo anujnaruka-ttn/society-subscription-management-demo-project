@@ -6,6 +6,7 @@ import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId, upda
 import { IUser } from "../models/IUser";
 import { generateAuthResponse } from "../utils/generateAuthResponse";
 import { CustomRequest } from "../types/CustomRequest";
+import { LoginInput } from "../validations/user.validation";
 
 const login = catchAsync(
     async (req: Request, res: Response) => {
@@ -13,7 +14,7 @@ const login = catchAsync(
         const {
             email,
             password
-        } = req.body;
+        } = req.body as LoginInput;
 
         const user: IUser = await findUserByEmail(email);
 
@@ -49,7 +50,7 @@ const residentRegister = catchAsync(
 
         const hashedPassword = await hashPassword(password);
 
-        const newUser: IUser = await createNewUser(name, email, hashedPassword);
+        const newUser: IUser = await createNewUser({name, email, password: hashedPassword});
 
         const responseData = generateAuthResponse(newUser);
 
@@ -83,18 +84,7 @@ const changePassword = catchAsync(
 
         if (!isSamePassword) return unauthorized(res, "Invalid Credentials");
 
-        let isSameNewPassword: boolean;
-        try {
-            isSameNewPassword = await comparePassword(newPassword, userData.password);
-        } catch (err: Error | unknown) {
-            return error(res, "Internal Server Error", 500, err)
-        }
-
-        if (isSameNewPassword) return badRequest(res, "New password cannot be same as old password");
-
-        const hashedPassword = await hashPassword(newPassword);
-
-        const updatedUser: IUser = await updateUserPassword({ email, newPassword: hashedPassword });
+        const updatedUser: IUser = await updateUserPassword({ email, newPassword, oldPassword });
 
         const responseData = generateAuthResponse(updatedUser);
 
@@ -128,17 +118,18 @@ const changeProfile = catchAsync(
 
 const loginGoogle = catchAsync(
     async (req: Request, res: Response) => {
-        const validation = loginGoogleZodSchema.safeParse(req.body);
-        if (!validation.success) return badRequest(res, validation.error.issues[0].message);
-
-        const { name, email, auth0_id } = validation.data; // NextAuth will send `account.providerAccountId` here
+        const {
+            name,
+            email,
+            auth0_id, // NextAuth will send `account.providerAccountId` here
+        } = req.body;
 
         // 1. Find user by email
         let user: IUser = await findUserByEmail(email);
 
         if (!user) {
             // 2. If user does not exist, create a new record
-            user = await createNewUserGoogle(name, email, auth0_id);
+            user = await createNewUserGoogle({name, email, auth0_id});
         } else if (!user.auth0_id || user.auth0_id !== auth0_id) {
             // 3. If user exists but auth_id is missing/different, update it
             user = await updateAuthId(email, auth0_id);

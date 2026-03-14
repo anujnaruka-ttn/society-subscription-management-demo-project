@@ -5,7 +5,8 @@ dotenv.config();
 const envSchema = z.object({
     NODE_ENV: z.enum(["production", "development"]).default("development"),
     DATABASE_URL: z.url("Invalid Database Url"),
-    PORT: z.coerce.number().default(4000)
+    PORT: z.coerce.number().default(4000),
+    JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
 })
 
 const { success, data, error } = envSchema.safeParse(process.env);

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodSchema } from "zod";
+import { ZodType } from "zod";
 import { badRequest } from "../utils/response";
 import { catchAsync } from "../utils/catchAsync";
 
 interface ValidationSchemas {
-    body?: ZodSchema;
-    query?: ZodSchema;
-    params?: ZodSchema;
+    body?: ZodType;
+    query?: ZodType;
+    params?: ZodType;
 }
 
 export const validate = (schemas: ValidationSchemas) => {
