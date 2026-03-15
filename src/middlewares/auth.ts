@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
-import { unauthorized } from "../utils/response";
+import { error, unauthorized } from "../utils/response";
 import { ENV } from "../validations/env.validation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { ITokenPayload } from "../models/ITokenPayload";
@@ -31,11 +31,32 @@ const auth = catchAsync(
                 auth0_id: decodedToken.auth0_id
             };
             next();
-        } catch (error) {
-            return unauthorized(res, "Authentication required: Invalid token");
+        } catch (error: Error | unknown) {
+            return unauthorized(res, "Authentication required: Invalid token or expired token");
         }
-
-
-
     }
 )
+
+const isAdmin = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const user = (req as CustomRequest).user;
+        if (!user) return unauthorized(res, "Authentication required: No token provided");
+        if (user.role !== "admin") return unauthorized(res, "Authentication required: Not authorized");
+        next();
+    }
+)
+
+const isResident = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+        const user = (req as CustomRequest).user;
+        if (!user) return unauthorized(res, "Authentication required: No token provided");
+        if (user.role !== "resident") return unauthorized(res, "Authentication required: Not authorized");
+        next();
+    }
+)
+
+export {
+    auth,
+    isAdmin,
+    isResident
+}

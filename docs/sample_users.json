@@ -1,12 +1,5 @@
 [
   {
-    "name": "Arjun Admin",
-    "email": "admin@example.com",
-    "password": "AdminPassword123!",
-    "phone_number": "+919000000000",
-    "role": "admin"
-  },
-  {
     "name": "Ananya Khan",
     "email": "ananya.khan1@example.com",
     "password": "PassWord01!",

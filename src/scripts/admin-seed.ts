@@ -1,0 +1,40 @@
+import { query } from "../config/db";
+import { hashPassword } from "../utils/password";
+
+const seedAdmin = async () => {
+    try {
+        const name = "Anuj Naruka";
+        const email = "anuj.admin@example.com";
+        const password = "AdminPassword123!";
+        const phone_number = "+919876000000";
+        const role = "admin";
+
+        console.log(`Hashing password for ${email}...`);
+        const hashedPassword = await hashPassword(password);
+
+        console.log(`Checking if admin exists...`);
+        const checkResult = await query("SELECT * FROM users WHERE email = $1", [email]);
+
+        if (checkResult.rows.length > 0) {
+            console.log("Admin user already exists. Updating password and details...");
+            await query(
+                "UPDATE users SET name = $1, password = $2, phone_number = $3, role = $4 WHERE email = $5",
+                [name, hashedPassword, phone_number, role, email]
+            );
+        } else {
+            console.log("Creating new admin user...");
+            await query(
+                "INSERT INTO users (name, email, password, phone_number, role) VALUES ($1, $2, $3, $4, $5)",
+                [name, email, hashedPassword, phone_number, role]
+            );
+        }
+
+        console.log("Admin seeding completed successfully!");
+        process.exit(0);
+    } catch (error) {
+        console.error("Error seeding admin user:", error);
+        process.exit(1);
+    }
+};
+
+seedAdmin();

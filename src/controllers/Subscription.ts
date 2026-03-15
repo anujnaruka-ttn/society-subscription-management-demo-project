@@ -1,6 +1,6 @@
 import { catchAsync } from "../utils/catchAsync";
 import { Request, Response } from "express";
-import { getAllSubscriptions } from "../services/subscription.service";
+import { getAllSubscriptions, updateSubscription } from "../services/subscription.service";
 import { success } from "../utils/response";
 
 const getAllSubscriptionsController = catchAsync(
@@ -10,6 +10,13 @@ const getAllSubscriptionsController = catchAsync(
     }
 )
 
+const updateMonthlyRate = catchAsync(
+    async (req: Request, res: Response) => {
+        const updatedSubscription = await updateSubscription(req.body);
+        return success(res, "Monthly rate updated successfully", updatedSubscription);
+    }
+)
 export {
-    getAllSubscriptionsController
+    getAllSubscriptionsController,
+    updateMonthlyRate
 }

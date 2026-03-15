@@ -4,10 +4,12 @@ import { query } from './config/db.ts';
 import userRouter from './routes/user.routes.ts';
 import { globalErrorHandler } from './middlewares/error.middleware.ts';
 import { notFound } from './utils/response.ts';
+import subscriptionRouter from './routes/subscription.routes.ts';
 
 const app = express();
 app.use(express.json());
 app.use('/api/v1/user', userRouter);
+app.use('/api/v1/subscriptions', subscriptionRouter);
 
 const PORT = ENV.PORT;
 

@@ -1,0 +1,1 @@
+export type FlatType = "1bhk" | "2bhk" | "3bhk" | "4bhk";
