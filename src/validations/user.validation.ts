@@ -35,6 +35,6 @@ export const updateProfileZodSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerZodSchema>;
 export type LoginInput = z.infer<typeof loginZodSchema>;
+export type UpdateProfileInput = z.infer<typeof updateProfileZodSchema>;
 export type LoginGoogleInput = z.infer<typeof loginGoogleZodSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordZodSchema>;
-export type UpdateProfileInput = z.infer<typeof updateProfileZodSchema>;
