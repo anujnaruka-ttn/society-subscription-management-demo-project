@@ -3,37 +3,37 @@
 ## Admin Portal (Next.js App)
 The admin app helps the society management team control all flats, subscriptions, and payments.
 
-### 1. Admin Login Page
+### 1. Admin Login Page --> done
 - **Path:** `/admin/login`
 - **Summary:** This page lets the society admins securely log into the admin system. They must enter their email and password, which are verified using Auth0 (Google Sign In). If login is successful, the admin goes to the Dashboard.
-
-### 2. Admin Dashboard
+ 
+### 2. Admin Dashboard --> done
 - **Path:** `/admin/dashboard`
 - **Summary:** A bird’s-eye view of the society’s financial health. Admins see key statistics like total flats, total money collected, pending payments, and monthly insights. Can also show graphs/charts.
 
-### 3. Flats Management Page
+### 3. Flats Management Page --> done
 - **Path:** `/admin/flats`
 - **Summary:** This page lists all flats in the society with details like owner name, email, and phone. Admins can add a flat, edit its details, or delete it.
     - Data tables (search, sort, paginate)
     - Modal forms for add/edit
 
-### 4. Subscription Plans Page
+### 4. Subscription Plans Page --> done
 - **Path:** `/admin/subscriptions`
 - **Summary:** Shows the current subscription amount flat type wise (e.g., 2BHK: ₹1500/month, 3BHK: ₹1800/month). Admins can update the monthly rates.
 
-### 5. Monthly Subscription Records Page
+### 5. Monthly Subscription Records Page --> done
 - **Path:** `/admin/monthly-records`
 - **Summary:** Shows every flat’s payment status for a selected month—paid or pending. Admins can manually mark a flat’s subscription as paid.
 
-### 6. Manual Payment Entry Page
+### 6. Manual Payment Entry Page --> done
 - **Path:** `/admin/payment-entry`
 - **Summary:** Admins can record a payment if someone pays offline (Cash/UPI). They select a flat and month, and enter payment details.
 
-### 7. Reports Page
+### 7. Reports Page --> done
 - **Path:** `/admin/reports`
 - **Summary:** Generates monthly and yearly financial reports. Includes total collection, pending payments, payment-mode breakdown, etc. Admins can download CSV/PDF.
 
-### 8. Notifications Page
+### 8. Notifications Page 
 - **Path:** `/admin/notifications`
 - **Summary:** Let admins send reminders (e.g., “Payment due for February”). Uses Firebase Cloud Messaging or OneSignal to push notifications to users.
 

@@ -4,6 +4,7 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/common/Navbar";
+import { Toaster } from "sonner";
 
 const fontSans = Alexandria({
   subsets: ["latin"],
@@ -70,6 +71,7 @@ export default async function RootLayout({
             <main className="w-full h-full flex justify-center-safe items-center-safe">
               {children}
             </main>
+            <Toaster />
           </TooltipProvider>
         </ThemeProvider>
       </body>
