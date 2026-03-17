@@ -3,8 +3,7 @@ import { authApis, apiMethods } from "./apis";
 import { setToken, setUser } from "@/reducers/authSlice";
 import { toast } from "sonner";
 import { AppDispatch, persistor } from "@/stores/store";
-import { signOut } from "next-auth/react";
-import { getServerSession } from "next-auth";
+import { signOut, getSession } from "next-auth/react";
 
 export const login = (data: any, navigate: any) => {
     return async (dispatch: AppDispatch) => {
@@ -57,13 +56,18 @@ export const logout = (navigate: any) => {
             // 1. Clear Redux state & LocalStorage
             dispatch(setToken(null));
             dispatch(setUser(null));
-            await persistor.purge();
+            try {
+                await persistor.purge();
+            } catch (purgeError) {
+                console.warn("Purge failed:", purgeError);
+            }
 
             // 2. Check if we have an active NextAuth (Google) session
-            const session = await getServerSession();
+            const session = await getSession();
 
             if (session) {
                 // Google User: Let NextAuth handle the cleanup and redirect
+                console.log("Signing out from NextAuth session...");
                 await signOut({ callbackUrl: "/login" });
             } else {
                 // Normal User: Pure Redux logout, just navigate to login

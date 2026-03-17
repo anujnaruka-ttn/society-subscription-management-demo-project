@@ -10,7 +10,7 @@ const Navbar = () => {
     if (!isAuthPage) return null;
 
     return (
-        <nav className="w-full h-[80px]">
+        <nav className="w-full h-20">
             <div className="w-[80%] mx-auto flex items-center justify-end h-full">
                 <ModeToggle />
             </div>

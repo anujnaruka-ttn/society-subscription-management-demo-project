@@ -12,7 +12,13 @@ export default function LogOut() {
     const dispatch = useDispatch();
     const router = useRouter();
 
-    useEffect(() => dispatch(logout(router.push) as any), [dispatch, router]);
+    useEffect(() => {
+
+        (async () => {
+            await dispatch(logout(router.push) as any);
+        })();
+        
+    }, [dispatch, router]);
 
     return (
         <div className="w-full h-full flex flex-col items-center justify-center gap-4">

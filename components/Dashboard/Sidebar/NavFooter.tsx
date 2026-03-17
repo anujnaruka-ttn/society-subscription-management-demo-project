@@ -50,7 +50,7 @@ export default function NavFooter({
                             </TooltipTrigger>
                             <TooltipContent
                                 side="top"
-                                className="py-1 px-2 m-2 max-w-[180px] border bg-popover text-popover-foreground"
+                                className="py-1 px-2 m-2 max-w-45 border bg-popover text-popover-foreground"
                             >
                                 <div className="space-y-1 text-xs">
                                     <p className="font-medium">
