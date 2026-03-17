@@ -5,8 +5,6 @@ import { toast } from "sonner";
 import { AppDispatch, persistor } from "@/stores/store";
 import { signOut, getSession } from "next-auth/react";
 
-let isLoggingOut = false;
-
 export const login = (data: any, navigate: any) => {
     return async (dispatch: AppDispatch) => {
         try {
@@ -54,9 +52,6 @@ export const signup = (data: any, navigate: any) => {
 
 export const logout = (navigate: any) => {
     return async (dispatch: AppDispatch) => {
-        // Prevent duplicate logout calls (for Google logout double-click issue)
-        if (isLoggingOut) return;
-        isLoggingOut = true;
 
         try {
             // 1. Clear Redux state & LocalStorage
@@ -84,8 +79,7 @@ export const logout = (navigate: any) => {
             console.error("Logout Error:", error);
             navigate("/login"); // Fallback
             toast.error("Logout Failed");
-        } finally {
-            isLoggingOut = false;
         }
+        
     };
 };
