@@ -1,0 +1,24 @@
+const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
+const apis = {
+    user: BASE_URL + '/user',
+    subscription: BASE_URL + '/subscription',
+    payment: BASE_URL + '/payment',
+    flat: BASE_URL + '/flat',
+}
+
+const apiMethods = {
+    GET: 'GET',
+    POST: 'POST',
+    PUT: 'PUT',
+    DELETE: 'DELETE',
+    PATCH: 'PATCH'
+}
+
+const authApis = {
+    login: apis.user + '/auth/login',
+    signup: apis.user + '/auth/register',
+    loginGoogle: apis.user + '/auth/login-google',
+    changePassword: apis.user + '/auth/change-password',
+
+}
