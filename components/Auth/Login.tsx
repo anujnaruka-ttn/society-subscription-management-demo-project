@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useDispatch, useSelector } from "react-redux";
+import { useSession } from "next-auth/react";
 
 type LoginFormData = {
     email: string;
@@ -24,12 +25,7 @@ export default function Login({
     const { token, user } = useSelector((state: any) => state.auth);
     const router = useRouter();
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        if (token && user) {
-            router.push(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
-        }
-    }, [token, user, router]);
+    const { data: session, status } = useSession();
 
     const {
         register,
@@ -39,6 +35,18 @@ export default function Login({
 
     const onSubmit: SubmitHandler<LoginFormData> = (data) => dispatch(login(data, router.push) as any)
 
+    useEffect(() => {
+        if (token && user) {
+            router.push(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
+        } else if (status === "authenticated" && session?.user) {
+            router.push((session.user as any).role === "admin" ? "/admin/dashboard" : "/dashboard");
+        }
+    }, [token, user, session, status, router]);
+
+    if (status === "loading" || (status === "authenticated") || (token && user)) {
+        return null;
+    }
+
 
     return (
         <AuthCommon
@@ -46,6 +54,7 @@ export default function Login({
             description="Enter your email and password below to login to your account"
             feature="Login"
             onSubmit={handleSubmit(onSubmit)}
+            role={role}
         >
             <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
@@ -54,7 +63,6 @@ export default function Login({
                         id="email"
                         type="email"
                         placeholder="m@example.com"
-                        required
                         {
                         ...register("email", {
                             required: "Email is required.",
@@ -73,7 +81,6 @@ export default function Login({
                     <Input
                         id="password"
                         type="password"
-                        required
                         {...register("password", {
                             required: "Password is required.",
                             minLength: {

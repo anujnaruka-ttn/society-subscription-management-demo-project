@@ -17,8 +17,7 @@ import Link from "next/link";
 import NavFooter from "./NavFooter";
 import { dashboardRoutes } from "@/lib/dashboard-nav";
 import { useSelector } from "react-redux";
-
-
+import { useSession } from "next-auth/react";
 
 // import { TeamSwitcher } from "./team-switcher";
 
@@ -50,6 +49,7 @@ const sampleNotifications = [
 export default function DashboardSidebar() {
 
   const { user } = useSelector((state: any) => state.auth);
+  const { data: session } = useSession()
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
@@ -98,7 +98,7 @@ export default function DashboardSidebar() {
       <SidebarContent className="gap-4 px-2 py-4">
         <DashboardNavigation routes={routes} />
       </SidebarContent>
-      <NavFooter user={user} />
+      <NavFooter user={user || session?.user} />
     </Sidebar>
   );
 }

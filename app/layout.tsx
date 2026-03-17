@@ -6,6 +6,7 @@ import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/common/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import StoreProvider from "@/components/providers/StoreProvider";
+import AuthProvider from "@/components/providers/AuthProvider";
 
 const fontSans = Alexandria({
     subsets: ["latin"],
@@ -69,16 +70,18 @@ export default async function RootLayout({
                         disableTransitionOnChange
                     >
                         <TooltipProvider>
-                            <Navbar />
-                            <main className="w-full h-full flex justify-center-safe items-center-safe">
-                                {children}
-                            </main>
-                            <Toaster
-                                richColors
-                                expand
-                                position="top-right"
-                                swipeDirections={["right"]}
-                            />
+                            <AuthProvider>
+                                <Navbar />
+                                <main className="w-full h-full flex justify-center-safe items-center-safe">
+                                    {children}
+                                </main>
+                                <Toaster
+                                    richColors
+                                    expand
+                                    position="top-right"
+                                    swipeDirections={["right"]}
+                                />
+                            </AuthProvider>
                         </TooltipProvider>
                     </ThemeProvider>
                 </StoreProvider>

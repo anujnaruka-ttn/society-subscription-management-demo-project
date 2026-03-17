@@ -3,12 +3,6 @@
 import ModeToggle from "@/components/common/ModeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
     SidebarFooter,
     SidebarMenu,
     SidebarMenuItem,
@@ -19,10 +13,7 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-    CircleHelp,
-    LogOut
-} from "lucide-react";
+import { CircleHelp } from "lucide-react";
 
 export default function NavFooter({
     user,
@@ -37,7 +28,7 @@ export default function NavFooter({
     const { state } = useSidebar();
     const isCollapsed = state === "collapsed";
 
-    const initials = user.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "U";
+    const initials = user?.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "U";
 
     return (
         <SidebarFooter className="p-4">
@@ -45,7 +36,7 @@ export default function NavFooter({
                 <SidebarMenuItem>
                     <div className={`flex items-center ${isCollapsed ? "flex-col gap-y-2" : "flex-row gap-x-2"}`}>
                         <Avatar className="h-12 w-12 rounded-full">
-                            <AvatarImage src={user.profile_image} alt={user.name || "User"} />
+                            <AvatarImage src={user?.profile_image || (user as any)?.image} alt={user?.name || "User"} />
                             <AvatarFallback className="rounded-full">{initials}</AvatarFallback>
                         </Avatar>
 
@@ -63,10 +54,10 @@ export default function NavFooter({
                             >
                                 <div className="space-y-1 text-xs">
                                     <p className="font-medium">
-                                        {user.name || "Loading..."}
+                                        {user?.name || "Guest"}
                                     </p>
                                     <p className="text-muted-foreground">
-                                        {user.email || ""}
+                                        {user?.email || ""}
                                     </p>
                                 </div>
                             </TooltipContent>
@@ -80,4 +71,5 @@ export default function NavFooter({
         </SidebarFooter>
     );
 }
+
 

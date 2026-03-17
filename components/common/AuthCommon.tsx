@@ -13,6 +13,8 @@ import GoogleIcon from "@/public/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { RoleType } from "@/types/RoleType";
 
 interface AuthCommonProps {
     children: React.ReactNode;
@@ -20,10 +22,12 @@ interface AuthCommonProps {
     description: string;
     feature: string;
     onSubmit?: React.SubmitEventHandler<HTMLFormElement>;
+    role?: RoleType;
 }
 
-const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCommonProps) => {
+const AuthCommon = ({ children, title, description, feature, onSubmit, role }: AuthCommonProps) => {
     const path = usePathname();
+    const { data: session } = useSession();
 
     return (
         <Card className="w-full max-w-sm">
@@ -53,7 +57,14 @@ const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCom
                     <Button type="submit" className="w-full">
                         {feature}
                     </Button>
-                    <Button type="button" variant="outline" className="w-full">
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        className="w-full"
+                        onClick={() => signIn('google', { 
+                            callbackUrl: role === "admin" ? "/admin/dashboard" : "/dashboard" 
+                        })}
+                    >
                         <span>
                             <Image src={GoogleIcon} alt="Google" width={20} height={20} />
                         </span>
@@ -71,3 +82,4 @@ const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCom
 };
 
 export default AuthCommon;
+

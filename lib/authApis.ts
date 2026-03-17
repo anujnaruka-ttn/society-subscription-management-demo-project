@@ -2,7 +2,9 @@ import { apiConnector } from "./apiConnector";
 import { authApis, apiMethods } from "./apis";
 import { setToken, setUser } from "@/reducers/authSlice";
 import { toast } from "sonner";
-import { AppDispatch } from "@/stores/store";
+import { AppDispatch, persistor } from "@/stores/store";
+import { signOut } from "next-auth/react";
+import { getServerSession } from "next-auth";
 
 export const login = (data: any, navigate: any) => {
     return async (dispatch: AppDispatch) => {
@@ -52,12 +54,27 @@ export const signup = (data: any, navigate: any) => {
 export const logout = (navigate: any) => {
     return async (dispatch: AppDispatch) => {
         try {
+            // 1. Clear Redux state & LocalStorage
             dispatch(setToken(null));
             dispatch(setUser(null));
-            navigate("/login");
+            await persistor.purge();
+
+            // 2. Check if we have an active NextAuth (Google) session
+            const session = await getServerSession();
+
+            if (session) {
+                // Google User: Let NextAuth handle the cleanup and redirect
+                await signOut({ callbackUrl: "/login" });
+            } else {
+                // Normal User: Pure Redux logout, just navigate to login
+                navigate("/login");
+            }
+
             toast.success("Logout Successful");
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Logout Failed");
+            console.error("Logout Error:", error);
+            navigate("/login"); // Fallback
+            toast.error("Logout Failed");
         }
     };
 };
