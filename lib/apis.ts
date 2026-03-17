@@ -19,6 +19,12 @@ const authApis = {
     login: apis.user + '/auth/login',
     signup: apis.user + '/auth/register',
     loginGoogle: apis.user + '/auth/login-google',
-    changePassword: apis.user + '/auth/change-password',
+    changePassword: apis.user + '/change-password',
+    changeProfile: apis.user + '/change-profile',
+}
 
+export {
+    apis,
+    apiMethods,
+    authApis
 }

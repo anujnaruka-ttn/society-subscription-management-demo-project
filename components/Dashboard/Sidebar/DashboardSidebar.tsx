@@ -19,6 +19,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import NavFooter from "./NavFooter";
 import { dashboardRoutes } from "@/lib/dashboard-nav";
+import { useSelector } from "react-redux";
 
 
 
@@ -57,10 +58,13 @@ const user = {
 
 
 export default function DashboardSidebar() {
+
+  const { user } = useSelector((state: any) => state.auth);
+  console.log("User in DashboardSidebar:", user);
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-  const isAdmin = true;
+  const isAdmin = user?.role === "admin";
   const routes = isAdmin ? dashboardRoutes.admin : dashboardRoutes.resident;
 
   return (

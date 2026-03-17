@@ -4,9 +4,8 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import ThemeProvider from "@/components/providers/ThemeProvider";
 import Navbar from "@/components/common/Navbar";
-import { Provider } from "react-redux";
-import store from "@/stores/store";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/sonner";
+import StoreProvider from "@/components/providers/StoreProvider";
 
 const fontSans = Alexandria({
     subsets: ["latin"],
@@ -62,7 +61,7 @@ export default async function RootLayout({
 
             <body className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable} antialiased w-screen h-screen overflow-x-hidden overflow-y-auto
             flex flex-col items-center-safe`}>
-                <Provider store={store}>
+                <StoreProvider>
                     <ThemeProvider
                         attribute="class"
                         defaultTheme="system"
@@ -73,11 +72,16 @@ export default async function RootLayout({
                             <Navbar />
                             <main className="w-full h-full flex justify-center-safe items-center-safe">
                                 {children}
-                                <Toaster />
                             </main>
+                            <Toaster
+                                richColors
+                                expand
+                                position="top-right"
+                                swipeDirections={["right"]}
+                            />
                         </TooltipProvider>
                     </ThemeProvider>
-                </Provider>
+                </StoreProvider>
             </body>
         </html>
     );

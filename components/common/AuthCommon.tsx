@@ -10,29 +10,26 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import GoogleIcon from "@/public/assets/google.svg";
-import { formType } from "@/types/formType";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface AuthCommonProps {
-    children: React.ReactElement,
-    title: string,
-    description: string,
-    feature: string,
-    onSubmit?: React.SubmitEventHandler<HTMLFormElement>
+    children: React.ReactNode;
+    title: string;
+    description: string;
+    feature: string;
+    onSubmit?: React.SubmitEventHandler<HTMLFormElement>;
 }
-const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCommonProps) => {
 
+const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCommonProps) => {
     const path = usePathname();
 
     return (
         <Card className="w-full max-w-sm">
             <form onSubmit={onSubmit}>
                 <CardHeader>
-                    <CardTitle
-                        className={path.includes("/admin") ? "text-center" : ""}
-                    >
+                    <CardTitle className={path.includes("/admin") ? "text-center" : ""}>
                         {title}
                     </CardTitle>
                     <CardDescription>
@@ -63,17 +60,14 @@ const AuthCommon = ({ children, title, description, feature, onSubmit }: AuthCom
                         Login with Google
                     </Button>
                     <Button type="button" variant={"link"} asChild>
-
                         <Link href={path.includes("/admin") ? "/login" : "/admin/login"}>
                             {path.includes("/admin") ? "Login as user" : "Login as admin"}
                         </Link>
-
                     </Button>
                 </CardFooter>
             </form>
         </Card>
-    )
-
-}
+    );
+};
 
 export default AuthCommon;

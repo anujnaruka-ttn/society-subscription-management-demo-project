@@ -1,1 +1,0 @@
-export type formType = "admin" | "user";
