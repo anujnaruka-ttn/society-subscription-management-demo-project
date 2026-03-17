@@ -31,7 +31,7 @@ const ModeToggle = ({
             variant="outline"
             size="icon"
             onClick={toggleTheme}
-            className={cn("relative w-8 h-8 rounded-full overflow-hidden", className)}
+            className={cn("relative w-8 h-8 rounded-full overflow-hidden dark:hover:text-white cursor-pointer", className)}
             {...props}
         >
             <ThemeIcon

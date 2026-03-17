@@ -2,7 +2,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 const apis = {
     user: BASE_URL + '/user',
-    subscription: BASE_URL + '/subscription',
+    subscription: BASE_URL + '/subscriptions',
     payment: BASE_URL + '/payment',
     flat: BASE_URL + '/flat',
 }
@@ -23,8 +23,14 @@ const authApis = {
     changeProfile: apis.user + '/change-profile',
 }
 
+const adminApis = {
+    getSubscriptions: apis.subscription + '/',
+    updateSubscriptionRate: apis.subscription + '/update-monthly-rate',
+}
+
 export {
     apis,
     apiMethods,
-    authApis
+    authApis,
+    adminApis
 }

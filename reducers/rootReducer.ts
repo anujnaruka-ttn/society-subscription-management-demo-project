@@ -1,4 +1,5 @@
 import authReducer from "@/reducers/authSlice";
+import adminSubscriptionReducer from "@/reducers/adminSubscriptionSlice";
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -20,7 +21,8 @@ const createNoopStorage = () => {
 const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
 
 const rootReducer = combineReducers({
-    auth: authReducer
+    auth: authReducer,
+    adminSubscription: adminSubscriptionReducer
 });
 
 const persistConfig = {

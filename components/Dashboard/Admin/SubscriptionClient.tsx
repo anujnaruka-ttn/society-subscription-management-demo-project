@@ -3,33 +3,19 @@
 import { PlusCircle, Edit2, IndianRupee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
-
-const subscriptionData = [
-    {
-        flatType: "1BHK",
-        subscriptionRate: 10000,
-    },
-    {
-        flatType: "2BHK",
-        subscriptionRate: 20000,
-    },
-    {
-        flatType: "3BHK",
-        subscriptionRate: 30000,
-    },
-    {
-        flatType: "4BHK",
-        subscriptionRate: 40000,
-    },
-]
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSubscriptions } from '@/lib/subscriptionApis';
 
 const SubscriptionClient = () => {
 
-    const [disableSubscriptionUpdation, setdisableSubscriptionUpdation] = useState({
-        flatType: "",
-        disable: true
-    });
+    const { subscriptions } = useSelector((state: any) => state.adminSubscription);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getSubscriptions() as any);
+    }, []);
 
     return (
         <Card className='w-full h-full bg-transparent border-none shadow-none p-6'>
@@ -52,25 +38,25 @@ const SubscriptionClient = () => {
                 </Button>
             </CardHeader>
             <CardContent className='p-0 flex flex-col gap-4'>
-                {subscriptionData.map((item, index) => (
+                {subscriptions.map((item: any) => (
                     <Card
-                        key={index}
+                        key={item.id}
                         className='group flex flex-row w-full h-fit items-center justify-between gap-4 p-4 border-border/50 hover:border-primary/50 hover:bg-muted/5 transition-all duration-300'
                     >
                         <div className='flex items-center gap-6 flex-1'>
                             {/* Flat Type Box */}
                             <div className="flex flex-col gap-1">
                                 <span className="text-[10px] uppercase font-bold text-muted-foreground/70 tracking-wider">Flat Type</span>
-                                <div className='w-full min-w-[100px] h-12 px-4 flex items-center justify-center bg-muted rounded-lg border border-border/50 font-bold text-lg shadow-inner'>
-                                    {item.flatType}
+                                <div className='w-full min-w-25 h-12 px-4 flex items-center justify-center bg-muted rounded-lg border border-border/50 font-bold text-lg shadow-inner'>
+                                    {item.flat_type}
                                 </div>
                             </div>
 
                             {/* Divider */}
-                            <div className="h-16 w-[1px] bg-border/60 mx-2 hidden sm:block" />
+                            <div className="h-16 w-px bg-border/60 mx-2 hidden sm:block" />
 
                             {/* Rate Input Section */}
-                            <div className="flex flex-col gap-1 flex-1 max-w-[240px]">
+                            <div className="flex flex-col gap-1 flex-1 max-w-60">
                                 <span className="text-[10px] uppercase font-bold text-muted-foreground/70 tracking-wider">Monthly Rate</span>
                                 <div className='relative flex items-center h-12 bg-background rounded-lg border border-border/50 focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary/20 transition-all'>
                                     <div className="pl-3 pr-2 text-muted-foreground">
@@ -79,7 +65,7 @@ const SubscriptionClient = () => {
                                     <div
                                         className='border-none shadow-none focus:outline-none focus:ring-0 text-lg font-medium w-full h-full flex items-center-safe p-0 bg-transparent text-muted-foreground'
                                     >
-                                        {item.subscriptionRate}
+                                        {item.monthly_rate}
                                     </div>
                                 </div>
                             </div>

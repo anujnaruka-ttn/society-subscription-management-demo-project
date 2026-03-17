@@ -67,9 +67,10 @@ export const logout = (navigate: any) => {
             const session = await getSession();
 
             if (session) {
-                // Google User: Let NextAuth handle the cleanup (redirect: false, we handle navigation)
                 console.log("Signing out from NextAuth session...");
-                await signOut({ redirect: false });
+                await signOut({ callbackUrl: "/login" });
+                toast.success("Logout Successful");
+                return; // signOut will handle the redirect
             }
 
             // Navigate to login after everything is cleared
@@ -80,6 +81,6 @@ export const logout = (navigate: any) => {
             navigate("/login"); // Fallback
             toast.error("Logout Failed");
         }
-        
+
     };
 };
