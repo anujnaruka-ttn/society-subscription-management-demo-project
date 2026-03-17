@@ -1,0 +1,13 @@
+on profile for admin 
+show name, email, phone, address, profile pic, role badge, log out, change pswd
+
+on profile for user 
+show name, email, phone, address, profile pic, role badge, log out, change pswd
+
+clicking the change pswd btn will open a modal with old pswd, new pswd, confirm pswd
+on clicking the log out btn will log out the user
+
+changePassword controller
+
+changeProfile controller
+

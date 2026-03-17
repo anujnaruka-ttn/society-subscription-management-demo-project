@@ -22,6 +22,7 @@ export const generateAuthResponse = (user: IUser) => {
         email: user.email,
         role: user.role || "resident",
         auth0_id: user.auth0_id,
+        profile_image: user.profile_image,
         token: token
     };
 };

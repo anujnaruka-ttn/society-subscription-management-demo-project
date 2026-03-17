@@ -23,7 +23,7 @@ This document presents an improved database schema designed to fulfill all requi
 users (
     id UUID PRIMARY KEY,
     auth0_id VARCHAR(255) UNIQUE, -- Support for Auth0 / Google Sign In
-    password_hash VARCHAR(255), -- Support for Normal Email/Password Login
+    password VARCHAR(255), -- Support for Normal Email/Password Login
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     profile_image TEXT, -- URL or path to user's profile picture

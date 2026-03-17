@@ -7,7 +7,8 @@
     "start": "ts-node src/server.ts",
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed:admin": "ts-node src/scripts/admin-seed.ts"
   },
   "repository": {
     "type": "git",
