@@ -7,6 +7,7 @@ import { IUser } from "../models/IUser";
 import { generateAuthResponse } from "../utils/generateAuthResponse";
 import { CustomRequest } from "../types/CustomRequest";
 import { LoginInput } from "../validations/user.validation";
+import { UploadedFile } from "express-fileupload";
 
 const login = catchAsync(
     async (req: Request, res: Response) => {
@@ -50,7 +51,7 @@ const residentRegister = catchAsync(
 
         const hashedPassword = await hashPassword(password);
 
-        const newUser: IUser = await createNewUser({name, email, password: hashedPassword});
+        const newUser: IUser = await createNewUser({ name, email, password: hashedPassword });
 
         const responseData = generateAuthResponse(newUser);
 
@@ -98,9 +99,9 @@ const changeProfile = catchAsync(
         const {
             name,
             phone,
-            profileImage,
         } = req.body;
 
+        const profileImage = req.files?.profile as UploadedFile;
         const userData = (req as CustomRequest).user;
 
         if (!userData) return error(res, "User not found", 404);
@@ -129,7 +130,7 @@ const loginGoogle = catchAsync(
 
         if (!user) {
             // 2. If user does not exist, create a new record
-            user = await createNewUserGoogle({name, email, auth0_id});
+            user = await createNewUserGoogle({ name, email, auth0_id });
         } else if (!user.auth0_id || user.auth0_id !== auth0_id) {
             // 3. If user exists but auth_id is missing/different, update it
             user = await updateAuthId(email, auth0_id);
@@ -141,7 +142,6 @@ const loginGoogle = catchAsync(
         return success(res, "Google Login successful", responseData);
     }
 );
-
 
 export {
     login,
