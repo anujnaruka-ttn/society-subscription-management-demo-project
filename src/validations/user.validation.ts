@@ -30,7 +30,7 @@ const changePasswordZodSchema = z.object({
 const updateProfileZodSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
     phone: z.string().length(10, "Phone number must be 10 digits").optional(),
-    profileImage: z.string().optional(),
+    profileImage: z.url().optional(),
 });
 
 export {

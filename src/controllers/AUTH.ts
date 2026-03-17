@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
-import { badRequest, error, notFound, success, unauthorized } from "../utils/response";
+import { badRequest, error, notFound, success, unauthorized, validationError } from "../utils/response";
 import { comparePassword, hashPassword } from "../utils/password";
 import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId, updateUserPassword, updateUserProfile } from "../services/user.service";
 import { IUser } from "../models/IUser";
@@ -8,6 +8,10 @@ import { generateAuthResponse } from "../utils/generateAuthResponse";
 import { CustomRequest } from "../types/CustomRequest";
 import { LoginInput } from "../validations/user.validation";
 import { UploadedFile } from "express-fileupload";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
+import { ENV } from "../validations/env.validation";
+
+const folderName = ENV.FOLDER_NAME;
 
 const login = catchAsync(
     async (req: Request, res: Response) => {
@@ -74,7 +78,7 @@ const changePassword = catchAsync(
 
         const userData: IUser = await findUserByEmail(user.email);
 
-        if (!userData) return notFound(res, "User not found")
+        if (!userData) return notFound(res, "User not found");
 
         let isSamePassword: boolean;
         try {
@@ -101,16 +105,35 @@ const changeProfile = catchAsync(
             phone,
         } = req.body;
 
+        const user = (req as CustomRequest).user;
+
+        if (!user) return unauthorized(res, "User not logged in.");
+
         const profileImage = req.files?.profile as UploadedFile;
-        const userData = (req as CustomRequest).user;
 
-        if (!userData) return error(res, "User not found", 404);
+        if (!profileImage) return validationError(res, 'ProfilePic is required');
 
-        const user: IUser = await findUserByEmail(userData.email);
+        console.log('Profile pic details:', {
+            name: profileImage.name,
+            size: profileImage.size,
+            mimetype: profileImage.mimetype,
+            tempFilePath: profileImage.tempFilePath
+        });
 
-        if (!user) return notFound(res, "User not found")
+        if (!["image/jpeg", "image/png"].includes(profileImage.mimetype)) {
+            return validationError(res, 'Invalid file type. Only JPEG and PNG allowed.');
+        }
 
-        const updatedUser: IUser = await updateUserProfile(userData.email, { name, phone, profileImage });
+        // Check if tempFilePath exists
+        if (!profileImage.tempFilePath) {
+            return error(res, 'Temporary file path not found. Make sure useTempFiles is enabled.');
+        }
+
+        console.log('Attempting to upload to Cloudinary...');
+        const { secure_url } = await uploadToCloudinary(profileImage.tempFilePath, folderName);
+        console.log('Upload successful, updating user profile...');
+
+        const updatedUser: IUser = await updateUserProfile(user.email, { name, phone, profileImage: secure_url });
 
         return success(res, "Profile updated successfully", updatedUser);
 
