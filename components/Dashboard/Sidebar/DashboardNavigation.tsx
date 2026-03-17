@@ -28,6 +28,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
     const isCollapsed = state === "collapsed";
     const [openCollapsible, setOpenCollapsible] = useState<string | null>(null);
     const isActive = (pathname: string): boolean => pathname === activePathname;
+
     return (
         <SidebarMenu>
             {routes.map((route: Route) => {
@@ -100,31 +101,30 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                 )}
                             </Collapsible>
                         ) : (
-                            <SidebarMenuButton 
-                                tooltip={route.title} 
-                                asChild
+                            <SidebarMenuButton
+                                tooltip={route.title}
+                                asChild={!isLogOut}
                                 isActive={isActiveRoute}
                                 className={cn(
                                     isLogOut && "text-red-500 hover:text-red-500 hover:bg-red-500/10 active:text-red-500 active:bg-red-500/10"
                                 )}
                             >
-                                <Link
-                                    href={route.link}
-                                    prefetch={true}
-                                    className={cn(
-                                        "flex items-center rounded-lg px-2 transition-colors",
-                                        isCollapsed && "justify-center"
-                                    )}
-                                >
-                                    {route.icon}
-                                    {!isCollapsed && (
-                                        <span className="ml-2 text-sm font-medium">
-                                            {route.title}
-                                        </span>
-                                    )}
-                                </Link>
+                                    <Link
+                                        href={route.link}
+                                        prefetch={true}
+                                        className={cn(
+                                            "flex items-center rounded-lg px-2 transition-colors",
+                                            isCollapsed && "justify-center"
+                                        )}
+                                    >
+                                        {route.icon}
+                                        {!isCollapsed && (
+                                            <span className="ml-2 text-sm font-medium">
+                                                {route.title}
+                                            </span>
+                                        )}
+                                    </Link>
                             </SidebarMenuButton>
-
                         )}
                     </SidebarMenuItem>
                 );

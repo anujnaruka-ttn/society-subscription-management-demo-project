@@ -5,6 +5,8 @@ import { toast } from "sonner";
 import { AppDispatch, persistor } from "@/stores/store";
 import { signOut, getSession } from "next-auth/react";
 
+let isLoggingOut = false;
+
 export const login = (data: any, navigate: any) => {
     return async (dispatch: AppDispatch) => {
         try {
@@ -52,6 +54,10 @@ export const signup = (data: any, navigate: any) => {
 
 export const logout = (navigate: any) => {
     return async (dispatch: AppDispatch) => {
+        // Prevent duplicate logout calls (for Google logout double-click issue)
+        if (isLoggingOut) return;
+        isLoggingOut = true;
+
         try {
             // 1. Clear Redux state & LocalStorage
             dispatch(setToken(null));
@@ -66,19 +72,20 @@ export const logout = (navigate: any) => {
             const session = await getSession();
 
             if (session) {
-                // Google User: Let NextAuth handle the cleanup and redirect
+                // Google User: Let NextAuth handle the cleanup (redirect: false, we handle navigation)
                 console.log("Signing out from NextAuth session...");
-                await signOut({ callbackUrl: "/login" });
-            } else {
-                // Normal User: Pure Redux logout, just navigate to login
-                navigate("/login");
+                await signOut({ redirect: false });
             }
 
+            // Navigate to login after everything is cleared
             toast.success("Logout Successful");
+            navigate("/login");
         } catch (error: any) {
             console.error("Logout Error:", error);
             navigate("/login"); // Fallback
             toast.error("Logout Failed");
+        } finally {
+            isLoggingOut = false;
         }
     };
 };
