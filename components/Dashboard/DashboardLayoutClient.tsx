@@ -6,11 +6,13 @@ import DashboardSidebar from "./Sidebar/DashboardSidebar";
 
 export default function DashboardLayoutClient({
     children,
+    requiredRole,
 }: {
     children: React.ReactNode;
+    requiredRole?: "admin" | "resident";
 }) {
     return (
-        <AuthGuard>
+        <AuthGuard requiredRole={requiredRole}>
             <SidebarProvider>
                 <main className="relative flex h-dvh w-full overflow-hidden">
                     <DashboardSidebar />
@@ -22,3 +24,4 @@ export default function DashboardLayoutClient({
         </AuthGuard>
     );
 }
+

@@ -1,41 +1,28 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const isClient = typeof window !== "undefined";
+interface AuthState {
+    token: string | null;
+    user: any | null;
+}
+
+const initialState: AuthState = {
+    token: null,
+    user: null,
+};
 
 const authSlice = createSlice({
     name: "auth",
-    initialState: {
-        token: isClient ? localStorage.getItem("token") : null,
-        user: isClient ? JSON.parse(localStorage.getItem("user") || "null") : null,
-    },
+    initialState,
     reducers: {
-        setToken: (state, action) => {
+        setToken: (state, action: PayloadAction<string | null>) => {
             state.token = action.payload;
-            if (isClient) {
-                if (action.payload) {
-                    localStorage.setItem("token", action.payload);
-                } else {
-                    localStorage.removeItem("token");
-                }
-            }
         },
-        setUser: (state, action) => {
+        setUser: (state, action: PayloadAction<any | null>) => {
             state.user = action.payload;
-            if (isClient) {
-                if (action.payload) {
-                    localStorage.setItem("user", JSON.stringify(action.payload));
-                } else {
-                    localStorage.removeItem("user");
-                }
-            }
         },
         logout: (state) => {
             state.token = null;
             state.user = null;
-            if (isClient) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
-            }
         },
     },
 });

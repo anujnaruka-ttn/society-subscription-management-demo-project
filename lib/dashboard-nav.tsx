@@ -5,6 +5,7 @@ import {
     TbReport,
     TbSettings,
     TbLayoutDashboard,
+    TbLogout,
 } from "react-icons/tb";
 import { MdOutlineCardMembership, MdOutlineAdminPanelSettings } from "react-icons/md";
 import { FcOvertime } from "react-icons/fc";
@@ -64,6 +65,12 @@ export const dashboardRoutes: { admin: Route[]; resident: Route[] } = {
                 },
             ],
         },
+        {
+            id: "logout",
+            title: "Logout",
+            icon: <TbLogout className="size-4" />,
+            link: "/log-out",
+        }
     ],
     resident: [
         {
@@ -83,6 +90,12 @@ export const dashboardRoutes: { admin: Route[]; resident: Route[] } = {
             title: "Profile",
             icon: <TiUserOutline className="size-4" />,
             link: "/profile",
+        },
+        {
+            id: "logout",
+            title: "Logout",
+            icon: <TbLogout className="size-4" />,
+            link: "/log-out",
         }
     ],
 };

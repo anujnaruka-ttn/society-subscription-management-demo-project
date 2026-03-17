@@ -21,18 +21,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-{/*
-    ROUTES: 
-    /admin/login
-    /admin/dashboard
-    /admin/flats
-    /admin/subscriptions
-    /admin/monthly-records
-    /admin/payment-entry
-    /admin/reports
-    /admin/(settings)/notifications
-    /admin/(settings)/profile
-*/}
 export default function DashboardNavigation({ routes }: { routes: Route[] }) {
 
     const activePathname = usePathname();
@@ -46,6 +34,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                 const isOpen = !isCollapsed && openCollapsible === route.id;
                 const hasSubRoutes = !!route.subs?.length;
                 const isActiveRoute = isActive(route.link);
+                const isLogOut = route.id === "logout";
 
                 return (
                     <SidebarMenuItem key={route.id}>
@@ -111,13 +100,19 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                 )}
                             </Collapsible>
                         ) : (
-                            <SidebarMenuButton tooltip={route.title} asChild
-                                isActive={isActiveRoute}>
+                            <SidebarMenuButton 
+                                tooltip={route.title} 
+                                asChild
+                                isActive={isActiveRoute}
+                                className={cn(
+                                    isLogOut && "text-red-500 hover:text-red-500 hover:bg-red-500/10 active:text-red-500 active:bg-red-500/10"
+                                )}
+                            >
                                 <Link
                                     href={route.link}
                                     prefetch={true}
                                     className={cn(
-                                        "flex items-center rounded-lg px-2 transition-colors text-muted-foreground hover:bg-sidebar-muted hover:text-foreground",
+                                        "flex items-center rounded-lg px-2 transition-colors",
                                         isCollapsed && "justify-center"
                                     )}
                                 >
@@ -129,6 +124,7 @@ export default function DashboardNavigation({ routes }: { routes: Route[] }) {
                                     )}
                                 </Link>
                             </SidebarMenuButton>
+
                         )}
                     </SidebarMenuItem>
                 );

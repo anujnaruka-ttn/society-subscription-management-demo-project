@@ -51,7 +51,7 @@ export default function DashboardLayout({
 }) {
 
     return (
-        <DashboardLayoutClient>
+        <DashboardLayoutClient requiredRole="admin">
             {children}
         </DashboardLayoutClient>
     );

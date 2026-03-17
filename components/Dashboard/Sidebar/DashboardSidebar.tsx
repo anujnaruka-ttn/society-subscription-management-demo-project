@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarTrigger,
   useSidebar,
@@ -11,12 +10,10 @@ import {
 import { cn } from "@/lib/utils";
 import * as motion from "motion/react-client"
 import Logo from "@/app/icon0.svg";
-import type { Route } from "@/types/routes";
 import DashboardNavigation from "./DashboardNavigation";
 import NotificationsPopover from "./Notifications";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import NavFooter from "./NavFooter";
 import { dashboardRoutes } from "@/lib/dashboard-nav";
 import { useSelector } from "react-redux";
@@ -49,23 +46,16 @@ const sampleNotifications = [
   },
 ];
 
-const user = {
-  name: "Anuj",
-  email: "anujnaruka28@gmail.com",
-  avatar: "/avatars/01.png",
-}
-
-
 
 export default function DashboardSidebar() {
 
   const { user } = useSelector((state: any) => state.auth);
-  console.log("User in DashboardSidebar:", user);
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   const isAdmin = user?.role === "admin";
   const routes = isAdmin ? dashboardRoutes.admin : dashboardRoutes.resident;
+
 
   return (
     <Sidebar variant="inset" collapsible="icon">

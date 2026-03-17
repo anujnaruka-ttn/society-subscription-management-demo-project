@@ -51,7 +51,7 @@ export default function ResidentDashboardLayout({
 }) {
 
     return (
-        <DashboardLayoutClient>
+        <DashboardLayoutClient requiredRole="resident">
             {children}
         </DashboardLayoutClient>
     );

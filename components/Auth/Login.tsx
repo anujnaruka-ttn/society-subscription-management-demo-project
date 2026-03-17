@@ -5,8 +5,10 @@ import { Label } from "@/components/ui/label";
 import { login } from "@/lib/authApis";
 import { RoleType } from "@/types/RoleType";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
 
 type LoginFormData = {
     email: string;
@@ -19,8 +21,15 @@ export default function Login({
     role?: RoleType
 }) {
 
+    const { token, user } = useSelector((state: any) => state.auth);
     const router = useRouter();
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (token && user) {
+            router.push(user.role === "admin" ? "/admin/dashboard" : "/dashboard");
+        }
+    }, [token, user, router]);
 
     const {
         register,
@@ -28,7 +37,8 @@ export default function Login({
         formState: { errors }
     } = useForm<LoginFormData>();
 
-    const onSubmit: SubmitHandler<LoginFormData> = (data) => dispatch(login(data, router.push) as any);
+    const onSubmit: SubmitHandler<LoginFormData> = (data) => dispatch(login(data, router.push) as any)
+
 
     return (
         <AuthCommon
@@ -44,6 +54,7 @@ export default function Login({
                         id="email"
                         type="email"
                         placeholder="m@example.com"
+                        required
                         {
                         ...register("email", {
                             required: "Email is required.",
@@ -62,13 +73,15 @@ export default function Login({
                     <Input
                         id="password"
                         type="password"
+                        required
                         {...register("password", {
                             required: "Password is required.",
                             minLength: {
                                 value: 6,
                                 message: "Password must be at least 6 characters long"
                             }
-                        })}                    />
+                        })}
+                    />
                     {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
                 </div>
             </div>

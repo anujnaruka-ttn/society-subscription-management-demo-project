@@ -21,31 +21,32 @@ import {
 } from "@/components/ui/tooltip";
 import {
     CircleHelp,
-    LogOut,
-    Settings,
-    User,
+    LogOut
 } from "lucide-react";
 
 export default function NavFooter({
     user,
 }: {
     user: {
-        name: string;
-        email: string;
-        avatar: string;
+        name?: string;
+        email?: string;
+        profile_image?: string;
     };
 }) {
 
     const { state } = useSidebar();
     const isCollapsed = state === "collapsed";
+
+    const initials = user.name ? user.name.split(" ").map(n => n[0]).join("").toUpperCase() : "U";
+
     return (
         <SidebarFooter className="p-4">
             <SidebarMenu className={`justify-between ${isCollapsed ? "flex-col items-center gap-y-3" : "flex-row items-center gap-x-3"}`}>
                 <SidebarMenuItem>
                     <div className={`flex items-center ${isCollapsed ? "flex-col gap-y-2" : "flex-row gap-x-2"}`}>
                         <Avatar className="h-12 w-12 rounded-full">
-                            <AvatarImage src={user.avatar} alt={user.name} />
-                            <AvatarFallback className="rounded-full">AN</AvatarFallback>
+                            <AvatarImage src={user.profile_image} alt={user.name || "User"} />
+                            <AvatarFallback className="rounded-full">{initials}</AvatarFallback>
                         </Avatar>
 
                         <Tooltip>
@@ -62,10 +63,10 @@ export default function NavFooter({
                             >
                                 <div className="space-y-1 text-xs">
                                     <p className="font-medium">
-                                        {user.name}
+                                        {user.name || "Loading..."}
                                     </p>
                                     <p className="text-muted-foreground">
-                                        {user.email}
+                                        {user.email || ""}
                                     </p>
                                 </div>
                             </TooltipContent>
@@ -79,3 +80,4 @@ export default function NavFooter({
         </SidebarFooter>
     );
 }
+
