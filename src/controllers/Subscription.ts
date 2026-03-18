@@ -12,8 +12,10 @@ const getAllSubscriptionsController = catchAsync(
 
 const updateMonthlyRate = catchAsync(
     async (req: Request, res: Response) => {
-        const updatedSubscription = await updateSubscription(req.body);
-        return success(res, "Monthly rate updated successfully", updatedSubscription);
+        await updateSubscription(req.body);
+        // Return full list so Redux stays in sync
+        const allSubscriptions = await getAllSubscriptions();
+        return success(res, "Monthly rate updated successfully", allSubscriptions);
     }
 )
 export {
