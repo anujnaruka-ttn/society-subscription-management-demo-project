@@ -1,5 +1,11 @@
+'use client'
+
+import { ProfileContent } from '@/components/common/CommonProfile';
+
 export default function AdminProfilePage() {
     return (
-        <h1>Admin Profile Page</h1>
-    )
+        <main className='w-full h-full'>
+            <ProfileContent title="Profile" />
+        </main>
+    );
 }

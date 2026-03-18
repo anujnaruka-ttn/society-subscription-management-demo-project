@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { login } from "@/lib/authApis";
 import { RoleType } from "@/types/RoleType";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Eye, EyeOff } from 'lucide-react';
 
 import { useDispatch, useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
@@ -21,7 +22,7 @@ export default function Login({
 }: {
     role?: RoleType
 }) {
-
+    const [showPassword, setShowPassword] = useState(false);
     const { token, user } = useSelector((state: any) => state.auth);
     const router = useRouter();
     const dispatch = useDispatch();
@@ -78,17 +79,27 @@ export default function Login({
                     <div className="flex items-center">
                         <Label htmlFor="password">Password</Label>
                     </div>
-                    <Input
-                        id="password"
-                        type="password"
-                        {...register("password", {
-                            required: "Password is required.",
-                            minLength: {
-                                value: 6,
-                                message: "Password must be at least 6 characters long"
-                            }
-                        })}
-                    />
+                    <div className="relative">
+                        <Input
+                            id="password"
+                            type={showPassword ? "text" : "password"}
+                            className="pr-10"
+                            {...register("password", {
+                                required: "Password is required.",
+                                minLength: {
+                                    value: 6,
+                                    message: "Password must be at least 6 characters long"
+                                }
+                            })}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
                 </div>
             </div>

@@ -21,6 +21,7 @@ const authApis = {
     loginGoogle: apis.user + '/auth/login-google',
     changePassword: apis.user + '/change-password',
     changeProfile: apis.user + '/change-profile',
+    updateProfile: apis.user + '/update-profile',
 }
 
 const adminApis = {

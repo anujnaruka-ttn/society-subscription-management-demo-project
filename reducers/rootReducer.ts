@@ -22,7 +22,8 @@ const storage = typeof window !== "undefined" ? createWebStorage("local") : crea
 
 const rootReducer = combineReducers({
     auth: authReducer,
-    adminSubscription: adminSubscriptionReducer
+    adminSubscription: adminSubscriptionReducer,
+    
 });
 
 const persistConfig = {

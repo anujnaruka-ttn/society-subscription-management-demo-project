@@ -45,6 +45,7 @@ export const updateMonthlyRate = (subscription_id: string, monthly_rate: number,
                     Authorization: `Bearer ${token}`,
                 },
                 data: {
+                    subscription_id,
                     flat_type,
                     monthly_rate,
                     effective_from: (() => {

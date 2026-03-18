@@ -35,7 +35,7 @@ export default function NavFooter({
             <SidebarMenu className={`justify-between ${isCollapsed ? "flex-col items-center gap-y-3" : "flex-row items-center gap-x-3"}`}>
                 <SidebarMenuItem>
                     <div className={`flex items-center ${isCollapsed ? "flex-col gap-y-2" : "flex-row gap-x-2"}`}>
-                        <Avatar className="h-12 w-12 rounded-full">
+                        <Avatar className="h-12 w-12 rounded-full border-2 border-border object-cover">
                             <AvatarImage src={user?.profile_image || (user as any)?.image} alt={user?.name || "User"} />
                             <AvatarFallback className="rounded-full">{initials}</AvatarFallback>
                         </Avatar>

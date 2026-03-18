@@ -105,10 +105,8 @@ const SubscriptionClient = () => {
                         </span>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="max-w-52 text-center text-xs leading-relaxed">
-                        <p>
-                            No new flat type configurations are currently proposed for this society.
-                            New subscription plans can only be added when a new flat type is introduced.
-                        </p>
+                        No new flat type configurations are currently proposed for this society.
+                        New subscription plans can only be added when a new flat type is introduced.
                     </TooltipContent>
                 </Tooltip>
             </CardHeader>
