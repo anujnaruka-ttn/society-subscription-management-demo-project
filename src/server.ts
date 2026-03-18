@@ -7,19 +7,24 @@ import { notFound } from './utils/response.ts';
 import subscriptionRouter from './routes/subscription.routes.ts';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
+import { cloudinaryConnecter } from './config/cloudinary.ts';
 const app = express();
-app.use(express.json());
+
+// File upload middleware - MUST come before body parsers
 app.use(fileUpload({
     useTempFiles: true,
-    tempFileDir: process.platform === 'win32' ? './tmp/' : '/tmp/',
+    tempFileDir: '/tmp/', // Ubuntu/Linux temp directory
     limits: { fileSize: 800 * 1024 * 1024 }, // 800MB limit
     abortOnLimit: true,
     createParentPath: true
 }));
 
+// Body parsers - AFTER fileUpload
+app.use(express.json());
+
 app.use(cors({
     origin: ENV.FRONTEND_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE','PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
@@ -42,7 +47,7 @@ query(textQuery)
         (err: Error) => console.error('Query Failed : ' + err.message)
     )
 
-
+cloudinaryConnecter();
 
 app.get('/', (_req, res) => {
     res.json({

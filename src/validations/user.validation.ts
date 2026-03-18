@@ -29,7 +29,7 @@ const changePasswordZodSchema = z.object({
 // Schema for Update Profile
 const updateProfileZodSchema = z.object({
     name: z.string().min(1, "Name is required").optional(),
-    phone: z.string().length(10, "Phone number must be 10 digits").optional(),
+    phoneNumber: z.string().length(10, "Phone number must be 10 digits").optional(),
     profileImage: z.url().optional(),
 });
 
