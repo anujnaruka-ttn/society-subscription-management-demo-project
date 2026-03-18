@@ -24,7 +24,7 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
 
         // Check if neither Redux nor NextAuth has a user
         const isAuthenticated = !!token || status === "authenticated";
-        
+
         if (!isAuthenticated) {
             error("You are not logged in");
             router.push("/login");
@@ -35,7 +35,7 @@ export default function AuthGuard({ children, requiredRole }: AuthGuardProps) {
         const currentRole = user?.role || (session?.user as any)?.role;
         if (requiredRole && currentRole !== requiredRole) {
             error("Unauthorized access");
-            router.push("/dashboard"); 
+            router.push("/dashboard");
         }
     }, [token, user, status, session, requiredRole, router]);
 

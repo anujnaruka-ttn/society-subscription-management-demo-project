@@ -5,16 +5,22 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { FadeLoader } from "react-spinners";
-
+import { useToast } from "@/hooks/use-toast"
 
 export default function LogOut() {
 
     const dispatch = useDispatch();
     const router = useRouter();
+    const { error, success } = useToast();
 
     useEffect(() => {
         const performLogout = async () => {
-            await dispatch(logout(router.push) as any);
+            try {
+                await dispatch(logout(router.push) as any);
+                success("Logout Successful");
+            } catch (err: any) {
+                error("Logout Failed", err.message);
+            }
         };
         performLogout();
     }, [dispatch, router]);

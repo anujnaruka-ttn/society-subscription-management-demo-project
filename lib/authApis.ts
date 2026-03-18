@@ -3,7 +3,7 @@ import { authApis, apiMethods } from "./apis";
 import { setToken, setUser } from "@/reducers/authSlice";
 import { toast } from "sonner";
 import { AppDispatch, persistor } from "@/stores/store";
-import { signOut, getSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 export const login = (data: any, navigate: any) => {
     return async (dispatch: AppDispatch) => {
@@ -52,35 +52,23 @@ export const signup = (data: any, navigate: any) => {
 
 export const logout = (navigate: any) => {
     return async (dispatch: AppDispatch) => {
-
         try {
-            // 1. Clear Redux state & LocalStorage
+
+            await signOut({ redirect: false });
+            // 1. Clear Redux and Persistor FIRST
             dispatch(setToken(null));
             dispatch(setUser(null));
+
             try {
                 await persistor.purge();
             } catch (purgeError) {
                 console.warn("Purge failed:", purgeError);
             }
-
-            // 2. Check if we have an active NextAuth (Google) session
-            const session = await getSession();
-
-            if (session) {
-                console.log("Signing out from NextAuth session...");
-                await signOut({ callbackUrl: "/login" });
-                toast.success("Logout Successful");
-                return; // signOut will handle the redirect
-            }
-
-            // Navigate to login after everything is cleared
-            toast.success("Logout Successful");
             navigate("/login");
+
         } catch (error: any) {
             console.error("Logout Error:", error);
-            navigate("/login"); // Fallback
-            toast.error("Logout Failed");
+            navigate("/login");
         }
-
     };
 };

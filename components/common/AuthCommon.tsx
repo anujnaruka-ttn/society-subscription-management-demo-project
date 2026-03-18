@@ -13,7 +13,7 @@ import GoogleIcon from "@/public/assets/google.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { RoleType } from "@/types/RoleType";
 
 interface AuthCommonProps {
@@ -27,7 +27,6 @@ interface AuthCommonProps {
 
 const AuthCommon = ({ children, title, description, feature, onSubmit, role }: AuthCommonProps) => {
     const path = usePathname();
-    const { data: session } = useSession();
 
     return (
         <Card className="w-full max-w-sm">
@@ -57,12 +56,12 @@ const AuthCommon = ({ children, title, description, feature, onSubmit, role }: A
                     <Button type="submit" className="w-full">
                         {feature}
                     </Button>
-                    <Button 
-                        type="button" 
-                        variant="outline" 
+                    <Button
+                        type="button"
+                        variant="outline"
                         className="w-full"
-                        onClick={() => signIn('google', { 
-                            callbackUrl: role === "admin" ? "/admin/dashboard" : "/dashboard" 
+                        onClick={() => signIn('google', {
+                            callbackUrl: role === "admin" ? "/admin/dashboard" : "/dashboard"
                         })}
                     >
                         <span>
