@@ -2,7 +2,7 @@ import { apiConnector } from "./apiConnector";
 import { authApis, apiMethods } from "./apis";
 import { toast } from "sonner";
 import { AppDispatch } from "@/stores/store";
-import { setUser } from "@/reducers/authSlice";
+import { setUser } from "@/reducers/slices/authSlice";
 
 // Upload profile image only
 export const changeProfile = (profileImage: File) => {

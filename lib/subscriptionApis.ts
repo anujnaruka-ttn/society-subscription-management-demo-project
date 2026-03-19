@@ -1,4 +1,4 @@
-import { setSubscriptions } from "@/reducers/adminSubscriptionSlice";
+import { setSubscriptions } from "@/reducers/slices/adminSubscriptionSlice";
 import { adminApis, apiMethods } from "./apis";
 import { apiConnector } from "./apiConnector";
 

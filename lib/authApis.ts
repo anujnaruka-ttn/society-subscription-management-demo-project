@@ -1,6 +1,6 @@
 import { apiConnector } from "./apiConnector";
 import { authApis, apiMethods } from "./apis";
-import { setToken, setUser } from "@/reducers/authSlice";
+import { setToken, setUser, logout as logOutReducer } from "@/reducers/slices/authSlice";
 import { toast } from "sonner";
 import { AppDispatch, persistor } from "@/stores/store";
 import { signOut } from "next-auth/react";
@@ -56,9 +56,9 @@ export const logout = (navigate: any) => {
 
             await signOut({ redirect: false });
             // 1. Clear Redux and Persistor FIRST
-            dispatch(setToken(null));
-            dispatch(setUser(null));
-
+            // dispatch(setToken(null));
+            // dispatch(setUser(null));
+            dispatch(logOutReducer());
             try {
                 await persistor.purge();
             } catch (purgeError) {

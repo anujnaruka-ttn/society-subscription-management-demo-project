@@ -1,6 +1,6 @@
-import authReducer from "@/reducers/authSlice";
-import adminSubscriptionReducer from "@/reducers/adminSubscriptionSlice";
-import flatResidentsReducer from "@/reducers/flatResidentsSlice";
+import authReducer from "@/reducers/slices/authSlice";
+import adminSubscriptionReducer from "@/reducers/slices/adminSubscriptionSlice";
+import flatReducer from "@/reducers/slices/flatSlice";
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -24,7 +24,7 @@ const storage = typeof window !== "undefined" ? createWebStorage("local") : crea
 const rootReducer = combineReducers({
     auth: authReducer,
     adminSubscription: adminSubscriptionReducer,
-    flatResidents: flatResidentsReducer,
+    flat: flatReducer,
 });
 
 const persistConfig = {

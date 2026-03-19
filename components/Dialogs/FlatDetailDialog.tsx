@@ -25,23 +25,22 @@ import {
 } from "@/components/ui/select"
 import { DialogProps } from "@/types/dialogProps"
 import { FlatData, ResidentData } from "@/types/flatData"
-import { getResidents } from "@/lib/flatApis"
+import { getResidents, addFlat } from "@/lib/flatApis"
 import { RootState } from "@/stores/store"
 import ResidentDropdown from "@/components/common/ResidentDropdown"
 import CommonBadge from "@/components/common/CommonBadge";
-
 const FLAT_TYPE_OPTIONS = [
-    { value: "1", label: "1 BHK" },
-    { value: "2", label: "2 BHK" },
-    { value: "3", label: "3 BHK" },
-    { value: "4", label: "4 BHK" },
+    { value: "1BHK", label: "1 BHK" },
+    { value: "2BHK", label: "2 BHK" },
+    { value: "3BHK", label: "3 BHK" },
+    { value: "4BHK", label: "4 BHK" },
 ];
 
 export default function FlatDetailDialog(
     { children, dialogProps, flatDetails }: { children: React.ReactNode, dialogProps: DialogProps, flatDetails: FlatData }
 ) {
     const dispatch = useDispatch();
-    const residents = useSelector((state: RootState) => state.flatResidents.residents);
+    const residents = useSelector((state: RootState) => state.flat.residents);
     const [selectedOwnerId, setSelectedOwnerId] = useState<string>(flatDetails.owner_id || "");
     const [selectedResidentIds, setSelectedResidentIds] = useState<string[]>(flatDetails.resident_ids || []);
     const [selectedOwnerData, setSelectedOwnerData] = useState<ResidentData | null>(null);
@@ -55,8 +54,6 @@ export default function FlatDetailDialog(
         handleSubmit,
         control,
         formState: { errors },
-        reset,
-        watch,
         setValue,
     } = useForm<FlatData>({
         defaultValues: flatDetails,
@@ -92,7 +89,7 @@ export default function FlatDetailDialog(
     };
 
     // Handle form submission
-    const onSubmit: SubmitHandler<FlatData> = (data: FlatData) => {
+    const onSubmit: SubmitHandler<FlatData> = async (data: FlatData) => {
         console.log("Form submitted with data:", {
             ...data,
             owner_id: selectedOwnerId,
@@ -104,12 +101,28 @@ export default function FlatDetailDialog(
             selectedResidentIds,
             errors: Object.keys(errors).length > 0 ? errors : "No errors",
         });
-        // Add your API call here
+        
+        try {
+            // Dispatch addFlat action with the form data
+            await dispatch(addFlat({
+                flat_type: data.flat_type,
+                flat_number: data.flat_number,
+                floor_number: data.floor_number,
+                owner_id: selectedOwnerId,
+                resident_ids: selectedResidentIds,
+            }) as any);
+            
+            // Close dialog after successful submission
+            setOpen(false);
+            
+        } catch (error) {
+            console.error('Error adding flat:', error);
+        }
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form>
                 <DialogTrigger asChild>
                     {children}
                 </DialogTrigger>
@@ -153,19 +166,37 @@ export default function FlatDetailDialog(
                             )}
                         </div>
 
-                        {/* Flat Address */}
+                        {/* Flat Number */}
                         <div className="space-y-2">
-                            <Label htmlFor="flatAddress">Flat Address</Label>
+                            <Label htmlFor="flat_number">Flat Number</Label>
                             <Input
-                                id="flatAddress"
-                                placeholder="Enter flat address"
-                                {...register("flatAddress", isNewFlat ? {
-                                    required: "Flat address is required",
+                                id="flat_number"
+                                placeholder="Enter flat number (e.g., 101)"
+                                {...register("flat_number", isNewFlat ? {
+                                    required: "Flat number is required",
                                 } : {})}
-                                className={errors.flatAddress ? "border-red-500" : ""}
+                                className={errors.flat_number ? "border-red-500" : ""}
                             />
-                            {errors.flatAddress && (
-                                <p className="text-sm text-red-500">{errors.flatAddress.message}</p>
+                            {errors.flat_number && (
+                                <p className="text-sm text-red-500">{errors.flat_number.message}</p>
+                            )}
+                        </div>
+
+                        {/* Floor Number */}
+                        <div className="space-y-2">
+                            <Label htmlFor="floor_number">Floor Number</Label>
+                            <Input
+                                id="floor_number"
+                                type="number"
+                                placeholder="Enter floor number"
+                                {...register("floor_number", isNewFlat ? {
+                                    required: "Floor number is required",
+                                    valueAsNumber: true,
+                                } : {})}
+                                className={errors.floor_number ? "border-red-500" : ""}
+                            />
+                            {errors.floor_number && (
+                                <p className="text-sm text-red-500">{errors.floor_number.message}</p>
                             )}
                         </div>
                         {/* Owner Selection Dropdown */}
@@ -226,7 +257,10 @@ export default function FlatDetailDialog(
                         </Button>
                         <Button 
                             type="submit"
-                            onClick={() => console.log("Save button clicked, current errors:", errors)}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                handleSubmit(onSubmit)();
+                            }}
                         >
                             Save changes
                         </Button>

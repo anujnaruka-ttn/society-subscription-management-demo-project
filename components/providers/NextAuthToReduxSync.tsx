@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setToken, setUser } from "@/reducers/authSlice";
+import { setToken, setUser } from "@/reducers/slices/authSlice";
 
 export default function NextAuthToReduxSync({ children }: { children: React.ReactNode }) {
     const { data: session, status } = useSession();

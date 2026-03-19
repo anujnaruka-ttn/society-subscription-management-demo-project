@@ -27,7 +27,8 @@ const authApis = {
 const adminApis = {
     getSubscriptions: apis.subscription + '/',
     updateSubscriptionRate: apis.subscription + '/update-monthly-rate',
-    getResidents: apis.flat + '/residents'
+    getResidents: apis.flat + '/residents',
+    addFlat: apis.flat + '/add-flat'
 }
 
 export {

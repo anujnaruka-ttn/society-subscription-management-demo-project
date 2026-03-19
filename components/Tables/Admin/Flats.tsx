@@ -87,8 +87,18 @@ const columns: ColumnDef<FlatData>[] = [
         header: "Phone",
     },
     {
-        accessorKey: "flatAddress",
-        header: "Flat Address",
+        accessorKey: "flat_number",
+        header: "Flat Number",
+        cell: ({ row }) => (
+            <span className="font-medium">{row.getValue("flat_number")}</span>
+        ),
+    },
+    {
+        accessorKey: "floor_number",
+        header: "Floor",
+        cell: ({ row }) => (
+            <span className="font-medium">Floor {row.getValue("floor_number")}</span>
+        ),
     },
     {
         id: "actions",
@@ -135,72 +145,90 @@ const data: FlatData[] = [
         owner: "Anuj Naruka",
         email: "anuj@example.com",
         phone: "+91 9876543210",
-        flatAddress: "Tower A, 101",
+        flat_number: "101",
+        floor_number: 1,
+        flat_type: "2",
     },
     {
         id: "2",
         owner: "John Doe",
         email: "john@example.com",
         phone: "+91 9876543211",
-        flatAddress: "Tower B, 202",
+        flat_number: "202",
+        floor_number: 2,
+        flat_type: "3",
     },
     {
         id: "3",
         owner: "Alice Smith",
         email: "alice@example.com",
         phone: "+91 9876543212",
-        flatAddress: "Tower C, 303",
+        flat_number: "303",
+        floor_number: 3,
+        flat_type: "1",
     },
     {
         id: "4",
         owner: "Bob Johnson",
         email: "bob@example.com",
         phone: "+91 9876543213",
-        flatAddress: "Tower D, 404",
+        flat_number: "404",
+        floor_number: 4,
+        flat_type: "2",
     },
     {
         id: "5",
         owner: "Emma Wilson",
         email: "emma@example.com",
         phone: "+91 9876543214",
-        flatAddress: "Tower A, 505",
+        flat_number: "505",
+        floor_number: 5,
+        flat_type: "3",
     },
     {
         id: "6",
         owner: "Michael Brown",
         email: "michael@example.com",
         phone: "+91 9876543215",
-        flatAddress: "Tower B, 606",
+        flat_number: "606",
+        floor_number: 6,
+        flat_type: "4",
     },
     {
         id: "7",
         owner: "Sarah Davis",
         email: "sarah@example.com",
         phone: "+91 9876543216",
-        flatAddress: "Tower C, 707",
-
+        flat_number: "707",
+        floor_number: 7,
+        flat_type: "2",
     },
     {
         id: "8",
         owner: "David Clark",
         email: "david@example.com",
         phone: "+91 9876543217",
-        flatAddress: "Tower D, 808",
-
+        flat_number: "808",
+        floor_number: 8,
+        flat_type: "1",
     },
     {
         id: "9",
         owner: "James Miller",
         email: "james@example.com",
         phone: "+91 9876543218",
-        flatAddress: "Tower A, 909",
+        flat_number: "909",
+        floor_number: 9,
+        flat_type: "3",
     },
     {
         id: "10",
         owner: "Linda White",
         email: "linda@example.com",
         phone: "+91 9876543219",
-        flatAddress: "Tower B, 1010",
+        flat_number: "1010",
+        floor_number: 10,
+        flat_type: "2",
     },
 ];
 
@@ -263,7 +291,7 @@ export default function FlatsTable() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="h-8 md:w-full w-64 md:flex-1"
                 />
-                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add a new flat to the society" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
+                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add a new flat to the society" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flat_number: "", floor_number: 0, flat_type: "" }}>
                     <Button
                         variant="outline"
                         size="icon-lg"
