@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getSubscriptions, updateMonthlyRate } from '@/lib/subscriptionApis';
-import { toast } from 'sonner';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useToast } from '@/hooks/use-toast';
 
 const SubscriptionClient = () => {
 
@@ -20,6 +20,8 @@ const SubscriptionClient = () => {
     const [monthlyRates, setMonthlyRates] = useState<Record<string, string | number>>({});
 
     const dispatch = useDispatch();
+
+    const { error } = useToast();
 
     useEffect(() => {
         dispatch(getSubscriptions() as any);
@@ -55,19 +57,18 @@ const SubscriptionClient = () => {
         if (e.key === 'Enter') {
             const newRate = Number(monthlyRates[id]);
             if (isNaN(newRate) || newRate <= 0) {
-                toast.error('Please enter a valid monthly rate');
+                error('Please enter a valid monthly rate');
                 return;
             }
             // Find the flat_type for this subscription (backend requires flat_type, not id)
             const flat_type = subscriptions.find((s: any) => s.id === id)?.flat_type;
             if (!flat_type) {
-                toast.error('Could not find subscription details');
+                error('Could not find subscription details');
                 return;
             }
             dispatch(updateMonthlyRate(id, newRate, flat_type) as any);
             // Re-disable the input after saving
             setToggleDisableMonthlyRateInput(prev => ({ ...prev, [id]: true }));
-            toast.success('Monthly rate updated successfully');
         }
         if (e.key === 'Escape') {
             // Cancel edit: restore original value and re-disable
@@ -120,7 +121,7 @@ const SubscriptionClient = () => {
                             {/* Flat Type Box */}
                             <div className="flex flex-col gap-1">
                                 <span className="text-[10px] uppercase font-bold text-muted-foreground/70 tracking-wider">Flat Type</span>
-                                <div className='w-full min-w-25 h-12 px-4 flex items-center justify-center bg-muted rounded-lg border border-border/50 font-bold text-lg shadow-inner'>
+                                <div className='w-full min-w-25 h-12 px-4 flex items-center justify-center bg-muted rounded-lg border border-border/50 font-bold text-lg shadow-inner uppercase'>
                                     {item.flat_type}
                                 </div>
                             </div>

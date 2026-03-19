@@ -1,6 +1,7 @@
 import { setSubscriptions } from "@/reducers/slices/adminSubscriptionSlice";
 import { adminApis, apiMethods } from "./apis";
 import { apiConnector } from "./apiConnector";
+import { toast } from "sonner";
 
 export const getSubscriptions = () => {
     return async (dispatch: any, getState: any) => {
@@ -9,7 +10,7 @@ export const getSubscriptions = () => {
             const token = auth?.token;
 
             if (!token) {
-                console.error("No token found - user not authenticated");
+                toast.error("No token found - user not authenticated");
                 return;
             }
 
@@ -21,8 +22,9 @@ export const getSubscriptions = () => {
                 }
             });
             dispatch(setSubscriptions(response.data.data));
+            toast.success("Subscriptions fetched successfully");
         } catch (error: any) {
-            console.error("Error fetching subscriptions:", error);
+            toast.error("Error fetching subscriptions:", error.message);
         }
     }
 }
@@ -34,7 +36,7 @@ export const updateMonthlyRate = (subscription_id: string, monthly_rate: number,
             const token = auth?.token;
 
             if (!token) {
-                console.error("No token found - user not authenticated");
+                toast.error("No token found - user not authenticated");
                 return;
             }
 
@@ -46,7 +48,7 @@ export const updateMonthlyRate = (subscription_id: string, monthly_rate: number,
                 },
                 data: {
                     subscription_id,
-                    flat_type,
+                    flat_type: flat_type.toLowerCase(),
                     monthly_rate,
                     effective_from: (() => {
                         const d = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
@@ -57,8 +59,9 @@ export const updateMonthlyRate = (subscription_id: string, monthly_rate: number,
                 }
             });
             dispatch(setSubscriptions(response.data.data));
+            toast.success("Monthly rate updated successfully");
         } catch (error: any) {
-            console.error("Error updating monthly rate:", error);
+            toast.error("Error updating monthly rate:", error.message);
         }
     }
 }

@@ -105,6 +105,7 @@ export default function FlatDetailDialog(
         try {
             // Dispatch addFlat action with the form data
             await dispatch(addFlat({
+                id: flatDetails.id, // Important: pass the ID for updates
                 flat_type: data.flat_type,
                 flat_number: data.flat_number,
                 floor_number: data.floor_number,
