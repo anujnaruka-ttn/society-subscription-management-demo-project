@@ -1,10 +1,11 @@
 import express from 'express';
 import { ENV } from './validations/env.validation.ts';
 import { query } from './config/db.ts';
-import userRouter from './routes/user.routes.ts';
 import { globalErrorHandler } from './middlewares/error.middleware.ts';
 import { notFound } from './utils/response.ts';
+import userRouter from './routes/user.routes.ts';
 import subscriptionRouter from './routes/subscription.routes.ts';
+import flatRouter from './routes/flat.routes.ts';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import { cloudinaryConnecter } from './config/cloudinary.ts';
@@ -31,6 +32,7 @@ app.use(cors({
 
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
+app.use('/api/v1/flats', flatRouter);
 
 const PORT = ENV.PORT;
 
