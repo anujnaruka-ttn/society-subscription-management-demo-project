@@ -4,7 +4,7 @@ const apis = {
     user: BASE_URL + '/user',
     subscription: BASE_URL + '/subscriptions',
     payment: BASE_URL + '/payment',
-    flat: BASE_URL + '/flat',
+    flat: BASE_URL + '/flats',
 }
 
 const apiMethods = {
@@ -27,6 +27,7 @@ const authApis = {
 const adminApis = {
     getSubscriptions: apis.subscription + '/',
     updateSubscriptionRate: apis.subscription + '/update-monthly-rate',
+    getResidents: apis.flat + '/residents'
 }
 
 export {

@@ -263,11 +263,11 @@ export default function FlatsTable() {
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="h-8 md:w-full w-64 md:flex-1"
                 />
-                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add Flat" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
+                <FlatDetailDialog dialogProps={{ title: "Add Flat", description: "Add a new flat to the society" }} flatDetails={{ id: "", owner: "", email: "", phone: "", flatAddress: "" }}>
                     <Button
                         variant="outline"
                         size="icon-lg"
-                        className="w-full md:w-fit px-3 ml-auto h-8"
+                        className="w-full md:w-fit px-3 ml-auto h-8 hover:text-white"
                     >
                         <GoPlusCircle />
                         Add Flat

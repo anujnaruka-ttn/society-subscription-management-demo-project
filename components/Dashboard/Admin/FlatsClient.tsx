@@ -1,13 +1,13 @@
 'use client'
 
 import FlatsTable from "@/components/Tables/Admin/Flats";
-import CommonAdminClient from "../common/CommonAdminClient";
+import CommonHeader from "../common/CommonHeader";
 
 const FlatsClient = () => {
     return (
-        <CommonAdminClient title="Flats & Residents" description="Manage society flats, resident assignments, and occupancy status">
+        <CommonHeader title="Flats & Residents" description="Manage society flats, resident assignments, and occupancy status">
             <FlatsTable />
-        </CommonAdminClient>
+        </CommonHeader>
 
     )
 }

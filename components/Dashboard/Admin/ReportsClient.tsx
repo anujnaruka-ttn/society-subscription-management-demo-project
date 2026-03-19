@@ -1,16 +1,16 @@
 "use client"
 
-import CommonAdminClient from "../common/CommonAdminClient";
+import CommonHeader from "../common/CommonHeader";
 import Reports from "./Reports";
 
 const ReportsClient = () => {
     return (
-        <CommonAdminClient
+        <CommonHeader
             title="Reports"
             description="Generates monthly and yearly financial reports."
         >
             <Reports />
-        </CommonAdminClient>
+        </CommonHeader>
     )
 }
 

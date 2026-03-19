@@ -74,19 +74,7 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
     };
 
     return (
-        <main className='w-full h-fit flex flex-col gap-6'>
-            <Card className='w-full h-full bg-transparent border-none shadow-none p-6'>
-                <CardHeader className='w-full px-0 pt-0 pb-8 flex flex-row justify-between items-center'>
-                    <div className='flex flex-col gap-1.5'>
-                        <CardTitle className="text-2xl font-bold tracking-tight capitalize">
-                            {title}
-                        </CardTitle>
-                        <CardDescription className="text-muted-foreground">
-                            {description}
-                        </CardDescription>
-                    </div>
-                </CardHeader>
-
+            <Card className='w-full h-full bg-transparent border-none shadow-none p-0'>
                 <CardContent className='p-0 flex flex-col gap-4'>
                     {/* Profile Card with Avatar and Basic Info */}
                     <Card className='border-richblack-700 bg-richblack-800'>
@@ -230,7 +218,7 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
                                 </div>
 
                                 {/* Update Password Button */}
-                                <Button className='w-full mt-4 hover:text-white'
+                                <Button className='w-fit mt-4 hover:text-white'
                                 variant={"outline"}>
                                     Update Password
                                 </Button>
@@ -239,6 +227,5 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
                     </Card>
                 </CardContent>
             </Card>
-        </main>
     );
 };

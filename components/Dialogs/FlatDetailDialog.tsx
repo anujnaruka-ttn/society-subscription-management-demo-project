@@ -1,3 +1,8 @@
+'use client'
+
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -11,16 +16,100 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { DialogProps } from "@/types/dialogProps"
-import { FlatData } from "@/types/flatData"
+import { FlatData, ResidentData } from "@/types/flatData"
+import { getResidents } from "@/lib/flatApis"
+import { RootState } from "@/stores/store"
+import ResidentDropdown from "@/components/common/ResidentDropdown"
+import CommonBadge from "@/components/common/CommonBadge";
+
+const FLAT_TYPE_OPTIONS = [
+    { value: "1", label: "1 BHK" },
+    { value: "2", label: "2 BHK" },
+    { value: "3", label: "3 BHK" },
+    { value: "4", label: "4 BHK" },
+];
 
 export default function FlatDetailDialog(
     { children, dialogProps, flatDetails }: { children: React.ReactNode, dialogProps: DialogProps, flatDetails: FlatData }
 ) {
-    return (
-        <Dialog>
+    const dispatch = useDispatch();
+    const residents = useSelector((state: RootState) => state.flatResidents.residents);
+    const [selectedOwnerId, setSelectedOwnerId] = useState<string>(flatDetails.owner_id || "");
+    const [selectedResidentIds, setSelectedResidentIds] = useState<string[]>(flatDetails.resident_ids || []);
+    const [selectedOwnerData, setSelectedOwnerData] = useState<ResidentData | null>(null);
+    const [open, setOpen] = useState(false);
+    
+    // Determine if this is a new flat (no id) or existing flat (has id)
+    const isNewFlat = !flatDetails.id;
 
-            <form>
+    const {
+        register,
+        handleSubmit,
+        control,
+        formState: { errors },
+        reset,
+        watch,
+        setValue,
+    } = useForm<FlatData>({
+        defaultValues: flatDetails,
+        mode: "onSubmit",
+        reValidateMode: "onSubmit",
+    });
+
+    useEffect(() => {
+        if (open && residents.length === 0) {
+            dispatch(getResidents() as any);
+        }
+    }, [open, dispatch, residents.length]);
+
+    // Update owner details when owner is selected
+    useEffect(() => {
+        if (selectedOwnerId) {
+            const owner = residents.find(r => r.id === selectedOwnerId);
+            if (owner) {
+                setSelectedOwnerData(owner);
+                setValue("owner_id", owner.id);
+            }
+        } else {
+            setSelectedOwnerData(null);
+            setValue("owner_id", undefined);
+        }
+    }, [selectedOwnerId, residents, setValue]);
+
+    // Handle owner removal
+    const handleOwnerRemove = () => {
+        setSelectedOwnerId("");
+        setSelectedOwnerData(null);
+        setValue("owner_id", undefined);
+    };
+
+    // Handle form submission
+    const onSubmit: SubmitHandler<FlatData> = (data: FlatData) => {
+        console.log("Form submitted with data:", {
+            ...data,
+            owner_id: selectedOwnerId,
+            resident_ids: selectedResidentIds,
+        });
+        console.log("Current form state:", {
+            isNewFlat,
+            selectedOwnerId,
+            selectedResidentIds,
+            errors: Object.keys(errors).length > 0 ? errors : "No errors",
+        });
+        // Add your API call here
+    };
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogTrigger asChild>
                     {children}
                 </DialogTrigger>
@@ -34,24 +123,116 @@ export default function FlatDetailDialog(
                         </DialogDescription>
                     </DialogHeader>
 
-                    <Label htmlFor="owner-1">Owner</Label>
-                    <Input id="owner-1" name="owner" defaultValue={flatDetails.owner} />
-                    <Label htmlFor="email-1">Email</Label>
-                    <Input id="email-1" name="email" defaultValue={flatDetails.email} />
-                    <Label htmlFor="phone-1">Phone</Label>
-                    <Input id="phone-1" name="phone" defaultValue={flatDetails.phone} />
-                    <Label htmlFor="flatAddress-1">Flat Address</Label>
-                    <Input id="flatAddress-1" name="flatAddress" defaultValue={flatDetails.flatAddress} />
+                    <div className="space-y-4">
+                        {/* Flat Type Dropdown */}
+                        <div className="space-y-2">
+                            <Label htmlFor="flat_type">Flat Type</Label>
+                            <Controller
+                                name="flat_type"
+                                control={control}
+                                rules={isNewFlat ? {
+                                    required: "Flat type is required",
+                                } : {}}
+                                render={({ field }) => (
+                                    <Select value={field.value || ""} onValueChange={field.onChange}>
+                                        <SelectTrigger id="flat_type" className={errors.flat_type ? "border-red-500" : ""}>
+                                            <SelectValue placeholder="Select flat type" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {FLAT_TYPE_OPTIONS.map((option) => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                            {errors.flat_type && (
+                                <p className="text-sm text-red-500">{errors.flat_type.message}</p>
+                            )}
+                        </div>
+
+                        {/* Flat Address */}
+                        <div className="space-y-2">
+                            <Label htmlFor="flatAddress">Flat Address</Label>
+                            <Input
+                                id="flatAddress"
+                                placeholder="Enter flat address"
+                                {...register("flatAddress", isNewFlat ? {
+                                    required: "Flat address is required",
+                                } : {})}
+                                className={errors.flatAddress ? "border-red-500" : ""}
+                            />
+                            {errors.flatAddress && (
+                                <p className="text-sm text-red-500">{errors.flatAddress.message}</p>
+                            )}
+                        </div>
+                        {/* Owner Selection Dropdown */}
+                        <div className="space-y-2">
+                            <Label>Select Owner</Label>
+                            <ResidentDropdown
+                                items={residents}
+                                selectedIds={selectedOwnerId ? [selectedOwnerId] : []}
+                                onSelect={(id) => setSelectedOwnerId(id)}
+                                isMultiple={false}
+                                label="Select Owner"
+                                triggerText="Add Owner"
+                            />
+
+                            {/* Owner Badge */}
+                            <CommonBadge
+                                items={selectedOwnerData}
+                                onRemove={handleOwnerRemove}
+                                variant="default"
+                                isSingle={true}
+                            />
+                        </div>
+
+                        {/* Residents Selection Dropdown with Checkboxes */}
+                        <div className="space-y-2">
+                            <Label>Select Residents</Label>
+                            <ResidentDropdown
+                                items={residents}
+                                selectedIds={selectedResidentIds}
+                                onSelect={(id) => {
+                                    setSelectedResidentIds(prev =>
+                                        prev.includes(id) ? prev.filter(rid => rid !== id) : [...prev, id]
+                                    );
+                                }}
+                                isMultiple={true}
+                                label="Select Residents"
+                                triggerText="Add Residents"
+                                filterOutIds={[selectedOwnerId]}
+                            />
+
+                            {/* Residents Badges */}
+                            <CommonBadge
+                                items={selectedResidentIds.map(id => residents.find(r => r.id === id)).filter(Boolean) as ResidentData[]}
+                                onRemove={(id) => setSelectedResidentIds(prev => prev.filter(rid => rid !== id))}
+                                variant="secondary"
+                                isSingle={false}
+                            />
+                        </div>
+                    </div>
 
                     <DialogFooter>
-                        <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button type="submit">Save changes</Button>
+                        <Button 
+                            variant="outline" 
+                            className="hover:text-white"
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancel
+                        </Button>
+                        <Button 
+                            type="submit"
+                            onClick={() => console.log("Save button clicked, current errors:", errors)}
+                        >
+                            Save changes
+                        </Button>
                     </DialogFooter>
 
                 </DialogContent>
-
             </form>
         </Dialog>
     )

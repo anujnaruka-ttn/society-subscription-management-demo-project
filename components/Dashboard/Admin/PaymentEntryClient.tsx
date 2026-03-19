@@ -1,13 +1,13 @@
 "use client"
 
 import PaymentEntryTable from "@/components/Tables/Admin/PaymentEntry";
-import CommonAdminClient from "../common/CommonAdminClient";
+import CommonHeader from "../common/CommonHeader";
 
 const PaymentEntryClient = () => {
     return (
-        <CommonAdminClient title="Payment Entry" description="Record and manage manual subscription payments from residents">
+        <CommonHeader title="Payment Entry" description="Record and manage manual subscription payments from residents">
             <PaymentEntryTable />
-        </CommonAdminClient >
+        </CommonHeader >
     )
 }
 
