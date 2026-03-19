@@ -1,3 +1,6 @@
+import { query } from "../config/db";
+import { CREATE_BILLING_RECORDS_TABLE } from "../queries/schemas";
+
 export interface IBilling {
     id: string;
     flat_id: string;
@@ -9,3 +12,8 @@ export interface IBilling {
     created_at?: Date;
     updated_at?: Date;
 }
+
+export const initBilling = async () => {
+    await query(CREATE_BILLING_RECORDS_TABLE);
+    console.log("Billing records table initialized successfully");
+};

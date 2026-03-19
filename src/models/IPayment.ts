@@ -1,3 +1,6 @@
+import { query } from "../config/db";
+import { CREATE_PAYMENTS_TABLE } from "../queries/schemas";
+
 export interface IPayment {
     id: string;
     bill_id: string;
@@ -12,3 +15,8 @@ export interface IPayment {
     created_at?: Date;
     updated_at?: Date;
 }
+
+export const initPayments = async () => {
+    await query(CREATE_PAYMENTS_TABLE);
+    console.log("Payments table initialized successfully");
+};

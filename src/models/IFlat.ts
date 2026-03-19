@@ -1,3 +1,5 @@
+import { query } from "../config/db";
+import { CREATE_FLATS_TABLE, ALTER_USERS_FLAT_FK } from "../queries/schemas";
 import { FlatType } from "../types/flatTypes";
 
 export interface IFlat {
@@ -11,3 +13,9 @@ export interface IFlat {
     created_at?: Date;
     updated_at?: Date;
 }
+
+export const initFlats = async () => {
+    await query(CREATE_FLATS_TABLE);
+    await query(ALTER_USERS_FLAT_FK);
+    console.log("Flats table initialized successfully");
+};

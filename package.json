@@ -8,7 +8,8 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "seed:admin": "ts-node src/scripts/admin-seed.ts"
+    "seed:admin": "ts-node src/scripts/admin-seed.ts",
+    "seed:subscriptions": "ts-node src/scripts/subscription-seed.ts"
   },
   "repository": {
     "type": "git",

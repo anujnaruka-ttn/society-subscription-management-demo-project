@@ -1,3 +1,5 @@
+import { query } from "../config/db";
+import { CREATE_SUBSCRIPTION_PLANS_TABLE } from "../queries/schemas";
 import { FlatType } from "../types/flatTypes";
 
 export interface ISubscription {
@@ -9,3 +11,8 @@ export interface ISubscription {
     created_at?: Date;
     updated_at?: Date;
 }
+
+export const initSubscriptions = async () => {
+    await query(CREATE_SUBSCRIPTION_PLANS_TABLE);
+    console.log("Subscription plans table initialized successfully");
+};

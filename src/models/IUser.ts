@@ -1,3 +1,5 @@
+import { query } from "../config/db";
+import { CREATE_USERS_TABLE } from "../queries/schemas";
 import { Role } from "../types/roles";
 
 export interface IUser {
@@ -15,3 +17,8 @@ export interface IUser {
     created_at?: Date;
     updated_at?: Date;
 }
+
+export const initUsers = async () => {
+    await query(CREATE_USERS_TABLE);
+    console.log("Users table initialized successfully");
+};
