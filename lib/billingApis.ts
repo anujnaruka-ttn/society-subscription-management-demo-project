@@ -1,11 +1,10 @@
 import { apiConnector } from "./apiConnector";
 import { adminApis, apiMethods } from "./apis";
-import { setResidents, setFlats, addFlat as addFlatAction, removeFlat } from "@/reducers/slices/flatSlice";
+import { setBillingRecords, updateBillingRecord as updateBillingRecordAction, removeBillingRecord, setLoading } from "@/reducers/slices/billingSlice";
 import { toast } from "sonner";
 import { AppDispatch } from "@/stores/store";
 
-export const getResidents = () => {
-
+export const getAllBillingRecords = () => {
     return async (dispatch: AppDispatch, getState: any) => {
         
         const state = getState();
@@ -16,27 +15,31 @@ export const getResidents = () => {
             return;
         }
         
+        dispatch(setLoading(true));
+        
         try {
             const response = await apiConnector({
                 method: apiMethods.GET,
-                url: adminApis.getResidents,
+                url: adminApis.billing,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
             });
 
             if (response.data.success) {
-                dispatch(setResidents(response.data.data));
+                dispatch(setBillingRecords(response.data.data));
                 return response.data.data;
             }
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to fetch residents");
-            console.error("Error fetching residents:", error);
+            toast.error(error.response?.data?.message || "Failed to fetch billing records");
+            console.error("Error fetching billing records:", error);
+        } finally {
+            dispatch(setLoading(false));
         }
     };
 };
 
-export const getFlats = () => {
+export const getBillingRecordsByMonth = (month: number, year: number) => {
     return async (dispatch: AppDispatch, getState: any) => {
         
         const state = getState();
@@ -47,27 +50,31 @@ export const getFlats = () => {
             return;
         }
         
+        dispatch(setLoading(true));
+        
         try {
             const response = await apiConnector({
                 method: apiMethods.GET,
-                url: adminApis.getFlats,
+                url: `${adminApis.billing}/month?month=${month}&year=${year}`,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
             });
 
             if (response.data.success) {
-                dispatch(setFlats(response.data.data));
+                dispatch(setBillingRecords(response.data.data));
                 return response.data.data;
             }
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to fetch flats");
-            console.error("Error fetching flats:", error);
+            toast.error(error.response?.data?.message || "Failed to fetch billing records");
+            console.error("Error fetching billing records:", error);
+        } finally {
+            dispatch(setLoading(false));
         }
     };
 };
 
-export const addFlat = (flatData: any) => {
+export const updateBillingStatus = (billingId: string, status: string) => {
     return async (dispatch: AppDispatch, getState: any) => {
         
         const state = getState();
@@ -80,28 +87,28 @@ export const addFlat = (flatData: any) => {
         
         try {
             const response = await apiConnector({
-                method: apiMethods.POST,
-                url: adminApis.addFlat,
+                method: apiMethods.PUT,
+                url: `${adminApis.billing}/${billingId}/status`,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                data: flatData
+                data: { status }
             });
 
             if (response.data.success) {
-                dispatch(addFlatAction(response.data.data));
-                toast.success("Flat added successfully");
+                dispatch(updateBillingRecordAction(response.data.data));
+                toast.success("Billing status updated successfully");
                 return response.data.data;
             }
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to add flat");
-            console.error("Error adding flat:", error);
+            toast.error(error.response?.data?.message || "Failed to update billing status");
+            console.error("Error updating billing status:", error);
         }
     };
 };
 
-export const deleteFlat = (flatId: string) => {
+export const deleteBillingRecord = (billingId: string) => {
     return async (dispatch: AppDispatch, getState: any) => {
         
         const state = getState();
@@ -115,20 +122,20 @@ export const deleteFlat = (flatId: string) => {
         try {
             const response = await apiConnector({
                 method: apiMethods.DELETE,
-                url: adminApis.deleteFlat(flatId),
+                url: `${adminApis.billing}/${billingId}`,
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
             });
 
             if (response.data.success) {
-                dispatch(removeFlat(flatId));
-                toast.success("Flat deleted successfully");
+                dispatch(removeBillingRecord(billingId));
+                toast.success("Billing record deleted successfully");
                 return response.data.data;
             }
         } catch (error: any) {
-            toast.error(error.response?.data?.message || "Failed to delete flat");
-            console.error("Error deleting flat:", error);
+            toast.error(error.response?.data?.message || "Failed to delete billing record");
+            console.error("Error deleting billing record:", error);
         }
     };
 };

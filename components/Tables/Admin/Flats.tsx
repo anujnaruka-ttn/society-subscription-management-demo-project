@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/stores/store";
+import { getFlats, deleteFlat } from "@/lib/flatApis";
+import { getFlatColumns } from "./Columns/FlatColumns";
 import {
-    type ColumnDef,
     type SortingState,
     flexRender,
     getCoreRowModel,
@@ -14,12 +17,9 @@ import {
 import {
     ChevronLeft,
     ChevronRight,
-    Trash2Icon,
-    FileTextIcon,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
     Select,
@@ -38,7 +38,6 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { FlatData } from "@/types/flatData";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { GoPlusCircle } from "react-icons/go";
 import dynamic from "next/dynamic";
 
@@ -47,204 +46,32 @@ const FlatDetailDialog = dynamic(() => import("@/components/Dialogs/FlatDetailDi
     loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
 })
 
-
-const columns: ColumnDef<FlatData>[] = [
-    {
-        id: "select",
-        header: ({ table }) => (
-            <Checkbox
-                checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                }
-                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                aria-label="Select all"
-            />
-        ),
-        cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
-        ),
-        enableSorting: true,
-        enableHiding: false,
-    },
-    {
-        accessorKey: "owner",
-        header: "Owner",
-        cell: ({ row }) => (
-            <span className="font-medium text-nowrap">{row.getValue("owner")}</span>
-        ),
-    },
-    {
-        accessorKey: "email",
-        header: "Email",
-    },
-    {
-        accessorKey: "phone",
-        header: "Phone",
-    },
-    {
-        accessorKey: "flat_number",
-        header: "Flat Number",
-        cell: ({ row }) => (
-            <span className="font-medium">{row.getValue("flat_number")}</span>
-        ),
-    },
-    {
-        accessorKey: "floor_number",
-        header: "Floor",
-        cell: ({ row }) => (
-            <span className="font-medium">Floor {row.getValue("floor_number")}</span>
-        ),
-    },
-    {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-            <div className="flex items-center gap-1">
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 text-destructive"
-                            aria-label="Delete"
-                        >
-                            <Trash2Icon className="size-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                    <TooltipTrigger>
-                        <FlatDetailDialog dialogProps={{ title: "View Details", description: "View details of the flat" }}
-                            flatDetails={row.original}>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="h-8 w-8"
-                                aria-label="View details"
-                            >
-                                <FileTextIcon className="size-4" />
-                            </Button>
-                        </FlatDetailDialog>
-                    </TooltipTrigger>
-                    <TooltipContent>View Details</TooltipContent>
-                </Tooltip>
-            </div>
-        ),
-    },
-];
-
-const data: FlatData[] = [
-    {
-        id: "1",
-        owner: "Anuj Naruka",
-        email: "anuj@example.com",
-        phone: "+91 9876543210",
-        flat_number: "101",
-        floor_number: 1,
-        flat_type: "2",
-    },
-    {
-        id: "2",
-        owner: "John Doe",
-        email: "john@example.com",
-        phone: "+91 9876543211",
-        flat_number: "202",
-        floor_number: 2,
-        flat_type: "3",
-    },
-    {
-        id: "3",
-        owner: "Alice Smith",
-        email: "alice@example.com",
-        phone: "+91 9876543212",
-        flat_number: "303",
-        floor_number: 3,
-        flat_type: "1",
-    },
-    {
-        id: "4",
-        owner: "Bob Johnson",
-        email: "bob@example.com",
-        phone: "+91 9876543213",
-        flat_number: "404",
-        floor_number: 4,
-        flat_type: "2",
-    },
-    {
-        id: "5",
-        owner: "Emma Wilson",
-        email: "emma@example.com",
-        phone: "+91 9876543214",
-        flat_number: "505",
-        floor_number: 5,
-        flat_type: "3",
-    },
-    {
-        id: "6",
-        owner: "Michael Brown",
-        email: "michael@example.com",
-        phone: "+91 9876543215",
-        flat_number: "606",
-        floor_number: 6,
-        flat_type: "4",
-    },
-    {
-        id: "7",
-        owner: "Sarah Davis",
-        email: "sarah@example.com",
-        phone: "+91 9876543216",
-        flat_number: "707",
-        floor_number: 7,
-        flat_type: "2",
-    },
-    {
-        id: "8",
-        owner: "David Clark",
-        email: "david@example.com",
-        phone: "+91 9876543217",
-        flat_number: "808",
-        floor_number: 8,
-        flat_type: "1",
-    },
-    {
-        id: "9",
-        owner: "James Miller",
-        email: "james@example.com",
-        phone: "+91 9876543218",
-        flat_number: "909",
-        floor_number: 9,
-        flat_type: "3",
-    },
-    {
-        id: "10",
-        owner: "Linda White",
-        email: "linda@example.com",
-        phone: "+91 9876543219",
-        flat_number: "1010",
-        floor_number: 10,
-        flat_type: "2",
-    },
-];
-
-
 export default function FlatsTable() {
+    const dispatch = useDispatch();
+    const flats = useSelector((state: RootState) => state.flat.flats);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [rowSelection, setRowSelection] = useState({});
     const [globalFilter, setGlobalFilter] = useState("");
 
+    // Fetch flats data on mount
+    useEffect(() => {
+        dispatch(getFlats() as any);
+    }, [dispatch]);
+
+    const handleDeleteFlat = (flatId: string) => {
+        dispatch(deleteFlat(flatId) as any);
+    };
+
+    const columns = getFlatColumns(handleDeleteFlat);
+
     const table = useReactTable({
-        data,
+        data: flats,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
+        getRowId: (row) => row.id, // Use flat's id as row identifier
         onSortingChange: setSorting,
         onRowSelectionChange: setRowSelection,
         onGlobalFilterChange: setGlobalFilter,

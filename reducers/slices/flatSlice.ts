@@ -26,11 +26,14 @@ const flatSlice = createSlice({
         setFlats: (state, action: PayloadAction<FlatData[]>) => {
             state.flats = action.payload;
         },
+        removeFlat: (state, action: PayloadAction<string>) => {
+            state.flats = state.flats.filter(flat => flat.id !== action.payload);
+        },
         setLoading: (state, action: PayloadAction<boolean>) => {
             state.loading = action.payload;
         },
     },
 });
 
-export const { setResidents, addFlat, setFlats, setLoading } = flatSlice.actions;
+export const { setResidents, addFlat, setFlats, removeFlat, setLoading } = flatSlice.actions;
 export default flatSlice.reducer;

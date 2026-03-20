@@ -44,7 +44,11 @@ export default function ResidentDropdown({
             <DropdownMenuContent className="w-64">
                 <DropdownMenuLabel>{label}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {isMultiple ? (
+                {filteredItems.length === 0 ? (
+                    <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+                        No records available
+                    </div>
+                ) : isMultiple ? (
                     // Multi-select with checkboxes
                     filteredItems.map((resident) => (
                         <DropdownMenuCheckboxItem

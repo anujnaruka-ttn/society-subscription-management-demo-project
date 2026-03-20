@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/select"
 import { DialogProps } from "@/types/dialogProps"
 import { FlatData, ResidentData } from "@/types/flatData"
-import { getResidents, addFlat } from "@/lib/flatApis"
+import { getResidents, addFlat, getFlats } from "@/lib/flatApis"
 import { RootState } from "@/stores/store"
 import ResidentDropdown from "@/components/common/ResidentDropdown"
 import CommonBadge from "@/components/common/CommonBadge";
@@ -70,7 +70,7 @@ export default function FlatDetailDialog(
     // Update owner details when owner is selected
     useEffect(() => {
         if (selectedOwnerId) {
-            const owner = residents.find(r => r.id === selectedOwnerId);
+            const owner = residents.find((r: ResidentData) => r.id === selectedOwnerId);
             if (owner) {
                 setSelectedOwnerData(owner);
                 setValue("owner_id", owner.id);
@@ -105,19 +105,22 @@ export default function FlatDetailDialog(
         try {
             // Dispatch addFlat action with the form data
             await dispatch(addFlat({
-                id: flatDetails.id, // Important: pass the ID for updates
+                ...(flatDetails.id ? { id: flatDetails.id } : {}),
                 flat_type: data.flat_type,
                 flat_number: data.flat_number,
                 floor_number: data.floor_number,
-                owner_id: selectedOwnerId,
-                resident_ids: selectedResidentIds,
+                owner_id: selectedOwnerId || undefined,
+                resident_ids: selectedResidentIds.length > 0 ? selectedResidentIds : undefined,
             }) as any);
             
-            // Close dialog after successful submission
+            // Close dialog immediately after successful save
             setOpen(false);
             
+            // Refresh flats list after dialog closes
+            dispatch(getFlats() as any);
+            
         } catch (error) {
-            console.error('Error adding flat:', error);
+            console.error('Error adding/updating flat:', error);
         }
     };
 
@@ -240,7 +243,7 @@ export default function FlatDetailDialog(
 
                             {/* Residents Badges */}
                             <CommonBadge
-                                items={selectedResidentIds.map(id => residents.find(r => r.id === id)).filter(Boolean) as ResidentData[]}
+                                items={selectedResidentIds.map(id => residents.find((r: ResidentData) => r.id === id)).filter(Boolean) as ResidentData[]}
                                 onRemove={(id) => setSelectedResidentIds(prev => prev.filter(rid => rid !== id))}
                                 variant="secondary"
                                 isSingle={false}
