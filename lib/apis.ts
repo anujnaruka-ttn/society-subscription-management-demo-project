@@ -3,7 +3,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 const apis = {
     user: BASE_URL + '/user',
     subscription: BASE_URL + '/subscriptions',
-    payment: BASE_URL + '/payment',
+    payment: BASE_URL + '/payments',
     flat: BASE_URL + '/flats',
     billing: BASE_URL + '/billing',
 }
@@ -32,7 +32,14 @@ const adminApis = {
     getFlats: apis.flat + '/',
     addFlat: apis.flat + '/add-flat',
     deleteFlat: (id: string) => apis.flat + '/' + id,
-    billing: apis.billing + '/'
+    billing: apis.billing + '/',
+    billingByMonth: (month: number, year: number) => apis.billing + `/month?month=${month}&year=${year}`,
+    verifyPayment: (id: string) => apis.billing + `/${id}/verify-payment`,
+    updateBillingStatusCall: (id: string) => apis.billing + `/${id}/update-status`,
+    deleteBillingRecord: (id: string) => apis.billing + `/delete/${id}`,
+    getPaymentEntries: apis.payment + '/entries',
+    recordPayment: apis.payment + '/record',
+    getPendingPayments: apis.payment + '/pending',
 }
 
 export {

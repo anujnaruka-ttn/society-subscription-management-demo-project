@@ -15,7 +15,7 @@ const CommonHeader = ({ children, title, description }: { children: React.ReactN
                     </CardDescription>
                 </div>
             </CardHeader>
-            <CardContent className='p-0 overflow-auto'>
+            <CardContent className='p-0 overflow-hidden'>
                 {children}
             </CardContent>
         </Card>

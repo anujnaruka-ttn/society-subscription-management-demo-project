@@ -7,6 +7,7 @@ export interface MonthlyRecords {
     due_date: string;
     created_at: string;
     updated_at: string;
+    flat_id: string;
     flat_number: string;
     floor_number: number;
     flat_type: string;

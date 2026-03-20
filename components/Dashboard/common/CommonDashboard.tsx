@@ -1,3 +1,4 @@
+export const revalidate = 3600;
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartAreaInteractive } from "../Charts/ChartAreaInteractive";
 import MoneyCollectedChart from "../Charts/MoneyCollectedChart";

@@ -1,7 +1,6 @@
 "use client";
 
 import MonthlyRecordsTable from '@/components/Tables/Admin/MonthlyRecords';
-import CommonAdminClient from "../common/CommonAdminClient";
 import CommonHeader from '../common/CommonHeader';
 
 const MonthlyRecordsClient = () => {

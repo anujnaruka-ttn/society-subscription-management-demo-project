@@ -5,7 +5,7 @@ import { ResidentData } from "@/types/flatData"
 
 interface CommonBadgeProps {
     items: ResidentData | ResidentData[] | null;
-    onRemove: (id: string) => void;
+    onRemove?: (id: string) => void;
     variant?: "default" | "secondary";
     isSingle?: boolean;
 }
@@ -36,17 +36,19 @@ export default function CommonBadge({ items, onRemove, variant = "default", isSi
                         )}
                         <span>{item.name}</span>
                     </div>
-                    <button
-                        type="button"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onRemove(item.id);
-                        }}
-                        className="hover:bg-white/20 rounded p-0.5"
-                    >
-                        <X className="w-3 h-3" />
-                    </button>
+                    {onRemove && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onRemove?.(item.id);
+                            }}
+                            className="hover:bg-white/20 rounded p-0.5"
+                        >
+                            <X className="w-3 h-3" />
+                        </button>
+                    )}
                 </Badge>
             </div>
         );
@@ -77,17 +79,19 @@ export default function CommonBadge({ items, onRemove, variant = "default", isSi
                         )}
                         <span>{item.name}</span>
                     </div>
-                    <button
-                        type="button"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            onRemove(item.id);
-                        }}
-                        className="hover:bg-white/20 rounded p-0.5"
-                    >
-                        <X className="w-3 h-3" />
-                    </button>
+                    {onRemove && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onRemove?.(item.id);
+                            }}
+                            className="hover:bg-white/20 rounded p-0.5"
+                        >
+                            <X className="w-3 h-3" />
+                        </button>
+                    )}
                 </Badge>
             ))}
         </div>

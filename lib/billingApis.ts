@@ -6,7 +6,7 @@ import { AppDispatch } from "@/stores/store";
 
 export const getAllBillingRecords = () => {
     return async (dispatch: AppDispatch, getState: any) => {
-        
+
         const state = getState();
         const token = state.auth?.token;
 
@@ -14,9 +14,9 @@ export const getAllBillingRecords = () => {
             toast.error("Authentication required: No token found");
             return;
         }
-        
+
         dispatch(setLoading(true));
-        
+
         try {
             const response = await apiConnector({
                 method: apiMethods.GET,
@@ -28,6 +28,7 @@ export const getAllBillingRecords = () => {
 
             if (response.data.success) {
                 dispatch(setBillingRecords(response.data.data));
+                toast.success("Billing records fetched successfully");
                 return response.data.data;
             }
         } catch (error: any) {
@@ -41,7 +42,7 @@ export const getAllBillingRecords = () => {
 
 export const getBillingRecordsByMonth = (month: number, year: number) => {
     return async (dispatch: AppDispatch, getState: any) => {
-        
+
         const state = getState();
         const token = state.auth?.token;
 
@@ -49,13 +50,13 @@ export const getBillingRecordsByMonth = (month: number, year: number) => {
             toast.error("Authentication required: No token found");
             return;
         }
-        
+
         dispatch(setLoading(true));
-        
+
         try {
             const response = await apiConnector({
                 method: apiMethods.GET,
-                url: `${adminApis.billing}/month?month=${month}&year=${year}`,
+                url: adminApis.billingByMonth(month, year),
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
@@ -76,7 +77,7 @@ export const getBillingRecordsByMonth = (month: number, year: number) => {
 
 export const updateBillingStatus = (billingId: string, status: string) => {
     return async (dispatch: AppDispatch, getState: any) => {
-        
+
         const state = getState();
         const token = state.auth?.token;
 
@@ -84,16 +85,15 @@ export const updateBillingStatus = (billingId: string, status: string) => {
             toast.error("Authentication required: No token found");
             return;
         }
-        
+
         try {
             const response = await apiConnector({
                 method: apiMethods.PUT,
-                url: `${adminApis.billing}/${billingId}/status`,
+                url: adminApis.updateBillingStatusCall(billingId, status),
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
-                },
-                data: { status }
+                }
             });
 
             if (response.data.success) {
@@ -108,9 +108,25 @@ export const updateBillingStatus = (billingId: string, status: string) => {
     };
 };
 
+export const verifyPaymentForBill = async (billingId: string, token: string) => {
+    try {
+        const response = await apiConnector({
+            method: apiMethods.GET,
+            url: adminApis.verifyPayment(billingId),
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error("Error verifying payment:", error);
+        throw error;
+    }
+};
+
 export const deleteBillingRecord = (billingId: string) => {
     return async (dispatch: AppDispatch, getState: any) => {
-        
+
         const state = getState();
         const token = state.auth?.token;
 
@@ -118,11 +134,11 @@ export const deleteBillingRecord = (billingId: string) => {
             toast.error("Authentication required: No token found");
             return;
         }
-        
+
         try {
             const response = await apiConnector({
                 method: apiMethods.DELETE,
-                url: `${adminApis.billing}/${billingId}`,
+                url: adminApis.deleteBillingRecord(billingId),
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 }
