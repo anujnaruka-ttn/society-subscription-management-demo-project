@@ -10,35 +10,45 @@ interface ValidationSchemas {
 }
 
 export const validate = (schemas: ValidationSchemas) => {
-    return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-        
-        if (schemas.body) {
-            const parsed = schemas.body.safeParse(req.body);
-            if (!parsed.success) {
-                badRequest(res, parsed.error.issues[0].message);
-                return;
-            }
-            req.body = parsed.data;
-        }
+    return catchAsync(
 
-        if (schemas.query) {
-            const parsed = schemas.query.safeParse(req.query);
-            if (!parsed.success) {
-                badRequest(res, parsed.error.issues[0].message);
-                return;
-            }
-            req.query = parsed.data as any;
-        }
+        async (req: Request, res: Response, next: NextFunction) => {
 
-        if (schemas.params) {
-            const parsed = schemas.params.safeParse(req.params);
-            if (!parsed.success) {
-                badRequest(res, parsed.error.issues[0].message);
-                return;
+            if (schemas.body) {
+                const parsed = schemas.body.safeParse(req.body);
+                if (!parsed.success) {
+                    badRequest(res, parsed.error.issues[0].message);
+                    return;
+                }
+                req.body = parsed.data;
             }
-            req.params = parsed.data as any;
-        }
 
-        next();
-    });
+            if (schemas.query) {
+                const parsed = schemas.query.safeParse(req.query);
+                if (!parsed.success) {
+                    badRequest(res, parsed.error.issues[0].message);
+                    return;
+                }
+                // Use Object.assign for individual properties instead of overwriting the query object
+                for (const key in req.query) {
+                    delete (req.query as any)[key];
+                }
+                Object.assign(req.query, parsed.data);
+            }
+
+            if (schemas.params) {
+                const parsed = schemas.params.safeParse(req.params);
+                if (!parsed.success) {
+                    badRequest(res, parsed.error.issues[0].message);
+                    return;
+                }
+                for (const key in req.params) {
+                    delete (req.params as any)[key];
+                }
+                Object.assign(req.params, parsed.data);
+            }
+
+            next();
+        }
+    );
 };

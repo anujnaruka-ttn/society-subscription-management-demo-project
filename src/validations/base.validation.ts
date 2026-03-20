@@ -7,4 +7,9 @@ export const baseUserZodSchema = z.object({
     phone: z.string().length(10, "Phone number must be 10 digits").optional(),
 });
 
+export const idParamZodSchema = z.object({
+    id: z.uuid("Invalid ID")
+});
+
 export type BaseUserInput = z.infer<typeof baseUserZodSchema>;
+export type IdParamInput = z.infer<typeof idParamZodSchema>;

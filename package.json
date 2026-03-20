@@ -12,7 +12,8 @@
     "seed:users": "ts-node src/scripts/users-seed.ts",
     "seed:subscriptions": "ts-node src/scripts/subscription-seed.ts",
     "seed:flats": "ts-node src/scripts/flats-seed.ts",
-    "seed:billing": "ts-node src/scripts/billing-seed.ts"
+    "seed:billing": "ts-node src/scripts/billing-seed.ts",
+    "seed:payments": "ts-node src/scripts/payments-seed.ts"
   },
   "repository": {
     "type": "git",

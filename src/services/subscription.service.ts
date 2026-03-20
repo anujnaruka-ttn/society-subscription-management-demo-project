@@ -14,7 +14,10 @@ const updateSubscription = async (data: UpdateSubscriptionInput): Promise<ISubsc
     // Convert Date object to YYYY-MM-DD string
     const dateString = effective_from.toISOString().split('T')[0];
 
-    const result = await query(UPDATE_MONTHLY_RATE, [monthly_rate, dateString, flat_type]);
+    // Normalize flat_type to uppercase to match DB Enum (1BHK, 2BHK, etc.)
+    const normalizedFlatType = flat_type.toUpperCase();
+
+    const result = await query(UPDATE_MONTHLY_RATE, [monthly_rate, dateString, normalizedFlatType]);
     return result.rows[0];
 }
 

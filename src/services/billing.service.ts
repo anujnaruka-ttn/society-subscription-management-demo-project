@@ -4,7 +4,8 @@ import {
     GET_ALL_BILLING_RECORDS, 
     GET_BILLING_RECORDS_BY_MONTH, 
     UPDATE_BILLING_STATUS, 
-    SOFT_DELETE_BILLING_RECORD 
+    SOFT_DELETE_BILLING_RECORD,
+    CHECK_PAYMENT_EXISTS
 } from "../queries/billing.queries";
 
 const findAllBillingRecords = async () => {
@@ -35,9 +36,15 @@ const softDeleteBillingRecord = async (billingId: string): Promise<IBilling> => 
     }
 }
 
+const checkPaymentForBill = async (billId: string) => {
+    const result = await query(CHECK_PAYMENT_EXISTS, [billId]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+}
+
 export {
     findAllBillingRecords,
     findBillingRecordsByMonth,
     updateBillingStatus,
-    softDeleteBillingRecord
+    softDeleteBillingRecord,
+    checkPaymentForBill
 };

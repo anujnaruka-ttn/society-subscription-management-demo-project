@@ -12,12 +12,7 @@ const auth = catchAsync(
 
         const authHeader = req.header("Authorization")
 
-        let token: string;
-
-        (authHeader && authHeader.startsWith("Bearer "))
-            ? token = authHeader.replace("Bearer ", "")
-            : token = req.body?.token;
-
+        const token: string = authHeader?.replace("Bearer ", "") || "";
 
         if (!token) return unauthorized(res, "Authentication required: No token provided");
 

@@ -6,6 +6,9 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
+    -- NOTE: Enum values are case-sensitive in PostgreSQL. 
+    -- Some environments may use uppercase (1BHK) while others use lowercase (1bhk).
+    -- Development code should be case-adaptive where possible.
     CREATE TYPE flat_type_enum AS ENUM ('1BHK', '2BHK', '3BHK', '4BHK');
 EXCEPTION
     WHEN duplicate_object THEN null;

@@ -10,6 +10,6 @@ import { updateSubscriptionZodSchema } from "../validations/subscription.validat
 const subscriptionRouter = Router();
 
 subscriptionRouter.get("/", auth, isAdmin, getAllSubscriptionsController);
-subscriptionRouter.put("/update-monthly-rate", validate({ body: updateSubscriptionZodSchema }), auth, isAdmin, updateMonthlyRate);
+subscriptionRouter.put("/update-monthly-rate", auth, isAdmin, validate({ body: updateSubscriptionZodSchema }), updateMonthlyRate);
 
 export default subscriptionRouter;

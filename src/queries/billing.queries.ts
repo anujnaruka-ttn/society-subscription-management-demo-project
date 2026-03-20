@@ -8,6 +8,7 @@ const GET_ALL_BILLING_RECORDS = `
         br.due_date,
         br.created_at,
         br.updated_at,
+        br.flat_id,
         f.flat_number,
         f.floor_number,
         f.flat_type,
@@ -35,6 +36,7 @@ const GET_BILLING_RECORDS_BY_MONTH = `
         br.due_date,
         br.created_at,
         br.updated_at,
+        br.flat_id,
         f.flat_number,
         f.floor_number,
         f.flat_type,
@@ -68,9 +70,16 @@ const SOFT_DELETE_BILLING_RECORD = `
     RETURNING *
 `;
 
+const CHECK_PAYMENT_EXISTS = `
+    SELECT * FROM payments 
+    WHERE bill_id = $1 AND payment_status = 'success' 
+    LIMIT 1
+`;
+
 export {
     GET_ALL_BILLING_RECORDS,
     GET_BILLING_RECORDS_BY_MONTH,
     UPDATE_BILLING_STATUS,
-    SOFT_DELETE_BILLING_RECORD
+    SOFT_DELETE_BILLING_RECORD,
+    CHECK_PAYMENT_EXISTS
 };

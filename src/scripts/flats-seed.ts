@@ -34,10 +34,26 @@ const generateFlatsConfig = (): FlatConfig[] => {
     return flats;
 };
 
+const getFlatTypeEnums = async (): Promise<string[]> => {
+    const result = await query(
+        "SELECT enumlabel FROM pg_enum JOIN pg_type ON pg_enum.enumtypid = pg_type.oid WHERE pg_type.typname = 'flat_type_enum'"
+    );
+    return result.rows.map((row: any) => row.enumlabel);
+};
+
 const seedFlats = async () => {
     try {
-        console.log("Fetching residents from database...");
+        console.log("Fetching residents and enum types from database...");
         
+        // Get actual enum values from database to handle case-sensitivity across environments
+        const availableEnums = await getFlatTypeEnums();
+        console.log(`Database flat_type_enum values: ${availableEnums.join(", ")}`);
+
+        const getMappedFlatType = (type: string): string => {
+            const matched = availableEnums.find(e => e.toLowerCase() === type.toLowerCase());
+            return matched || type;
+        };
+
         // Get all residents from the database
         const residentsResult = await query(
             "SELECT id, name, email, role FROM users WHERE role = 'resident' ORDER BY id"
@@ -59,6 +75,9 @@ const seedFlats = async () => {
         let residentIndex = 0;
         
         for (const flatConfig of flatsConfig) {
+            // Map the flat type to the actual case in the DB
+            const mappedFlatType = getMappedFlatType(flatConfig.flat_type);
+
             // Check if flat already exists
             const checkResult = await query(
                 "SELECT id FROM flats WHERE flat_number = $1",
@@ -93,7 +112,7 @@ const seedFlats = async () => {
                 [
                     flatConfig.flat_number,
                     flatConfig.floor_number,
-                    flatConfig.flat_type,
+                    mappedFlatType,
                     owner.id,
                     additionalResidents
                 ]
@@ -108,12 +127,12 @@ const seedFlats = async () => {
                 [newFlat.id, userIdsToUpdate]
             );
             
-            // Get monthly rate for billing
+            // Get monthly rate for billing - use mappedFlatType for query
             const rateResult = await query(
                 `SELECT monthly_rate FROM subscription_plans 
                  WHERE flat_type = $1 AND is_active = true AND effective_from <= CURRENT_DATE
                  ORDER BY effective_from DESC LIMIT 1`,
-                [flatConfig.flat_type]
+                [mappedFlatType]
             );
             const monthlyRate = rateResult.rows.length > 0 ? rateResult.rows[0].monthly_rate : 0;
             
@@ -124,7 +143,7 @@ const seedFlats = async () => {
                 [newFlat.id, monthlyRate]
             );
             
-            console.log(`Created flat ${flatConfig.flat_number} (${flatConfig.flat_type}) - Owner: ${owner.name}, Residents: ${additionalResidents.length}`);
+            console.log(`Created flat ${flatConfig.flat_number} (${mappedFlatType}) - Owner: ${owner.name}, Residents: ${additionalResidents.length}`);
             
             residentIndex++;
         }
