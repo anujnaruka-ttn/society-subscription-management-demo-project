@@ -62,7 +62,13 @@ const updateUserProfile = async (
     
     // Use provided values or keep existing ones
     const updateName = name !== undefined && name !== null ? name : currentUser.name;
-    const updatePhoneNumber = phoneNumber !== undefined && phoneNumber !== null ? phoneNumber : currentUser.phone_number;
+    let updatePhoneNumber = phoneNumber !== undefined && phoneNumber !== null ? phoneNumber : currentUser.phone_number;
+    
+    // Add +91 prefix if phone number doesn't already have it
+    if (updatePhoneNumber && !updatePhoneNumber.startsWith('+91')) {
+        updatePhoneNumber = `+91${updatePhoneNumber}`;
+    }
+    
     const updateProfileImage = profileImage !== undefined && profileImage !== null ? profileImage : currentUser.profile_image;
     
     const result = await query(UPDATE_USER_PROFILE_QUERY, [updateName, updatePhoneNumber, updateProfileImage, email]);

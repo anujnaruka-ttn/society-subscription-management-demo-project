@@ -9,7 +9,10 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "seed:admin": "ts-node src/scripts/admin-seed.ts",
-    "seed:subscriptions": "ts-node src/scripts/subscription-seed.ts"
+    "seed:users": "ts-node src/scripts/users-seed.ts",
+    "seed:subscriptions": "ts-node src/scripts/subscription-seed.ts",
+    "seed:flats": "ts-node src/scripts/flats-seed.ts",
+    "seed:billing": "ts-node src/scripts/billing-seed.ts"
   },
   "repository": {
     "type": "git",

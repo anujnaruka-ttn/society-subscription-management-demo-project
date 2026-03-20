@@ -7,6 +7,7 @@ import { notFound } from './utils/response.ts';
 import userRouter from './routes/user.routes.ts';
 import subscriptionRouter from './routes/subscription.routes.ts';
 import flatRouter from './routes/flat.routes.ts';
+import billingRouter from './routes/billing.routes.ts';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import { cloudinaryConnecter } from './config/cloudinary.ts';
@@ -34,6 +35,7 @@ app.use(cors({
 app.use('/api/v1/user', userRouter);
 app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/flats', flatRouter);
+app.use('/api/v1/billing', billingRouter);
 
 const PORT = ENV.PORT;
 
