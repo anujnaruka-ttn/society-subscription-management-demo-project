@@ -119,7 +119,7 @@ export const getResidentSubscriptionsColumns = (): ColumnDef<ResidentBillingReco
                             </Button>
                         </Link>
                     )}
-                    
+
                     <Link href={`/subscriptions/${year}-${String(month).padStart(2, "0")}`}>
                         <Button variant="outline" size="sm" className="h-7 gap-1 text-xs">
                             <ExternalLink className="size-3" />

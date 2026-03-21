@@ -1,13 +1,13 @@
 import { ResidentData } from "./flatData";
 
 export interface ResidentBillingRecord {
-    id: string; // The billing_records table ID
-    flat_id: string;
+    id: string;
     billing_month: number;
     billing_year: number;
     amount_due: number;
     status: "paid" | "pending" | "overdue" | "cancelled";
     due_date: string | null;
+    flat_id: string,
     flat_address: string;
     flat_type: string;
     residents: ResidentData[];
