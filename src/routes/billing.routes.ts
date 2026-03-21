@@ -19,7 +19,7 @@ const billingRouter = Router();
 billingRouter.get("/", auth, isAdmin, getAllBillingRecords);
 billingRouter.get("/month", auth, isAdmin, validate({ query: billingQueryZodSchema }), getBillingRecordsByMonth);
 billingRouter.get("/:id/verify-payment", auth, isAdmin, validate({ params: idParamZodSchema }), verifyPaymentForBill);
-billingRouter.put("/:id/update-status", auth, isAdmin, validate({ params: idParamZodSchema }), updateBillingStatus);
-billingRouter.delete("/:id", auth, isAdmin, validate({ params: idParamZodSchema }), deleteBillingRecord);
+billingRouter.put("/:id/update-status", auth, isAdmin, validate({ params: idParamZodSchema, body: billingStatusZodSchema }), updateBillingStatus);
+billingRouter.delete("/delete/:id", auth, isAdmin, validate({ params: idParamZodSchema }), deleteBillingRecord);
 
 export default billingRouter;

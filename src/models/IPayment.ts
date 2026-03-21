@@ -6,7 +6,7 @@ export interface IPayment {
     bill_id: string;
     user_id: string;
     amount_paid: number;
-    payment_mode: "cash" | "upi" | "online_razorpay" | "online_stripe";
+    payment_mode: "cash" | "offline" | "upi" | "online_razorpay" | "online_stripe";
     transaction_id?: string;
     payment_status?: "success" | "failed" | "pending";
     receipt_url?: string;

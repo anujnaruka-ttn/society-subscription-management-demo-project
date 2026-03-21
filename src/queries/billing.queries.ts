@@ -15,6 +15,7 @@ const GET_ALL_BILLING_RECORDS = `
         u.name as owner_name,
         u.email as owner_email,
         u.phone_number as owner_phone,
+        f.owner_id as owner_id,
         CASE 
             WHEN f.owner_id IS NOT NULL THEN CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
             ELSE CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
@@ -43,6 +44,7 @@ const GET_BILLING_RECORDS_BY_MONTH = `
         u.name as owner_name,
         u.email as owner_email,
         u.phone_number as owner_phone,
+        f.owner_id as owner_id,
         CASE 
             WHEN f.owner_id IS NOT NULL THEN CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
             ELSE CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
@@ -57,17 +59,63 @@ const GET_BILLING_RECORDS_BY_MONTH = `
 `;
 
 const UPDATE_BILLING_STATUS = `
-    UPDATE billing_records 
-    SET status = $1, updated_at = NOW()
-    WHERE id = $2
-    RETURNING *
+    WITH updated AS (
+        UPDATE billing_records 
+        SET status = $1, updated_at = NOW()
+        WHERE id = $2
+        RETURNING *
+    )
+    SELECT 
+        u.id,
+        u.billing_month,
+        u.billing_year,
+        u.amount_due,
+        u.status,
+        u.due_date,
+        u.created_at,
+        u.updated_at,
+        u.flat_id,
+        f.flat_number,
+        f.floor_number,
+        f.flat_type,
+        usr.name as owner_name,
+        usr.email as owner_email,
+        usr.phone_number as owner_phone,
+        f.owner_id as owner_id,
+        CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number) as flat_address
+    FROM updated u
+    LEFT JOIN flats f ON u.flat_id = f.id
+    LEFT JOIN users usr ON f.owner_id = usr.id;
 `;
 
 const SOFT_DELETE_BILLING_RECORD = `
-    UPDATE billing_records 
-    SET status = 'cancelled', updated_at = NOW()
-    WHERE id = $1
-    RETURNING *
+    WITH updated AS (
+        UPDATE billing_records 
+        SET status = 'cancelled', updated_at = NOW()
+        WHERE id = $1
+        RETURNING *
+    )
+    SELECT 
+        u.id,
+        u.billing_month,
+        u.billing_year,
+        u.amount_due,
+        u.status,
+        u.due_date,
+        u.created_at,
+        u.updated_at,
+        u.flat_id,
+        f.flat_number,
+        f.floor_number,
+        f.flat_type,
+        usr.name as owner_name,
+        usr.email as owner_email,
+        usr.phone_number as owner_phone,
+        f.owner_id as owner_id,
+        CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number) as flat_address
+    FROM updated u
+    LEFT JOIN flats f ON u.flat_id = f.id
+    LEFT JOIN users usr ON f.owner_id = usr.id;
 `;
 
 const CHECK_PAYMENT_EXISTS = `
@@ -76,10 +124,46 @@ const CHECK_PAYMENT_EXISTS = `
     LIMIT 1
 `;
 
+const GET_BILLING_RECORDS_BY_FLAT = `
+    SELECT
+        br.id,
+        br.billing_month,
+        br.billing_year,
+        br.amount_due,
+        br.status,
+        br.due_date,
+        br.flat_id,
+        f.flat_number,
+        f.floor_number,
+        f.flat_type,
+        (
+            SELECT json_agg(json_build_object(
+                'id', ru.id,
+                'name', ru.name,
+                'email', ru.email,
+                'profile_image', ru.profile_image
+            ))
+            FROM users ru
+            WHERE ru.id = ANY(f.resident_ids)
+        ) as residents,
+        CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number) as flat_address,
+        p.payment_mode,
+        p.amount_paid,
+        p.payment_status,
+        p.transaction_id,
+        p.payment_date
+    FROM billing_records br
+    LEFT JOIN flats f ON br.flat_id = f.id
+    LEFT JOIN payments p ON p.bill_id = br.id AND p.payment_status = 'success'
+    WHERE f.owner_id = $1
+    ORDER BY br.billing_year DESC, br.billing_month DESC
+`;
+
 export {
     GET_ALL_BILLING_RECORDS,
     GET_BILLING_RECORDS_BY_MONTH,
     UPDATE_BILLING_STATUS,
     SOFT_DELETE_BILLING_RECORD,
-    CHECK_PAYMENT_EXISTS
+    CHECK_PAYMENT_EXISTS,
+    GET_BILLING_RECORDS_BY_FLAT
 };

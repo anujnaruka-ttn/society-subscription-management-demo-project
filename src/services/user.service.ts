@@ -42,7 +42,7 @@ const updateUserPassword = async (data: ChangePasswordInput): Promise<IUser> => 
     } catch (err: Error | unknown) {
         throw err;
     }
-
+    console.log(isSameNewPassword)
     if (isSameNewPassword) throw new Error("New password cannot be same as old password");
     const hashedPassword = await hashPassword(newPassword);
     const result = await query(UPDATE_USER_PASSWORD_QUERY, [hashedPassword, email]);
@@ -53,24 +53,24 @@ const updateUserProfile = async (
     email: string,
     data: Partial<UpdateProfileInput>): Promise<IUser> => {
     const { name, phoneNumber, profileImage } = data;
-    
+
     // Get current user to preserve fields not being updated
     const currentUser = await findUserByEmail(email);
     if (!currentUser) {
         throw new Error("User not found");
     }
-    
+
     // Use provided values or keep existing ones
     const updateName = name !== undefined && name !== null ? name : currentUser.name;
     let updatePhoneNumber = phoneNumber !== undefined && phoneNumber !== null ? phoneNumber : currentUser.phone_number;
-    
+
     // Add +91 prefix if phone number doesn't already have it
     if (updatePhoneNumber && !updatePhoneNumber.startsWith('+91')) {
         updatePhoneNumber = `+91${updatePhoneNumber}`;
     }
-    
+
     const updateProfileImage = profileImage !== undefined && profileImage !== null ? profileImage : currentUser.profile_image;
-    
+
     const result = await query(UPDATE_USER_PROFILE_QUERY, [updateName, updatePhoneNumber, updateProfileImage, email]);
     return result.rows[0]
 }

@@ -89,7 +89,11 @@ const changePassword = catchAsync(
 
         if (!isSamePassword) return unauthorized(res, "Invalid Credentials");
 
-        const updatedUser: IUser = await updateUserPassword({ email, newPassword, oldPassword });
+        const updatedUser: IUser = await updateUserPassword({
+            email,
+            newPassword,
+            oldPassword: userData.password
+        });
 
         const responseData = generateAuthResponse(updatedUser);
 
@@ -128,7 +132,7 @@ const changeProfile = catchAsync(
         console.log('Attempting to upload to Cloudinary...');
         const { secure_url } = await uploadToCloudinary(profileImage.tempFilePath, folderName);
         console.log('Cloudinary upload successful, secure URL:', secure_url);
-        
+
         const updatedUser: IUser = await updateUserProfile(user.email, { profileImage: secure_url });
 
         if (!updatedUser) {
@@ -164,7 +168,7 @@ const updateProfile = catchAsync(
         }
 
         console.log('Update data prepared:', updateData);
-        
+
         if (Object.keys(updateData).length === 0) {
             return validationError(res, 'At least one field (name or phone number) is required to update');
         }

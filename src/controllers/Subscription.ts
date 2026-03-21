@@ -1,7 +1,9 @@
 import { catchAsync } from "../utils/catchAsync";
 import { Request, Response } from "express";
 import { getAllSubscriptions, updateSubscription } from "../services/subscription.service";
+import { findBillingRecordsByFlatOwner } from "../services/billing.service";
 import { success } from "../utils/response";
+import { CustomRequest } from "../types/CustomRequest";
 
 const getAllSubscriptionsController = catchAsync(
     async (_req: Request, res: Response) => {
@@ -18,7 +20,20 @@ const updateMonthlyRate = catchAsync(
         return success(res, "Monthly rate updated successfully", allSubscriptions);
     }
 )
+
+const getResidentSubscriptionDetails = catchAsync(
+    async (req: Request, res: Response) => {
+        const user = (req as CustomRequest).user;
+        if (!user) return res.status(401).json({ success: false, message: "Unauthorized" });
+
+        // The user's id is the owner_id on the flat
+        const records = await findBillingRecordsByFlatOwner(user.id);
+        return success(res, "Resident billing records fetched successfully", records);
+    }
+)
+
 export {
     getAllSubscriptionsController,
+    getResidentSubscriptionDetails,
     updateMonthlyRate
 }

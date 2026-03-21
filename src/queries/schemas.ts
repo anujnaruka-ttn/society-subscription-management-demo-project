@@ -19,9 +19,15 @@ EXCEPTION
 END $$;
 
 DO $$ BEGIN
-    CREATE TYPE payment_mode_enum AS ENUM ('cash', 'upi', 'online_razorpay', 'online_stripe');
+    CREATE TYPE payment_mode_enum AS ENUM ('cash', 'offline', 'upi', 'online_razorpay', 'online_stripe');
 EXCEPTION
-    WHEN duplicate_object THEN null;
+    WHEN duplicate_object THEN 
+        -- Add missing values to existing enum
+        BEGIN
+            ALTER TYPE payment_mode_enum ADD VALUE 'offline';
+        EXCEPTION
+            WHEN duplicate_object THEN null;
+        END;
 END $$;
 
 DO $$ BEGIN

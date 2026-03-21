@@ -5,7 +5,8 @@ import {
     GET_BILLING_RECORDS_BY_MONTH, 
     UPDATE_BILLING_STATUS, 
     SOFT_DELETE_BILLING_RECORD,
-    CHECK_PAYMENT_EXISTS
+    CHECK_PAYMENT_EXISTS,
+    GET_BILLING_RECORDS_BY_FLAT
 } from "../queries/billing.queries";
 
 const findAllBillingRecords = async () => {
@@ -41,10 +42,16 @@ const checkPaymentForBill = async (billId: string) => {
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
+const findBillingRecordsByFlatOwner = async (ownerId: string) => {
+    const result = await query(GET_BILLING_RECORDS_BY_FLAT, [ownerId]);
+    return result.rows;
+}
+
 export {
     findAllBillingRecords,
     findBillingRecordsByMonth,
     updateBillingStatus,
     softDeleteBillingRecord,
-    checkPaymentForBill
+    checkPaymentForBill,
+    findBillingRecordsByFlatOwner
 };
