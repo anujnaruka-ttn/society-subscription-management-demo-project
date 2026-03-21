@@ -156,16 +156,16 @@ export const getMonthlyRecordsColumns = (
                         ) : !isCancelled && (
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                <MonthlyRecordSetDialog record={row.original}>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
-                                        aria-label="Mark as paid"
-                                    >
-                                        <Wallet className="size-4" />
-                                    </Button>
-                                </MonthlyRecordSetDialog>
+                                    <MonthlyRecordSetDialog record={row.original}>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            className="h-8 w-8 hover:bg-primary/10 hover:text-primary"
+                                            aria-label="Mark as paid"
+                                        >
+                                            <Wallet className="size-4" />
+                                        </Button>
+                                    </MonthlyRecordSetDialog>
                                 </TooltipTrigger>
                                 <TooltipContent>Mark as Paid</TooltipContent>
                             </Tooltip>

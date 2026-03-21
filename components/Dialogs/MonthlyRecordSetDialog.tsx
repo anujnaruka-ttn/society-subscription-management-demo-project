@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
 import { RootState, AppDispatch } from "@/stores/store";
 import { verifyPaymentForBill, updateBillingStatus } from "@/lib/billingApis";
 import {
@@ -15,11 +16,14 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle2, Loader2, ArrowRight } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { MonthlyRecords } from "@/types/MonthlyRecords";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { FadeLoader } from "react-spinners";
+
+const PaymentSetDialog = dynamic(() => import("./PaymentSetDialog"), {
+    loading: () => <Button variant={"ghost"} className="w-3 h-3"></Button>
+});
 
 interface MonthlyRecordSetDialogProps {
     record: MonthlyRecords;
@@ -28,11 +32,11 @@ interface MonthlyRecordSetDialogProps {
 
 export default function MonthlyRecordSetDialog({ record, children }: MonthlyRecordSetDialogProps) {
     const dispatch = useDispatch<AppDispatch>();
-    const router = useRouter();
     const token = useSelector((state: RootState) => state.auth?.token);
 
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [openPaymentRecordDialog, setOpenPaymentRecordDialog] = useState(false);
     const [verificationStatus, setVerificationStatus] = useState<{
         verified: boolean;
         exists: boolean | null;
@@ -54,11 +58,14 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                     exists: result.data.exists,
                     payment: result.data.payment
                 });
+                if (!result.data.exists) {
+                    setTimeout(() => setOpenPaymentRecordDialog(true), 2500);
+                }
             }
         } catch (error) {
             toast.error("Failed to verify payment record");
         } finally {
-            setLoading(false);
+            setTimeout(() => setLoading(false), 2499);
         }
     };
 
@@ -72,8 +79,9 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                 exists: null,
                 payment: null
             });
+            setOpenPaymentRecordDialog(false);
         }
-    }, [open]);
+    }, [open, openPaymentRecordDialog]);
 
     const handleConfirmPaid = async () => {
         try {
@@ -82,16 +90,6 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
         } catch (error) {
             console.error("Error updating status:", error);
         }
-    };
-
-    const handleRedirectToPayment = () => {
-        const queryParams = new URLSearchParams({
-            flatId: record.flat_id || "",
-            month: record.billing_month.toString(),
-            year: record.billing_year.toString(),
-            from: "billing"
-        });
-        router.push(`/admin/payments?${queryParams.toString()}`);
     };
 
     return (
@@ -111,7 +109,7 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                     {loading ? (
                         <div className="flex flex-col items-center space-y-2">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                            <p className="text-sm text-muted-foreground">Checking database...</p>
+                            <p className="text-sm text-muted-foreground">Checking...</p>
                         </div>
                     ) : verificationStatus.verified ? (
                         verificationStatus.exists ? (
@@ -134,7 +132,7 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                                 <div className="space-y-1">
                                     <p className="font-semibold text-yellow-600">No Payment Found</p>
                                     <p className="text-sm text-muted-foreground px-4">
-                                        We couldn't find a successful transaction for this billing period.
+                                        Please record the payment to continue
                                     </p>
                                 </div>
                             </div>
@@ -145,23 +143,44 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                 </div>
 
                 <DialogFooter>
-                    {!loading && verificationStatus.verified && (
-                        verificationStatus.exists ? (
-                            <Button className="w-fit" onClick={handleConfirmPaid}>
-                                Mark as Paid
-                            </Button>
-                        ) : (
-                            <Button className="w-fit group" onClick={handleRedirectToPayment}>
-                                Go to Payment Entry
-                                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                            </Button>
-                        )
+                    {!loading && verificationStatus.verified && verificationStatus.exists && (
+                        <Button className="w-fit" onClick={handleConfirmPaid}>
+                            Mark as Paid
+                        </Button>
                     )}
                     <Button variant="outline" onClick={() => setOpen(false)} className="w-fit hover:text-white">
                         Cancel
                     </Button>
                 </DialogFooter>
             </DialogContent>
+
+            <PaymentSetDialog
+                open={openPaymentRecordDialog}
+                onOpenChange={setOpenPaymentRecordDialog}
+                record={{
+                    bill_id: record.id,
+                    amount_due: record.amount_due,
+                    bill_status: record.status,
+                    billing_month: record.billing_month,
+                    billing_year: record.billing_year,
+                    flat_id: record.flat_id,
+                    flat_number: record.flat_number,
+                    floor_number: record.floor_number,
+                    flat_type: record.flat_type,
+                    owner_id: record.owner_id,
+                    owner_name: record.owner_name,
+                    owner_email: record.owner_email,
+                    owner_phone: record.owner_phone,
+                    flat_address: record.flat_address,
+                    payment_id: null,
+                    payment_mode: null,
+                    amount_paid: null,
+                    payment_date: null,
+                    payment_status: null,
+                    transaction_id: null,
+                    residents: null
+                }}
+            />
         </Dialog>
     );
 }

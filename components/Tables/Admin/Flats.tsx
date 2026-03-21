@@ -1,18 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/stores/store";
 import { getFlats, deleteFlat } from "@/lib/flatApis";
 import { getFlatColumns } from "./Columns/FlatColumns";
-import {
-    type SortingState,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+import { useDataTable } from "@/hooks/use-data-table";
+
 import { GoPlusCircle } from "react-icons/go";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
@@ -26,10 +20,6 @@ const FlatDetailDialog = dynamic(() => import("@/components/Dialogs/FlatDetailDi
 export default function FlatsTable() {
     const dispatch = useDispatch();
     const flats = useSelector((state: RootState) => state.flat.flats);
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [rowSelection, setRowSelection] = useState({});
-    const [globalFilter, setGlobalFilter] = useState("");
-
     // Fetch flats data on mount
     useEffect(() => {
         dispatch(getFlats() as any);
@@ -41,26 +31,10 @@ export default function FlatsTable() {
 
     const columns = getFlatColumns(handleDeleteFlat);
 
-    const table = useReactTable({
+    const { table, globalFilter, setGlobalFilter } = useDataTable({
         data: flats,
         columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getRowId: (row) => row.id, // Use flat's id as row identifier
-        onSortingChange: setSorting,
-        onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: "includesString",
-        state: {
-            sorting,
-            rowSelection,
-            globalFilter,
-        },
-        initialState: {
-            pagination: { pageSize: 10 },
-        },
+        getRowId: (row) => row.id,
     });
 
     return (

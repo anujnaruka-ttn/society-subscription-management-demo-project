@@ -1,6 +1,5 @@
+import SubscriptionsClient from "@/components/Dashboard/User/SubscriptionsClient";
 
 export default function ResidentSubscriptionsPage() {
-    return (
-        <div>ResidentSubscriptionsPage</div>
-    )
+    return <SubscriptionsClient />;
 }

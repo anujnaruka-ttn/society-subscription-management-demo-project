@@ -42,9 +42,14 @@ const adminApis = {
     getPendingPayments: apis.payment + '/pending',
 }
 
+const residentApis = {
+    getResidentSubscriptions: apis.subscription + '/resident/subscriptions',
+}
+
 export {
     apis,
     apiMethods,
     authApis,
-    adminApis
+    adminApis,
+    residentApis
 }

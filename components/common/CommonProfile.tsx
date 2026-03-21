@@ -8,10 +8,10 @@ import { Eye, EyeOff, Edit2 } from 'lucide-react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
-import { changeProfile, updateProfile } from '@/lib/profileApis';
+import { changePassword, changeProfile, updateProfile } from '@/lib/profileApis';
 
 // Reusable Profile Content Component
-export const ProfileContent = ({ title = "My Profile", description = "Manage your profile information and account settings" }: { title?: string; description?: string }) => {
+export const ProfileContent = () => {
     const { user } = useSelector((state: any) => state.auth);
     const dispatch = useDispatch();
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,6 +19,8 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [name, setName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [isUpdating, setIsUpdating] = useState(false);
     const { theme } = useTheme();
 
@@ -70,6 +72,18 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
             } catch (error) {
                 console.error("Failed to update name:", error);
             }
+        }
+    };
+
+    const handleChangePassword = async () => {
+        try {
+            const success = await dispatch(changePassword(currentPassword, newPassword) as any);
+            if (success) {
+                setCurrentPassword('');
+                setNewPassword('');
+            }
+        } catch (error) {
+            console.error("Failed to change password:", error);
         }
     };
 
@@ -186,6 +200,8 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
                                     <Input
                                         type={showCurrentPassword ? 'text' : 'password'}
                                         placeholder='Enter current password'
+                                        value={currentPassword}
+                                        onChange={(e) => setCurrentPassword(e.target.value)}
                                         className='bg-richblack-700 border-richblack-600 text-richblack-5 placeholder-richblack-400 pr-10'
                                     />
                                     <button
@@ -205,6 +221,8 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
                                     <Input
                                         type={showNewPassword ? 'text' : 'password'}
                                         placeholder='Enter new password'
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
                                         className='bg-richblack-700 border-richblack-600 text-richblack-5 placeholder-richblack-400 pr-10'
                                     />
                                     <button
@@ -218,8 +236,11 @@ export const ProfileContent = ({ title = "My Profile", description = "Manage you
                             </div>
 
                             {/* Update Password Button */}
-                            <Button className='w-fit mt-4 hover:text-white'
-                                variant={"outline"}>
+                            <Button
+                                className='w-fit mt-4 hover:text-white'
+                                variant={"outline"}
+                                onClick={handleChangePassword}
+                            >
                                 Update Password
                             </Button>
                         </div>

@@ -89,11 +89,12 @@ export const updateBillingStatus = (billingId: string, status: string) => {
         try {
             const response = await apiConnector({
                 method: apiMethods.PUT,
-                url: adminApis.updateBillingStatusCall(billingId, status),
+                url: adminApis.updateBillingStatusCall(billingId),
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
-                }
+                },
+                data: { status }
             });
 
             if (response.data.success) {

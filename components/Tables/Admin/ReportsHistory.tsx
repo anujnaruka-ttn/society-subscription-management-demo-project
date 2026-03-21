@@ -1,15 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import {
-    type ColumnDef,
-    type SortingState,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+import { type ColumnDef } from "@tanstack/react-table";
+import { useDataTable } from "@/hooks/use-data-table";
+
 import {
     Trash2Icon,
 } from "lucide-react";
@@ -141,29 +134,9 @@ const data: ReportType[] = [
 ];
 
 export default function ReportsHistoryTable() {
-    const [sorting, setSorting] = useState<SortingState>([]);
-    const [rowSelection, setRowSelection] = useState({});
-    const [globalFilter, setGlobalFilter] = useState("");
-
-    const table = useReactTable({
+    const { table, globalFilter, setGlobalFilter } = useDataTable({
         data,
         columns,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        onRowSelectionChange: setRowSelection,
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: "includesString",
-        state: {
-            sorting,
-            rowSelection,
-            globalFilter,
-        },
-        initialState: {
-            pagination: { pageSize: 10 },
-        },
     });
 
     return (

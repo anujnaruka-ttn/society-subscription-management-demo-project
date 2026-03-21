@@ -103,3 +103,50 @@ export const updateProfile = (data: { name?: string; phoneNumber?: string }) => 
         }
     };
 };
+
+// Change password — send currentPassword + newPassword in body with Bearer token
+export const changePassword = (currentPassword: string, newPassword: string) => {
+    return async (_dispatch: AppDispatch, getState: any) => {
+        try {
+            const state = getState();
+            const token = state.auth?.token;
+            const email = state.auth?.user?.email;
+
+            if (!token) {
+                toast.error("Authentication required: No token found");
+                return false;
+            }
+
+            if (!currentPassword || !newPassword) {
+                toast.error("Both current and new passwords are required");
+                return false;
+            }
+
+            const response = await apiConnector({
+                method: apiMethods.PUT,
+                url: authApis.changePassword,
+                data: {
+                    email,
+                    oldPassword: currentPassword,
+                    newPassword,
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response?.data?.success) {
+                toast.success("Password changed successfully");
+                return true;
+            } else {
+                toast.error(response?.data?.message || "Failed to change password");
+                return false;
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to change password");
+            console.error("Change password error:", error);
+            return false;
+        }
+    };
+};

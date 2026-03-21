@@ -3,6 +3,7 @@ import adminSubscriptionReducer from "@/reducers/slices/adminSubscriptionSlice";
 import flatReducer from "@/reducers/slices/flatSlice";
 import billingReducer from "@/reducers/slices/billingSlice";
 import adminPaymentReducer from "@/reducers/slices/adminPaymentSlice";
+import residentBillingReducer from "@/reducers/slices/residentBillingSlice"
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     flat: flatReducer,
     billing: billingReducer,
     adminPayment: adminPaymentReducer,
+    residentSubscriptionBilling: residentBillingReducer
 });
 
 const persistConfig = {

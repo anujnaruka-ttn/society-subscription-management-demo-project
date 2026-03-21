@@ -14,5 +14,6 @@ export interface MonthlyRecords {
     owner_name: string;
     owner_email: string;
     owner_phone: string;
+    owner_id: string;
     flat_address: string;
 }
