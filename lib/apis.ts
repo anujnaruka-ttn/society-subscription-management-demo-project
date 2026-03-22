@@ -43,7 +43,9 @@ const adminApis = {
 }
 
 const residentApis = {
-    getResidentSubscriptions: apis.subscription + '/resident/subscriptions',
+    getResidentSubscriptions: apis.subscription + '/details',
+    getResidentSubscriptionsByMonth: (month: string) => apis.subscription + `/details/${month}`,
+    updatePaymentStatus: apis.subscription + '/update-payment-status',
 }
 
 export {
