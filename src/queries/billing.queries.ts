@@ -159,11 +159,47 @@ const GET_BILLING_RECORDS_BY_FLAT = `
     ORDER BY br.billing_year DESC, br.billing_month DESC
 `;
 
+const GET_BILLING_RECORDS_BY_FLAT_AND_MONTH = `
+    SELECT
+        br.id,
+        br.billing_month,
+        br.billing_year,
+        br.amount_due,
+        br.status,
+        br.due_date,
+        br.flat_id,
+        f.flat_number,
+        f.floor_number,
+        f.flat_type,
+        (
+            SELECT json_agg(json_build_object(
+                'id', ru.id,
+                'name', ru.name,
+                'email', ru.email,
+                'profile_image', ru.profile_image
+            ))
+            FROM users ru
+            WHERE ru.id = ANY(f.resident_ids)
+        ) as residents,
+        CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number) as flat_address,
+        p.payment_mode,
+        p.amount_paid,
+        p.payment_status,
+        p.transaction_id,
+        p.payment_date
+    FROM billing_records br
+    LEFT JOIN flats f ON br.flat_id = f.id
+    LEFT JOIN payments p ON p.bill_id = br.id AND p.payment_status = 'success'
+    WHERE f.owner_id = $1 AND br.billing_year = $2 AND br.billing_month = $3
+    ORDER BY br.billing_year DESC, br.billing_month DESC
+`;
+
 export {
     GET_ALL_BILLING_RECORDS,
     GET_BILLING_RECORDS_BY_MONTH,
     UPDATE_BILLING_STATUS,
     SOFT_DELETE_BILLING_RECORD,
     CHECK_PAYMENT_EXISTS,
-    GET_BILLING_RECORDS_BY_FLAT
+    GET_BILLING_RECORDS_BY_FLAT,
+    GET_BILLING_RECORDS_BY_FLAT_AND_MONTH
 };

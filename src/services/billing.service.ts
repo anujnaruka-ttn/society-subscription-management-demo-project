@@ -6,7 +6,8 @@ import {
     UPDATE_BILLING_STATUS, 
     SOFT_DELETE_BILLING_RECORD,
     CHECK_PAYMENT_EXISTS,
-    GET_BILLING_RECORDS_BY_FLAT
+    GET_BILLING_RECORDS_BY_FLAT,
+    GET_BILLING_RECORDS_BY_FLAT_AND_MONTH
 } from "../queries/billing.queries";
 
 const findAllBillingRecords = async () => {
@@ -47,11 +48,98 @@ const findBillingRecordsByFlatOwner = async (ownerId: string) => {
     return result.rows;
 }
 
+const findBillingRecordsByFlatOwnerAndMonth = async (ownerId: string, month: number, year: number) => {
+    const result = await query(GET_BILLING_RECORDS_BY_FLAT_AND_MONTH, [ownerId, year, month]);
+    return result.rows;
+}
+
+const updateBillingRecordByFlatId = async (flatId: string, updateData: {
+    paymentId: string;
+    paymentMode: string;
+    amountPaid?: number;
+    month?: number;
+    year?: number;
+}) => {
+    // Build the WHERE clause with month/year if provided
+    let whereClause = 'WHERE flat_id = $1';
+    const queryParams = [flatId];
+    let paramIndex = 2;
+
+    if (updateData.month && updateData.year) {
+        whereClause += ` AND billing_month = $${paramIndex++} AND billing_year = $${paramIndex++}`;
+        queryParams.push(updateData.month.toString(), updateData.year.toString());
+    }
+
+    // Get the billing record for this flat (and specific month/year if provided)
+    const billingQuery = `
+        SELECT id, amount_due 
+        FROM billing_records 
+        ${whereClause}
+        ORDER BY billing_year DESC, billing_month DESC 
+        LIMIT 1
+    `;
+    
+    const billingResult = await query(billingQuery, queryParams);
+    const billingRecord = billingResult.rows[0];
+    
+    if (!billingRecord) {
+        throw new Error("No billing record found for this flat and month/year");
+    }
+
+    // Create a payment record
+    const paymentQuery = `
+        INSERT INTO payments (
+            bill_id, 
+            user_id, 
+            amount_paid, 
+            payment_mode, 
+            transaction_id, 
+            payment_status, 
+            payment_date
+        )
+        VALUES (
+            $1, 
+            (SELECT owner_id FROM flats WHERE id = $2), 
+            $3, 
+            $4, 
+            $5, 
+            'success', 
+            CURRENT_TIMESTAMP
+        )
+        RETURNING *
+    `;
+
+    const paymentResult = await query(paymentQuery, [
+        billingRecord.id,
+        flatId,
+        updateData.amountPaid || billingRecord.amount_due,
+        updateData.paymentMode,
+        updateData.paymentId
+    ]);
+
+    // Update billing record status to paid
+    const updateBillingQuery = `
+        UPDATE billing_records 
+        SET status = 'paid'
+        WHERE id = $1
+        RETURNING *
+    `;
+
+    const updatedBillingResult = await query(updateBillingQuery, [billingRecord.id]);
+
+    return {
+        payment: paymentResult.rows[0],
+        billing: updatedBillingResult.rows[0]
+    };
+}
+
 export {
     findAllBillingRecords,
     findBillingRecordsByMonth,
     updateBillingStatus,
     softDeleteBillingRecord,
     checkPaymentForBill,
-    findBillingRecordsByFlatOwner
+    findBillingRecordsByFlatOwner,
+    findBillingRecordsByFlatOwnerAndMonth,
+    updateBillingRecordByFlatId
 };
