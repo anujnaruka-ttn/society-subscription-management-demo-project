@@ -38,7 +38,7 @@ export const getFlatColumns = (onDelete: (id: string) => void): ColumnDef<FlatDa
         accessorKey: "owner",
         header: "Owner",
         cell: ({ row }) => (
-            <span className="font-medium text-nowrap">{row.getValue("owner")}</span>
+            <span className="font-medium text-nowrap">{row.original.owner}</span>
         ),
     },
     {
@@ -53,14 +53,14 @@ export const getFlatColumns = (onDelete: (id: string) => void): ColumnDef<FlatDa
         accessorKey: "flat_number",
         header: "Flat Number",
         cell: ({ row }) => (
-            <span className="font-medium">{row.getValue("flat_number")}</span>
+            <span className="font-medium">{row.original.flat_number}</span>
         ),
     },
     {
         accessorKey: "floor_number",
         header: "Floor",
         cell: ({ row }) => (
-            <span className="font-medium">Floor {row.getValue("floor_number")}</span>
+            <span className="font-medium">Floor {row.original.floor_number}</span>
         ),
     },
     {

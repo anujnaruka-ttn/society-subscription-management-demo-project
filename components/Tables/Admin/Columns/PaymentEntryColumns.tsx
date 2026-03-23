@@ -1,16 +1,18 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Layout, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { CreditCard, Layout, Plus, Users } from "lucide-react";
 import { GiWallet } from "react-icons/gi";
 import { FaCashRegister } from "react-icons/fa6";
 import Image from "next/image";
 import { PaymentEntryData } from "@/types/PaymentEntry";
 import CommonBadge from "@/components/common/CommonBadge";
 import { ResidentData } from "@/types/flatData";
+import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import dynamic from "next/dynamic";
-import { Button } from "@/components/ui/button";
 
 const PaymentSetDialog = dynamic(() => import("@/components/Dialogs/PaymentSetDialog"), {
     ssr: false,
@@ -45,11 +47,39 @@ export const paymentEntryColumns: ColumnDef<PaymentEntryData>[] = [
         header: "Residents",
         cell: ({ row }) => {
             const residents = row.original.residents || [];
-            if (residents.length === 0) return <span className="text-muted-foreground italic">No residents</span>;
+            const [showAllResidents, setShowAllResidents] = useState(false);
+            
+            if (!residents.length) {
+                return <span className="text-muted-foreground">No residents</span>;
+            }
 
             const shouldTruncate = residents.length > 4;
-            const displayResidents = shouldTruncate ? residents.slice(0, 3) : residents;
+            const displayResidents = shouldTruncate && !showAllResidents ? residents.slice(0, 3) : residents;
             const remainingCount = residents.length - displayResidents.length;
+
+            if (showAllResidents) {
+                return (
+                    <div className="space-y-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowAllResidents(false)}
+                            className="text-xs"
+                        >
+                            <Users className="w-3 h-3 mr-1" />
+                            Show Less
+                        </Button>
+                        <ScrollArea className="border rounded-md p-2">
+                            <div className="space-y-1">
+                                    <CommonBadge
+                                        items={displayResidents as ResidentData[]}
+                                        variant="secondary"
+                                    />
+                            </div>
+                        </ScrollArea>
+                    </div>
+                );
+            }
 
             return (
                 <div className="flex items-center gap-1.5 flex-wrap">
@@ -58,17 +88,22 @@ export const paymentEntryColumns: ColumnDef<PaymentEntryData>[] = [
                         variant="secondary"
                     />
                     {remainingCount > 0 && (
-                        <Badge variant="outline" className="bg-muted text-muted-foreground border-dashed text-[10px] h-5">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setShowAllResidents(true)}
+                            className="bg-muted text-muted-foreground border-dashed text-[10px] h-5 hover:bg-muted/80"
+                        >
                             +{remainingCount} more
-                        </Badge>
+                        </Button>
                     )}
                 </div>
             );
         },
     },
     {
-        accessorKey: "owner_name",
-        header: "Owner",
+        accessorKey: "user_name",
+        header: "User",
         cell: ({ row }) => (
             <div className="space-y-0.5">
                 <div className="font-medium text-sm">{row.original.owner_name || "N/A"}</div>

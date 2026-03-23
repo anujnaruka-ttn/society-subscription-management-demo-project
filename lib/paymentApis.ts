@@ -52,6 +52,7 @@ export const getPendingPayments = () => {
 
 export const recordPayment = (data: {
     bill_id: string;
+    flat_id: string;
     user_id: string;
     amount_paid: number;
     payment_mode: string;

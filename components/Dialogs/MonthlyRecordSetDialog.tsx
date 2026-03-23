@@ -101,7 +101,7 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                 <DialogHeader>
                     <DialogTitle>Verify Payment Status</DialogTitle>
                     <DialogDescription>
-                        Validating payment for {record.owner_name}'s flat ({record.flat_number})
+                        Validating payment for {record.user_name}'s flat ({record.flat_number})
                     </DialogDescription>
                 </DialogHeader>
 
@@ -167,10 +167,10 @@ export default function MonthlyRecordSetDialog({ record, children }: MonthlyReco
                     flat_number: record.flat_number,
                     floor_number: record.floor_number,
                     flat_type: record.flat_type,
-                    owner_id: record.owner_id,
-                    owner_name: record.owner_name,
-                    owner_email: record.owner_email,
-                    owner_phone: record.owner_phone,
+                    user_id: record.user_id,
+                    user_name: record.user_name,
+                    user_email: record.user_email,
+                    user_phone: record.user_phone,
                     flat_address: record.flat_address,
                     payment_id: null,
                     payment_mode: null,

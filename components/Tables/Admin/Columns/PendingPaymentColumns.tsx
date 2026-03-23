@@ -61,9 +61,9 @@ export const pendingPaymentColumns: ColumnDef<PendingPaymentData>[] = [
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
-                        variant="ghost"
+                        variant="default"
                         size="icon"
-                        className="h-7 w-7 text-destructive hover:bg-destructive/10"
+                        className="h-7 w-7 text-destructive bg-transparent hover:bg-destructive/10"
                         onClick={() => console.log("Notify user:", row.original.id)}
                     >
                         <AlertCircle className="size-4" />

@@ -33,6 +33,7 @@ export const getResidentSubscriptionsColumns = (): ColumnDef<ResidentBillingReco
     {
         accessorKey: "flat_address",
         header: "Flat Address",
+        cell: ({ row }) => <span className="capitalize">{row.original.flat_address || "N/A"}</span>,
     },
     {
         accessorKey: "flat_type",
@@ -40,9 +41,20 @@ export const getResidentSubscriptionsColumns = (): ColumnDef<ResidentBillingReco
         cell: ({ row }) => <span className="capitalize">{row.original.flat_type || "N/A"}</span>,
     },
     {
-        id: "residents",
+        accessorKey: "owner_name",
+        header: "Owner",
+        cell: ({ row }) => (
+            <div className="space-y-0.5">
+                <div className="font-medium">{row.original.owner_name || "N/A"}</div>
+                <div className="text-xs text-muted-foreground">{row.original.owner_email || "N/A"}</div>
+                <div className="text-xs text-muted-foreground">{row.original.owner_phone || "-"}</div>
+            </div>
+        ),
+    },
+    {
+        accessorKey: "residents",
         header: "Residents",
-        cell: ({ row }) => <CommonBadge items={row.original.residents} />
+        cell: ({ row }) => <CommonBadge items={row.original.residents} />,
     },
     {
         accessorKey: "amount_due",

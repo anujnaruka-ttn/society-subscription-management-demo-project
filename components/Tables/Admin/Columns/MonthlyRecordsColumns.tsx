@@ -44,13 +44,13 @@ export const getMonthlyRecordsColumns = (
             enableHiding: false,
         },
         {
-            accessorKey: "owner_name",
-            header: "Owner",
+            accessorKey: "user_name",
+            header: "Resident",
             cell: ({ row }) => (
                 <div className="space-y-1">
-                    <div className="font-medium">{row.getValue("owner_name") || "N/A"}</div>
-                    <div className="text-sm text-muted-foreground">{row.original.owner_email || "N/A"}</div>
-                    <div className="text-sm text-muted-foreground">{row.original.owner_phone || "-"}</div>
+                    <div className="font-medium">{row.original.user_name || "N/A"}</div>
+                    <div className="text-sm text-muted-foreground">{row.original.user_email || "N/A"}</div>
+                    <div className="text-sm text-muted-foreground">{row.original.user_phone || "-"}</div>
                 </div>
             ),
         },
@@ -59,7 +59,7 @@ export const getMonthlyRecordsColumns = (
             header: "Flat Address",
             cell: ({ row }) => (
                 <div className="space-y-1">
-                    <div className="font-medium">{row.getValue("flat_address")}</div>
+                    <div className="font-medium">{row.original.flat_address}</div>
                     <div className="text-sm text-muted-foreground">Type: {row.original.flat_type}</div>
                 </div>
             ),
@@ -68,7 +68,7 @@ export const getMonthlyRecordsColumns = (
             accessorKey: "billing_month",
             header: "Billing Period",
             cell: ({ row }) => {
-                const month = row.getValue("billing_month") as number;
+                const month = row.original.billing_month;
                 const year = row.original.billing_year;
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 return (
@@ -82,7 +82,7 @@ export const getMonthlyRecordsColumns = (
             accessorKey: "amount_due",
             header: "Amount Due",
             cell: ({ row }) => {
-                const amount = row.getValue("amount_due") as number;
+                const amount = row.original.amount_due;
                 return (
                     <div className="font-medium">
                         ₹{amount.toLocaleString()}
@@ -94,7 +94,7 @@ export const getMonthlyRecordsColumns = (
             accessorKey: "status",
             header: "Status",
             cell: ({ row }) => {
-                const status = row.getValue("status") as string;
+                const status = row.original.status;
                 const statusConfig = {
                     pending: { variant: "secondary" as const, icon: AlertCircle, color: "text-yellow-600" },
                     paid: { variant: "default" as const, icon: CheckCircle2, color: "text-green-600" },
@@ -117,7 +117,7 @@ export const getMonthlyRecordsColumns = (
             accessorKey: "due_date",
             header: "Due Date",
             cell: ({ row }) => {
-                const dueDate = row.getValue("due_date") as string;
+                const dueDate = row.original.due_date;
                 return dueDate ? new Date(dueDate).toLocaleDateString() : "-";
             },
         },

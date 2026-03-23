@@ -16,47 +16,33 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart"
 
-export const description = "A bar chart"
-
-const chartData = [
-    { month: "January", desktop: 186 },
-    { month: "February", desktop: 305 },
-    { month: "March", desktop: 237 },
-    { month: "April", desktop: 73 },
-    { month: "May", desktop: 209 },
-    { month: "June", desktop: 214 },
-]
+export const description = "Monthly flats bar chart"
 
 const chartConfig = {
-    desktop: {
-        label: "Desktop",
+    flats: {
+        label: "Flats",
         color: "var(--chart-1)",
     },
 } satisfies ChartConfig
 
-export function DayWiseChart() {
+export function MonthFlatsChart({ data }: { data?: any[] }) {
+    // Use passed data or fallback to empty array
+    const chartDataToUse = data && data.length > 0 ? data : [];
     return (
         <Card className="h-[25%] w-full gap-1.5 py-3">
             <CardHeader>
-                <CardTitle>Bar Chart</CardTitle>
-                <CardDescription>January - June 2024</CardDescription>
+                <CardTitle>Monthly Flats</CardTitle>
+                <CardDescription>Showing flats count per month</CardDescription>
             </CardHeader>
             <CardContent className="w-full h-full">
                 <ChartContainer config={chartConfig} className="w-full h-[75%]">
-                    <BarChart accessibilityLayer data={chartData}>
+                    <BarChart accessibilityLayer data={chartDataToUse}>
                         <CartesianGrid vertical={false} />
-                        <XAxis
-                            dataKey="month"
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            tickFormatter={(value) => value.slice(0, 3)}
-                        />
                         <ChartTooltip
                             cursor={false}
                             content={<ChartTooltipContent hideLabel />}
                         />
-                        <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
+                        <Bar dataKey="flats" fill="var(--chart-1)" radius={8} />
                     </BarChart>
                 </ChartContainer>
             </CardContent>

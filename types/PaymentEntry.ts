@@ -8,11 +8,16 @@ export interface PaymentEntryData {
     flat_number: string;
     floor_number: number;
     flat_type: string;
-    owner_id: string;
-    owner_name: string;
-    owner_email: string;
-    owner_phone: string;
+    user_id: string;
+    user_name: string;
+    user_email: string;
+    user_phone: string;
     flat_address: string;
+    // Optional owner details
+    owner_id?: string;
+    owner_name?: string;
+    owner_email?: string;
+    owner_phone?: string;
     payment_id: string | null;
     payment_mode: string | null;
     amount_paid: number | null;

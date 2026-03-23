@@ -42,7 +42,8 @@ export default function PaymentSetDialog({ record, children, open: externalOpen,
         try {
             const result = await dispatch(recordPayment({
                 bill_id: record.bill_id,
-                user_id: record.owner_id,
+                flat_id: record.flat_id,
+                user_id: record.user_id,
                 amount_paid: record.amount_due,
                 payment_mode: paymentMode,
                 transaction_id: transactionId
@@ -68,7 +69,7 @@ export default function PaymentSetDialog({ record, children, open: externalOpen,
                 <DialogHeader>
                     <DialogTitle>Record Payment</DialogTitle>
                     <DialogDescription>
-                        Select payment mode for {record.owner_name} - Flat {record.flat_number}
+                        Select payment mode for {record.user_name} - Flat {record.flat_number}
                     </DialogDescription>
                 </DialogHeader>
 

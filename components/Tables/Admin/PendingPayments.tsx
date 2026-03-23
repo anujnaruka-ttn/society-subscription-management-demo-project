@@ -17,7 +17,7 @@ export default function PendingPaymentsTable() {
         dispatch(getPendingPayments());
     }, [dispatch]);
 
-    const { table, globalFilter, setGlobalFilter } = useDataTable({
+    const { table, globalFilter } = useDataTable({
         data,
         columns: pendingPaymentColumns,
     });

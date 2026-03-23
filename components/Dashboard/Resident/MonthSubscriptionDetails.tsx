@@ -7,6 +7,7 @@ import { AppDispatch, RootState } from "@/stores/store";
 import { getResidentSubscriptionsByMonth } from "@/lib/residentApis";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import CommonBadge from "@/components/common/CommonBadge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, IndianRupee, Calendar, Home, Users } from "lucide-react";
 import { ResidentBillingRecord } from "@/types/ResidentBillingRecord";
@@ -118,13 +119,7 @@ export default function MonthSubscriptionDetails({ month }: MonthSubscriptionDet
                                 {/* Residents */}
                                 <div className="space-y-2">
                                     <label className="text-sm font-medium text-muted-foreground">Residents</label>
-                                    <div className="flex flex-wrap gap-2">
-                                        {record.residents.map((resident) => (
-                                            <Badge key={resident.id} variant="secondary" className="gap-1">
-                                                {resident.name}
-                                            </Badge>
-                                        ))}
-                                    </div>
+                                    <CommonBadge items={record.residents} variant="secondary" />
                                 </div>
 
                                 {/* Payment Details (if paid) */}

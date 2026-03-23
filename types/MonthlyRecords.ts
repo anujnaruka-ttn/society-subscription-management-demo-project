@@ -8,12 +8,13 @@ export interface MonthlyRecords {
     created_at: string;
     updated_at: string;
     flat_id: string;
+    user_id: string;
     flat_number: string;
     floor_number: number;
     flat_type: string;
-    owner_name: string;
-    owner_email: string;
-    owner_phone: string;
-    owner_id: string;
+    user_name: string;
+    user_email: string;
+    user_phone: string;
+    user_role: string;
     flat_address: string;
 }

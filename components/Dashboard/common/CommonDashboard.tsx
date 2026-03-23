@@ -2,11 +2,16 @@ export const revalidate = 3600;
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartAreaInteractive } from "../Charts/ChartAreaInteractive";
 import MoneyCollectedChart from "../Charts/MoneyCollectedChart";
-import { DayWiseChart } from "../Charts/DayWiseChart";
+import { MonthFlatsChart } from "../Charts/MonthFlatChart";
 import PendingPaymentsTable from "@/components/Tables/Admin/PendingPayments";
 
 type CommonDashboardProps = {
-    role: "admin" | "user"
+    role: "admin" | "user";
+    dashboardData?: {
+        monthlyStats: any[];
+        monthlyFlatsStats: any[];
+        moneyCollectedStats: any[];
+    };
 }
 
 const CommonDashboard = (
@@ -15,13 +20,15 @@ const CommonDashboard = (
     }: {
         props: CommonDashboardProps
     }) => {
+    const { dashboardData } = props;
+    
     return (
         <Card className="w-full h-full mx-auto flex flex-row justify-center gap-3 border-none shadow-none bg-transparent rounded-t-none">
             {/* left side */}
             <Card className="w-[70%] h-full p-6">
                 <CardContent className="px-0 h-full flex flex-col gap-y-3">
-                    <ChartAreaInteractive />
-                    <DayWiseChart />
+                    <ChartAreaInteractive data={dashboardData?.monthlyStats || []} />
+                    <MonthFlatsChart data={dashboardData?.monthlyFlatsStats || []} />
                 </CardContent>
             </Card>
 
@@ -39,7 +46,7 @@ const CommonDashboard = (
                         </CardDescription>
                     </CardHeader>
                     <CardContent className="px-3">
-                        <MoneyCollectedChart />
+                        <MoneyCollectedChart data={dashboardData?.moneyCollectedStats || []} />
                     </CardContent>
                 </Card>
 
