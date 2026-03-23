@@ -1,6 +1,6 @@
 import { Pool, type PoolConfig } from "pg";
-import { ENV } from "../validations/env.validation.ts"
-import type { dbQuery } from "../types/dbQuery.ts";
+import { ENV } from "../validations/env.validation"
+import type { dbQuery } from "../types/dbQuery";
 
 /*
 -------------------------------------------------------
