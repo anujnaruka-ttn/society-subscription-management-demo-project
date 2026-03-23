@@ -14,7 +14,8 @@ interface FlatConfig {
 }
 
 const generateFlatsConfig = (): FlatConfig[] => {
-    const flatTypes = ["1BHK", "2BHK", "3BHK", "4BHK"];
+    // Use consistent lowercase flat types to match database enum
+    const flatTypes = ["1bhk", "2bhk", "3bhk", "4bhk"];
     const flats: FlatConfig[] = [];
     
     // Generate flats for floors 1-10
@@ -22,11 +23,11 @@ const generateFlatsConfig = (): FlatConfig[] => {
         // 4 flats per floor
         for (let unit = 1; unit <= 4; unit++) {
             const flatNumber = `${floor}${unit.toString().padStart(2, '0')}`; // e.g., 101, 102, 103, 104
-            const flatType = flatTypes[unit - 1]; // Rotate through 1BHK, 2BHK, 3BHK, 4BHK
+            const flatType = flatTypes[unit - 1]; // Rotate through 1bhk, 2bhk, 3bhk, 4bhk
             flats.push({
                 flat_number: flatNumber,
                 floor_number: floor,
-                flat_type: flatType,
+                flat_type: flatType, // Already lowercase
             });
         }
     }
@@ -41,7 +42,7 @@ const getFlatTypeEnums = async (): Promise<string[]> => {
     return result.rows.map((row: any) => row.enumlabel);
 };
 
-const seedFlats = async () => {
+export const seedFlats = async () => {
     try {
         console.log("Fetching residents and enum types from database...");
         
@@ -49,10 +50,8 @@ const seedFlats = async () => {
         const availableEnums = await getFlatTypeEnums();
         console.log(`Database flat_type_enum values: ${availableEnums.join(", ")}`);
 
-        const getMappedFlatType = (type: string): string => {
-            const matched = availableEnums.find(e => e.toLowerCase() === type.toLowerCase());
-            return matched || type;
-        };
+        // Since we're using consistent lowercase, we can use the flat_type directly
+        // No need for mapping since both config and database use lowercase
 
         // Get all residents from the database
         const residentsResult = await query(
@@ -76,7 +75,7 @@ const seedFlats = async () => {
         
         for (const flatConfig of flatsConfig) {
             // Map the flat type to the actual case in the DB
-            const mappedFlatType = getMappedFlatType(flatConfig.flat_type);
+            const mappedFlatType = flatConfig.flat_type;
 
             // Check if flat already exists
             const checkResult = await query(
@@ -149,11 +148,8 @@ const seedFlats = async () => {
         }
         
         console.log("Flats seeding completed successfully!");
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding flats:", error);
         process.exit(1);
     }
 };
-
-seedFlats();

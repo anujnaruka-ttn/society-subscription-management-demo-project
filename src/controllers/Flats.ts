@@ -1,8 +1,15 @@
 import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { success } from "../utils/response";
-import { findAllResidents, findAllFlats, addFlatDetails, softDeleteFlat } from "../services/flat.service";
-import { FlatDetailsInput } from "../validations/flat.validation";
+import { 
+    findAllResidents, 
+    findAllFlats, 
+    addFlatDetails, 
+    updateFlatDetails,
+    softDeleteFlat 
+} from "../services/flat.service";
+import { FlatDetailsInput, FlatUpdateInput} from "../validations/flat.validation";
+import { IdParamInput } from "../validations/base.validation";
 
 const getAllResidents = catchAsync(
     async (_req: Request, res: Response) => {
@@ -19,23 +26,26 @@ const getAllFlats = catchAsync(
 )
 
 const addFlat = catchAsync(
+    async (req: Request<{}, {}, FlatDetailsInput>, res: Response) => {
+        const flat = await addFlatDetails(req.body);
+        return success(res, "Flat added successfully", flat);
+    }
+)
+
+const updateFlatById = catchAsync(
     async (req: Request, res: Response) => {
-        const flatData: FlatDetailsInput = req.body;
-        
-        const newFlat = await addFlatDetails(flatData);
-        
-        return success(res, "Flat added successfully", newFlat);
+        const { id } = req.params as IdParamInput;
+        const updatedFlat = await updateFlatDetails(id, req.body as FlatUpdateInput);
+        return success(res, "Flat updated successfully", updatedFlat);
     }
 )
 
 const deleteFlat = catchAsync(
     async (req: Request, res: Response) => {
-        const { id } = req.params;
-        
+        const { id } = req.params as IdParamInput;
         const flatId = Array.isArray(id) ? id[0] : id;
         const deletedFlat = await softDeleteFlat(flatId);
-        
-        return success(res, "Flat deleted successfully", deletedFlat);
+        return success(res, "Flat deactivated successfully", deletedFlat);
     }
 )
 
@@ -43,5 +53,6 @@ export {
     getAllResidents,
     getAllFlats,
     addFlat,
+    updateFlatById,
     deleteFlat
-}
+};

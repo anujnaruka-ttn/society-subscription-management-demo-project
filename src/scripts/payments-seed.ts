@@ -1,6 +1,6 @@
 import { query } from "../config/db";
 
-const seedPayments = async () => {
+export const seedPayments = async () => {
     try {
         console.log("Starting payment seeding...");
 
@@ -54,11 +54,8 @@ const seedPayments = async () => {
         }
 
         console.log("Payment seeding completed successfully!");
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding payments:", error);
         process.exit(1);
     }
 };
-
-seedPayments();

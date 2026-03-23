@@ -11,7 +11,7 @@ interface SampleUser {
     role: string;
 }
 
-const seedUsers = async () => {
+export const seedUsers = async () => {
     try {
         // Read the sample users JSON file
         const jsonPath = path.join(__dirname, "../../docs/sample_users.json");
@@ -46,11 +46,8 @@ const seedUsers = async () => {
         }
 
         console.log("Users seeding completed successfully!");
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding users:", error);
         process.exit(1);
     }
 };
-
-seedUsers();

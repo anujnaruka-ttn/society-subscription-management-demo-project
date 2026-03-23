@@ -6,7 +6,7 @@ interface Flat {
     flat_type: string;
 }
 
-const seedBillingRecords = async () => {
+export const seedBillingRecords = async () => {
     try {
         console.log("Fetching existing flats from database...");
         
@@ -65,11 +65,8 @@ const seedBillingRecords = async () => {
         
         console.log(`\nBilling records seeding completed!`);
         console.log(`Created: ${createdCount}, Skipped: ${skippedCount}, Total: ${flats.length}`);
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding billing records:", error);
         process.exit(1);
     }
 };
-
-seedBillingRecords();

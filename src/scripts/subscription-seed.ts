@@ -1,6 +1,6 @@
 import { query } from "../config/db";
 
-const seedSubscriptions = async () => {
+export const seedSubscriptions = async () => {
     try {
         const plans = [
             { flat_type: '1bhk', monthly_rate: 10000.00 },
@@ -34,11 +34,8 @@ const seedSubscriptions = async () => {
         }
 
         console.log("Subscription plans seeding completed successfully!");
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding subscription plans:", error);
         process.exit(1);
     }
 };
-
-seedSubscriptions();

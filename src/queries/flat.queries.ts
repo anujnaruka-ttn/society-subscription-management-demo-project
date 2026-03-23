@@ -16,6 +16,7 @@ const GET_ALL_FLATS = `
         u.phone_number as phone
     FROM flats f
     LEFT JOIN users u ON f.owner_id = u.id
+    WHERE f.is_active = true
     ORDER BY f.floor_number, f.flat_number
 `;
 
@@ -65,6 +66,19 @@ const INSERT_BILLING_RECORD = `
     RETURNING *
 `;
 
+const UPDATE_BILLING_FOR_USERS = `
+    INSERT INTO billing_records (id, flat_id, user_id, billing_month, billing_year, amount_due, status, due_date, created_at, updated_at)
+    VALUES (gen_random_uuid(), $1, $2, EXTRACT(MONTH FROM NOW() + INTERVAL '1 month'), EXTRACT(YEAR FROM NOW() + INTERVAL '1 month'), $3, 'pending', NOW() + INTERVAL '31 days', NOW(), NOW())
+    ON CONFLICT (user_id, billing_month, billing_year) 
+    DO UPDATE SET amount_due = billing_records.amount_due + EXCLUDED.amount_due, updated_at = NOW()
+`;
+
+const GET_MONTHLY_RATE_BY_FLAT_TYPE = `
+    SELECT monthly_rate FROM subscription_plans 
+    WHERE flat_type = $1 AND is_active = true 
+    ORDER BY effective_from DESC LIMIT 1
+`;
+
 const SOFT_DELETE_FLAT = `
     UPDATE flats 
     SET is_active = false, owner_id = NULL, resident_ids = '{}', updated_at = NOW()
@@ -72,13 +86,10 @@ const SOFT_DELETE_FLAT = `
     RETURNING *
 `;
 
-const GET_MONTHLY_RATE_BY_FLAT_TYPE = `
-    SELECT monthly_rate FROM subscription_plans 
-    WHERE flat_type = $1 
-    AND is_active = true 
-    AND effective_from <= CURRENT_DATE
-    ORDER BY effective_from DESC 
-    LIMIT 1
+const GET_FLAT_BY_ID = `
+    SELECT id, flat_number, floor_number, flat_type, owner_id, resident_ids, is_active, created_at, updated_at
+    FROM flats 
+    WHERE id = $1
 `;
 
 export {
@@ -89,8 +100,10 @@ export {
     UPDATE_FLAT_RESIDENTS,
     ADD_RESIDENT_TO_FLAT,
     REMOVE_RESIDENT_FROM_FLAT,
-    UPDATE_USERS_FLAT_ID,
-    INSERT_BILLING_RECORD,
     SOFT_DELETE_FLAT,
+    UPDATE_USERS_FLAT_ID,
+    GET_FLAT_BY_ID,
+    INSERT_BILLING_RECORD,
+    UPDATE_BILLING_FOR_USERS,
     GET_MONTHLY_RATE_BY_FLAT_TYPE
-}
+};

@@ -1,5 +1,5 @@
 export const CREATE_ENUMS = `
--- 1. Create the ENUM types
+-- 1. Create the ENUM types with consistent lowercase
 DO $$ BEGIN
     CREATE TYPE user_role AS ENUM ('admin', 'resident');
 EXCEPTION

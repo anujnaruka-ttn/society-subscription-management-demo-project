@@ -1,7 +1,7 @@
 import { query } from "../config/db";
 import { hashPassword } from "../utils/password";
 
-const seedAdmin = async () => {
+export const seedAdmin = async () => {
     try {
         const name = "Anuj Naruka";
         const email = "anuj.admin@example.com";
@@ -31,11 +31,9 @@ const seedAdmin = async () => {
         }
 
         console.log("Admin seeding completed successfully!");
-        process.exit(0);
     } catch (error) {
         console.error("Error seeding admin user:", error);
         process.exit(1);
     }
 };
 
-seedAdmin();

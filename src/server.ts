@@ -1,6 +1,5 @@
 import express from 'express';
 import { ENV } from './validations/env.validation.ts';
-import { migrate } from './controllers/Schema.ts';
 import { query } from './config/db.ts';
 import { globalErrorHandler } from './middlewares/error.middleware.ts';
 import { notFound } from './utils/response.ts';
@@ -40,9 +39,6 @@ app.use('/api/v1/billing', billingRouter);
 app.use('/api/v1/payments', paymentRouter);
 
 const PORT = ENV.PORT;
-
-// Run database migration on startup
-migrate();
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

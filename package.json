@@ -13,7 +13,12 @@
     "seed:subscriptions": "ts-node src/scripts/subscription-seed.ts",
     "seed:flats": "ts-node src/scripts/flats-seed.ts",
     "seed:billing": "ts-node src/scripts/billing-seed.ts",
-    "seed:payments": "ts-node src/scripts/payments-seed.ts"
+    "seed:payments": "ts-node src/scripts/payments-seed.ts",
+    "seed:jaya-billing": "ts-node src/jobs/billingCron.ts",
+    "fix:jaya-billing": "ts-node src/scripts/fix-jaya-billing.ts",
+    "fix:aditi-billing": "ts-node src/scripts/aditi-billing-fix.ts",
+    "reset:database": "ts-node src/scripts/reset-database.ts",
+    "cron": "ts-node src/jobs/billingCron.ts"
   },
   "repository": {
     "type": "git",
@@ -38,6 +43,7 @@
     "express-fileupload": "^1.5.2",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "node-cron": "^4.2.1",
     "nodemailer": "^8.0.2",
     "otp-generator": "^4.0.1",
     "pg": "^8.20.0",
@@ -49,6 +55,7 @@
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.4.0",
+    "@types/node-cron": "^3.0.11",
     "nodemon": "^3.1.14",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
