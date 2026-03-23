@@ -53,14 +53,14 @@ export default function MonthlyRecordDialog(
                 <div className="grid grid-cols-2 gap-4 py-4 text-sm">
                     <div className="space-y-1">
                         <Label className="text-muted-foreground">Owner</Label>
-                        <p className="font-medium">{record.owner_name}</p>
+                        <p className="font-medium">{record.user_name}</p>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <p className="text-xs text-muted-foreground truncate cursor-help max-w-[150px]">{record.owner_email}</p>
+                                    <p className="text-xs text-muted-foreground truncate cursor-help max-w-[150px]">{record.user_email}</p>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>{record.owner_email}</p>
+                                    <p>{record.user_email}</p>
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
