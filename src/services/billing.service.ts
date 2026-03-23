@@ -43,13 +43,13 @@ const checkPaymentForBill = async (billId: string) => {
     return result.rows.length > 0 ? result.rows[0] : null;
 }
 
-const findBillingRecordsByFlatOwner = async (ownerId: string) => {
-    const result = await query(GET_BILLING_RECORDS_BY_FLAT, [ownerId]);
+const findBillingRecordsByFlatAndUser = async (userId: string) => {
+    const result = await query(GET_BILLING_RECORDS_BY_FLAT, [userId]);
     return result.rows;
-}
+};
 
-const findBillingRecordsByFlatOwnerAndMonth = async (ownerId: string, month: number, year: number) => {
-    const result = await query(GET_BILLING_RECORDS_BY_FLAT_AND_MONTH, [ownerId, year, month]);
+const findBillingRecordsByFlatUserAndMonth = async (userId: string, month: number, year: number) => {
+    const result = await query(GET_BILLING_RECORDS_BY_FLAT_AND_MONTH, [userId, year, month]);
     return result.rows;
 }
 
@@ -222,8 +222,8 @@ export {
     updateBillingStatus,
     softDeleteBillingRecord,
     checkPaymentForBill,
-    findBillingRecordsByFlatOwner,
-    findBillingRecordsByFlatOwnerAndMonth,
+    findBillingRecordsByFlatAndUser,
+    findBillingRecordsByFlatUserAndMonth,
     updateBillingRecordByFlatId,
     getMonthlyBilling
 };

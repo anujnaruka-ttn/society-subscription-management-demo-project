@@ -111,6 +111,8 @@ const resetDatabase = async () => {
         console.log("\nDatabase reset completed successfully!");
         console.log("Database is now fresh with consistent lowercase enums");
         console.log("Start the server to run migration and create tables");
+
+        process.exit(0);
         
     } catch (error) {
         console.error("\nDatabase reset failed:", error);

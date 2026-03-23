@@ -135,12 +135,16 @@ export const seedFlats = async () => {
             );
             const monthlyRate = rateResult.rows.length > 0 ? rateResult.rows[0].monthly_rate : 0;
             
-            // Create billing record
-            await query(
-                `INSERT INTO billing_records (id, flat_id, billing_month, billing_year, amount_due, status, due_date, created_at, updated_at)
-                 VALUES (gen_random_uuid(), $1, EXTRACT(MONTH FROM NOW()), EXTRACT(YEAR FROM NOW()), $2, 'pending', NOW() + INTERVAL '15 days', NOW(), NOW())`,
-                [newFlat.id, monthlyRate]
-            );
+            // Create billing records for owner and all residents
+            const allUsers = [owner.id, ...additionalResidents];
+            
+            for (const userId of allUsers) {
+                await query(
+                    `INSERT INTO billing_records (id, flat_id, user_id, billing_month, billing_year, amount_due, status, due_date, created_at, updated_at)
+                     VALUES (gen_random_uuid(), $1, $2, EXTRACT(MONTH FROM NOW()), EXTRACT(YEAR FROM NOW()), $3, 'pending', NOW() + INTERVAL '15 days', NOW(), NOW())`,
+                    [newFlat.id, userId, monthlyRate]
+                );
+            }
             
             console.log(`Created flat ${flatConfig.flat_number} (${mappedFlatType}) - Owner: ${owner.name}, Residents: ${additionalResidents.length}`);
             

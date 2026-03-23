@@ -1,9 +1,12 @@
 import { catchAsync } from "../utils/catchAsync";
 import { Request, Response } from "express";
-import { getAllSubscriptions, updateSubscription } from "../services/subscription.service";
-import { findBillingRecordsByFlatOwner, findBillingRecordsByFlatOwnerAndMonth, updateBillingRecordByFlatId } from "../services/billing.service";
+import { 
+    getAllSubscriptions, 
+    updateSubscription
+} from "../services/subscription.service";
 import { success, unauthorized } from "../utils/response";
 import { CustomRequest } from "../types/CustomRequest";
+import { findBillingRecordsByFlatAndUser, findBillingRecordsByFlatUserAndMonth, updateBillingRecordByFlatId } from "../services/billing.service";
 
 const getAllSubscriptionsController = catchAsync(
     async (_req: Request, res: Response) => {
@@ -27,8 +30,8 @@ const getResidentSubscriptionDetails = catchAsync(
         if (!user) return unauthorized(res, "Resident not found");
 
         // The user's id is the owner_id on the flat
-        const records = await findBillingRecordsByFlatOwner(user.id);
-        return success(res, "Resident billing records fetched successfully", records);
+        const records = await findBillingRecordsByFlatAndUser(user.id);
+        return success(res, "Resident billing records for month fetched successfully", records);
     }
 )
 
@@ -51,7 +54,7 @@ const getResidentSubscriptionDetailsByMonth = catchAsync(
         }
 
         // The user's id is the owner_id on the flat
-        const records = await findBillingRecordsByFlatOwnerAndMonth(user.id, parsedMonth, parsedYear);
+        const records = await findBillingRecordsByFlatUserAndMonth(user.id, parsedMonth, parsedYear);
         return success(res, "Resident billing records for month fetched successfully", records);
     }
 )

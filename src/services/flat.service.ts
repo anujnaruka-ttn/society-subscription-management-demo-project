@@ -9,8 +9,7 @@ import {
     UPDATE_USERS_FLAT_ID, 
     INSERT_BILLING_RECORD,
     GET_FLAT_BY_ID,
-    GET_MONTHLY_RATE_BY_FLAT_TYPE,
-    UPDATE_BILLING_FOR_USERS
+    GET_MONTHLY_RATE_BY_FLAT_TYPE
 } from "../queries/flat.queries";
 import { FlatDetailsInput, FlatUpdateInput } from "../validations/flat.validation";
 
@@ -51,6 +50,30 @@ const addFlatDetails = async (
                 userIdsToUpdate
             ]);
         }
+
+        // Generate billing records for all users associated with this flat
+        if (userIdsToUpdate.length > 0) {
+            // Get monthly rate for this flat type
+            const rateResult = await query(GET_MONTHLY_RATE_BY_FLAT_TYPE, [flatData.flat_type]);
+            const monthlyRate = rateResult.rows[0]?.monthly_rate || 0;
+            
+            // Create billing records for current month for each user
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-indexed
+            const currentYear = currentDate.getFullYear();
+            
+            for (const userId of userIdsToUpdate) {
+                await query(INSERT_BILLING_RECORD, [
+                    flat.id,
+                    userId,
+                    currentMonth,
+                    currentYear,
+                    monthlyRate,
+                    'pending',
+                    new Date(currentYear, currentMonth - 1, 0).toISOString().split('T')[0] // Due date: last day of previous month
+                ]);
+            }
+        }
         
         return flat;
 
@@ -69,14 +92,14 @@ const updateFlatDetails = async (flatId: string, updateData: FlatUpdateInput): P
             throw new Error('Flat not found');
         }
 
-        // Update flat details (only owner_id, resident_ids, is_active)
+        // Update flat details (only owner_id, resident_ids, is_active - NOT flat_type, flat_number, floor_number)
         const updateResult = await query(UPDATE_FLAT, [
-            updateData.flat_number || currentFlat.flat_number,
-            updateData.floor_number || currentFlat.floor_number,
-            currentFlat.flat_type, // Keep existing flat_type
+            flatId,
+            currentFlat.flat_number, // Keep existing flat_number
+            currentFlat.floor_number,  // Keep existing floor_number
+            currentFlat.flat_type,       // Keep existing flat_type
             updateData.owner_id || currentFlat.owner_id,
-            updateData.resident_ids || currentFlat.resident_ids,
-            flatId
+            updateData.resident_ids || currentFlat.resident_ids
         ]);
         
         const updatedFlat = updateResult.rows[0];
@@ -84,7 +107,7 @@ const updateFlatDetails = async (flatId: string, updateData: FlatUpdateInput): P
         // Handle owner and resident changes
         const userIdsToUpdate = [
             ...(updateData.owner_id ? [updateData.owner_id] : []),
-            ...(updateData.resident_ids || [])
+            ...(updateData.resident_ids ? updateData.resident_ids : [])
         ];
 
         if (userIdsToUpdate.length > 0) {
@@ -98,12 +121,19 @@ const updateFlatDetails = async (flatId: string, updateData: FlatUpdateInput): P
             const rateResult = await query(GET_MONTHLY_RATE_BY_FLAT_TYPE, [currentFlat.flat_type]);
             const monthlyRate = rateResult.rows[0]?.monthly_rate || 0;
             
-            // Update billing records for each user for next month
+            // Create billing records for next month for each user
+            const currentDate = new Date();
+            const nextMonth = currentDate.getMonth() + 2; // Next month
+            const nextYear = currentDate.getFullYear();
+            
             for (const userId of userIdsToUpdate) {
-                await query(UPDATE_BILLING_FOR_USERS, [
+                await query(INSERT_BILLING_RECORD, [
                     flatId,
                     userId,
-                    monthlyRate
+                    nextMonth,
+                    nextYear,
+                    monthlyRate,
+                    new Date(nextYear, nextMonth - 1, 0).toISOString().split('T')[0] // Due date: last day of previous month
                 ]);
             }
         }

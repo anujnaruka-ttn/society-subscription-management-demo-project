@@ -28,8 +28,8 @@ const INSERT_FLAT = `
 
 const UPDATE_FLAT = `
     UPDATE flats 
-    SET flat_number = $1, floor_number = $2, flat_type = $3, owner_id = $4, resident_ids = $5, updated_at = NOW()
-    WHERE id = $6
+    SET flat_number = $2, floor_number = $3, flat_type = $4, owner_id = $5, resident_ids = $6, updated_at = NOW()
+    WHERE id = $1
     RETURNING *
 `;
 
@@ -61,16 +61,11 @@ const UPDATE_USERS_FLAT_ID = `
 `;
 
 const INSERT_BILLING_RECORD = `
-    INSERT INTO billing_records (id, flat_id, billing_month, billing_year, amount_due, status, due_date, created_at, updated_at)
-    VALUES (gen_random_uuid(), $1, EXTRACT(MONTH FROM NOW()), EXTRACT(YEAR FROM NOW()), $2, 'pending', NOW(), NOW(), NOW())
-    RETURNING *
-`;
-
-const UPDATE_BILLING_FOR_USERS = `
     INSERT INTO billing_records (id, flat_id, user_id, billing_month, billing_year, amount_due, status, due_date, created_at, updated_at)
-    VALUES (gen_random_uuid(), $1, $2, EXTRACT(MONTH FROM NOW() + INTERVAL '1 month'), EXTRACT(YEAR FROM NOW() + INTERVAL '1 month'), $3, 'pending', NOW() + INTERVAL '31 days', NOW(), NOW())
-    ON CONFLICT (user_id, billing_month, billing_year) 
-    DO UPDATE SET amount_due = billing_records.amount_due + EXCLUDED.amount_due, updated_at = NOW()
+    VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'pending', $6, NOW(), NOW())
+    ON CONFLICT (flat_id, user_id, billing_month, billing_year) 
+    DO UPDATE SET amount_due = EXCLUDED.amount_due, updated_at = NOW()
+    RETURNING *
 `;
 
 const GET_MONTHLY_RATE_BY_FLAT_TYPE = `
@@ -104,6 +99,5 @@ export {
     UPDATE_USERS_FLAT_ID,
     GET_FLAT_BY_ID,
     INSERT_BILLING_RECORD,
-    UPDATE_BILLING_FOR_USERS,
     GET_MONTHLY_RATE_BY_FLAT_TYPE
 };

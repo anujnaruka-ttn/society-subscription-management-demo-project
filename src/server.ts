@@ -11,6 +11,7 @@ import paymentRouter from './routes/payment.routes.ts';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import { cloudinaryConnecter } from './config/cloudinary.ts';
+import dashboardRouter from './routes/dashboard.routes.ts';
 const app = express();
 
 // File upload middleware - MUST come before body parsers
@@ -37,6 +38,7 @@ app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/flats', flatRouter);
 app.use('/api/v1/billing', billingRouter);
 app.use('/api/v1/payments', paymentRouter);
+app.use('/api/v1/dashboard',dashboardRouter);
 
 const PORT = ENV.PORT;
 

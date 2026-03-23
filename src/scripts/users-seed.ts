@@ -20,6 +20,7 @@ export const seedUsers = async () => {
 
         console.log(`Found ${users.length} users to seed...`);
 
+        let countUsers = 0;
         for (const user of users) {
             // Generate profile image URL using DiceBear
             const profile_image = `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(user.name)}`;
@@ -42,10 +43,11 @@ export const seedUsers = async () => {
                     "INSERT INTO users (name, email, password, phone_number, role, profile_image, is_active, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, true, NOW(), NOW())",
                     [user.name, user.email, hashedPassword, user.phone_number, user.role, profile_image]
                 );
+                countUsers++;
             }
         }
 
-        console.log("Users seeding completed successfully!");
+        console.log(`Users seeding completed successfully! Created ${countUsers} users`);
     } catch (error) {
         console.error("Error seeding users:", error);
         process.exit(1);

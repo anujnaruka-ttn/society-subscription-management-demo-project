@@ -35,7 +35,8 @@ const addFlat = catchAsync(
 const updateFlatById = catchAsync(
     async (req: Request, res: Response) => {
         const { id } = req.params as IdParamInput;
-        const updatedFlat = await updateFlatDetails(id, req.body as FlatUpdateInput);
+        const flatId = Array.isArray(id) ? id[0] : id;
+        const updatedFlat = await updateFlatDetails(flatId, req.body as FlatUpdateInput);
         return success(res, "Flat updated successfully", updatedFlat);
     }
 )

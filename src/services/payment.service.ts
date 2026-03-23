@@ -8,6 +8,7 @@ const getPaymentEntries = async () => {
 
 const recordPayment = async (data: {
     bill_id: string;
+    flat_id: string;
     user_id: string;
     amount_paid: number;
     payment_mode: string;
@@ -22,7 +23,8 @@ const recordPayment = async (data: {
         data.transaction_id || null
     ]);
 
-    await query(UPDATE_BILL_PAID, [data.bill_id]);
+    // Update ALL billing records for this flat to paid status
+    await query(UPDATE_BILL_PAID, [data.flat_id]);
 
     return paymentResult.rows[0];
 };

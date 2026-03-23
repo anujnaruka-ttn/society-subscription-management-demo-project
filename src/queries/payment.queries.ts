@@ -9,6 +9,10 @@ const GET_PAYMENT_ENTRIES = `
         f.flat_number,
         f.floor_number,
         f.flat_type,
+        u_billing.id as user_id,
+        u_billing.name as user_name,
+        u_billing.email as user_email,
+        u_billing.phone_number as user_phone,
         u_owner.id as owner_id,
         u_owner.name as owner_name,
         u_owner.email as owner_email,
@@ -32,6 +36,7 @@ const GET_PAYMENT_ENTRIES = `
         ) as residents
     FROM billing_records br
     LEFT JOIN flats f ON br.flat_id = f.id
+    LEFT JOIN users u_billing ON br.user_id = u_billing.id
     LEFT JOIN users u_owner ON f.owner_id = u_owner.id
     LEFT JOIN payments p ON br.id = p.bill_id
     WHERE f.is_active = true
@@ -45,7 +50,7 @@ const RECORD_PAYMENT = `
 `;
 
 const UPDATE_BILL_PAID = `
-    UPDATE billing_records SET status = 'paid' WHERE id = $1;
+    UPDATE billing_records SET status = 'paid' WHERE flat_id = $1;
 `;
 
 const GET_PENDING_PAYMENTS = `
@@ -58,10 +63,25 @@ const GET_PENDING_PAYMENTS = `
         br.status,
         br.amount_due as amount,
         br.billing_month,
-        br.billing_year
+        br.billing_year,
+        f.flat_type,
+        u_owner.name as owner_name,
+        u_owner.email as owner_email,
+        u_owner.phone_number as owner_phone,
+        (
+            SELECT json_agg(json_build_object(
+                'id', ru.id,
+                'name', ru.name,
+                'email', ru.email,
+                'profile_image', ru.profile_image
+            ))
+            FROM users ru
+            WHERE ru.id = ANY(f.resident_ids)
+        ) as residents
     FROM billing_records br
     JOIN flats f ON br.flat_id = f.id
-    LEFT JOIN users u ON f.owner_id = u.id
+    LEFT JOIN users u ON br.user_id = u.id
+    LEFT JOIN users u_owner ON f.owner_id = u_owner.id
     WHERE br.status = 'pending'
     ORDER BY br.created_at DESC;
 `;

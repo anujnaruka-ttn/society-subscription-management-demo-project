@@ -104,6 +104,7 @@ export const CREATE_BILLING_RECORDS_TABLE = `
 CREATE TABLE IF NOT EXISTS billing_records (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     flat_id UUID REFERENCES flats(id) NOT NULL,
+    user_id UUID REFERENCES users(id) NOT NULL,
     billing_month INT NOT NULL, 
     billing_year INT NOT NULL,
     amount_due DECIMAL(10, 2) NOT NULL,
@@ -111,7 +112,7 @@ CREATE TABLE IF NOT EXISTS billing_records (
     due_date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(flat_id, billing_month, billing_year)
+    UNIQUE(flat_id, user_id, billing_month, billing_year)
 );
 `;
 
