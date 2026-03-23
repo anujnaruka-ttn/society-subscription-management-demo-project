@@ -6,7 +6,6 @@ import { useForm, Controller, SubmitHandler } from "react-hook-form";
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
-    DialogClose,
     DialogContent,
     DialogDescription,
     DialogFooter,
@@ -25,19 +24,24 @@ import {
 } from "@/components/ui/select"
 import { DialogProps } from "@/types/dialogProps"
 import { FlatData, ResidentData } from "@/types/flatData"
-import { getResidents, addFlat, getFlats } from "@/lib/flatApis"
+import { getResidents, getFlats, addFlat, updateFlat } from "@/lib/flatApis"
 import { RootState } from "@/stores/store"
 import ResidentDropdown from "@/components/common/ResidentDropdown"
 import CommonBadge from "@/components/common/CommonBadge";
+
 const FLAT_TYPE_OPTIONS = [
-    { value: "1BHK", label: "1 BHK" },
-    { value: "2BHK", label: "2 BHK" },
-    { value: "3BHK", label: "3 BHK" },
-    { value: "4BHK", label: "4 BHK" },
+    { value: "1bhk", label: "1 BHK" },
+    { value: "2bhk", label: "2 BHK" },
+    { value: "3bhk", label: "3 BHK" },
+    { value: "4bhk", label: "4 BHK" },
 ];
 
 export default function FlatDetailDialog(
-    { children, dialogProps, flatDetails }: { children: React.ReactNode, dialogProps: DialogProps, flatDetails: FlatData }
+    { children, dialogProps, flatDetails }: { 
+        children: React.ReactNode, 
+        dialogProps: DialogProps & { mode?: 'add' | 'edit' | 'view' }, 
+        flatDetails: FlatData 
+    }
 ) {
     const dispatch = useDispatch();
     const residents = useSelector((state: RootState) => state.flat.residents);
@@ -45,6 +49,8 @@ export default function FlatDetailDialog(
     const [selectedResidentIds, setSelectedResidentIds] = useState<string[]>(flatDetails.resident_ids || []);
     const [selectedOwnerData, setSelectedOwnerData] = useState<ResidentData | null>(null);
     const [open, setOpen] = useState(false);
+    const [isViewMode, setIsViewMode] = useState(false);
+    const [viewDetails, setViewDetails] = useState(false);
     
     // Determine if this is a new flat (no id) or existing flat (has id)
     const isNewFlat = !flatDetails.id;
@@ -53,7 +59,7 @@ export default function FlatDetailDialog(
         register,
         handleSubmit,
         control,
-        formState: { errors },
+        formState: { errors, isSubmitting },
         setValue,
     } = useForm<FlatData>({
         defaultValues: flatDetails,
@@ -88,6 +94,33 @@ export default function FlatDetailDialog(
         setValue("owner_id", undefined);
     };
 
+    // Handle view mode when dialog opens
+    useEffect(() => {
+        if (open && dialogProps.mode === 'view' && !isViewMode) {
+            handleViewMode();
+        }
+    }, [open, dialogProps.mode, isViewMode]);
+
+    // Reset view mode when dialog closes
+    useEffect(() => {
+        if (!open && isViewMode) {
+            setIsViewMode(false);
+            setViewDetails(false);
+        }
+    }, [open]);
+
+    // Handle view mode
+    const handleViewMode = () => {
+        setIsViewMode(true);
+        setViewDetails(true);
+        // Set form values from flatDetails
+        setValue("flat_type", flatDetails.flat_type);
+        setValue("flat_number", flatDetails.flat_number);
+        setValue("floor_number", flatDetails.floor_number);
+        setValue("owner_id", flatDetails.owner_id);
+        setValue("resident_ids", flatDetails.resident_ids);
+    };
+
     // Handle form submission
     const onSubmit: SubmitHandler<FlatData> = async (data: FlatData) => {
         console.log("Form submitted with data:", {
@@ -95,23 +128,24 @@ export default function FlatDetailDialog(
             owner_id: selectedOwnerId,
             resident_ids: selectedResidentIds,
         });
-        console.log("Current form state:", {
-            isNewFlat,
-            selectedOwnerId,
-            selectedResidentIds,
-            errors: Object.keys(errors).length > 0 ? errors : "No errors",
-        });
         
         try {
-            // Dispatch addFlat action with the form data
-            await dispatch(addFlat({
-                ...(flatDetails.id ? { id: flatDetails.id } : {}),
-                flat_type: data.flat_type,
-                flat_number: data.flat_number,
-                floor_number: data.floor_number,
-                owner_id: selectedOwnerId || undefined,
-                resident_ids: selectedResidentIds.length > 0 ? selectedResidentIds : undefined,
-            }) as any);
+            if (flatDetails.id) {
+                // Update existing flat - only update owner_id and resident_ids
+                await dispatch(updateFlat(flatDetails.id, {
+                    owner_id: selectedOwnerId || undefined,
+                    resident_ids: selectedResidentIds.length > 0 ? selectedResidentIds : undefined,
+                }) as any);
+            } else {
+                // Create new flat
+                await dispatch(addFlat({
+                    flat_type: data.flat_type,
+                    flat_number: data.flat_number,
+                    floor_number: data.floor_number,
+                    owner_id: selectedOwnerId || undefined,
+                    resident_ids: selectedResidentIds.length > 0 ? selectedResidentIds : undefined,
+                }) as any);
+            }
             
             // Close dialog immediately after successful save
             setOpen(false);
@@ -126,7 +160,7 @@ export default function FlatDetailDialog(
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <DialogTrigger asChild>
                     {children}
                 </DialogTrigger>
@@ -141,30 +175,39 @@ export default function FlatDetailDialog(
                     </DialogHeader>
 
                     <div className="space-y-4">
-                        {/* Flat Type Dropdown */}
+                        {/* Flat Type */}
                         <div className="space-y-2">
                             <Label htmlFor="flat_type">Flat Type</Label>
-                            <Controller
-                                name="flat_type"
-                                control={control}
-                                rules={isNewFlat ? {
-                                    required: "Flat type is required",
-                                } : {}}
-                                render={({ field }) => (
-                                    <Select value={field.value || ""} onValueChange={field.onChange}>
-                                        <SelectTrigger id="flat_type" className={errors.flat_type ? "border-red-500" : ""}>
-                                            <SelectValue placeholder="Select flat type" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {FLAT_TYPE_OPTIONS.map((option) => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                            />
+                            {isViewMode ? (
+                                <Input
+                                    id="flat_type"
+                                    value={flatDetails.flat_type || ""}
+                                    disabled
+                                    placeholder="Flat type"
+                                />
+                            ) : (
+                                <Controller
+                                    name="flat_type"
+                                    control={control}
+                                    rules={isNewFlat ? {
+                                        required: "Flat type is required",
+                                    } : {}}
+                                    render={({ field }) => (
+                                        <Select value={field.value || ""} onValueChange={field.onChange}>
+                                            <SelectTrigger id="flat_type" className={errors.flat_type ? "border-red-500" : ""}>
+                                                <SelectValue placeholder="Select flat type" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {FLAT_TYPE_OPTIONS.map((option) => (
+                                                    <SelectItem key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                    )}
+                                />
+                            )}
                             {errors.flat_type && (
                                 <p className="text-sm text-red-500">{errors.flat_type.message}</p>
                             )}
@@ -179,6 +222,7 @@ export default function FlatDetailDialog(
                                 {...register("flat_number", isNewFlat ? {
                                     required: "Flat number is required",
                                 } : {})}
+                                disabled={isViewMode}
                                 className={errors.flat_number ? "border-red-500" : ""}
                             />
                             {errors.flat_number && (
@@ -197,12 +241,14 @@ export default function FlatDetailDialog(
                                     required: "Floor number is required",
                                     valueAsNumber: true,
                                 } : {})}
+                                disabled={isViewMode}
                                 className={errors.floor_number ? "border-red-500" : ""}
                             />
                             {errors.floor_number && (
                                 <p className="text-sm text-red-500">{errors.floor_number.message}</p>
                             )}
                         </div>
+
                         {/* Owner Selection Dropdown */}
                         <div className="space-y-2">
                             <Label>Select Owner</Label>
@@ -252,26 +298,27 @@ export default function FlatDetailDialog(
                     </div>
 
                     <DialogFooter>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                           variant="outline" 
                             className="hover:text-white"
                             onClick={() => setOpen(false)}
                         >
                             Cancel
                         </Button>
                         <Button 
-                            type="submit"
+                            type="submit" 
+                            disabled={isSubmitting}
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleSubmit(onSubmit)();
                             }}
                         >
-                            Save changes
+                            {isSubmitting ? "Saving..." : (isNewFlat ? "Add Flat" : "Save Changes")}
                         </Button>
                     </DialogFooter>
 
                 </DialogContent>
             </form>
         </Dialog>
-    )
+    );
 }

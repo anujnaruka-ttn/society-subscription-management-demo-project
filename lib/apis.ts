@@ -31,6 +31,8 @@ const adminApis = {
     getResidents: apis.flat + '/residents',
     getFlats: apis.flat + '/',
     addFlat: apis.flat + '/add-flat',
+    updateFlat: (id: string) => apis.flat + '/' + id,
+    changeFlatType: (id: string) => apis.flat + '/' + id + '/change-type',
     deleteFlat: (id: string) => apis.flat + '/' + id,
     billing: apis.billing + '/',
     billingByMonth: (month: number, year: number) => apis.billing + `/month?month=${month}&year=${year}`,

@@ -84,7 +84,11 @@ export const getFlatColumns = (onDelete: (id: string) => void): ColumnDef<FlatDa
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger>
-                        <FlatDetailDialog dialogProps={{ title: "View Details", description: "View details of the flat" }}
+                        <FlatDetailDialog dialogProps={{ 
+                            title: "View Details", 
+                            description: "View details of the flat", 
+                            mode: "view" 
+                        }}
                             flatDetails={row.original}>
                             <Button
                                 variant="outline"

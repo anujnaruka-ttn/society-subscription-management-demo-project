@@ -1,6 +1,6 @@
 import { apiConnector } from "./apiConnector";
 import { adminApis, apiMethods } from "./apis";
-import { setResidents, setFlats, addFlat as addFlatAction, removeFlat } from "@/reducers/slices/flatSlice";
+import { setResidents, setFlats, addFlat as addFlatAction, removeFlat, updateFlat as updateFlatAction } from "@/reducers/slices/flatSlice";
 import { toast } from "sonner";
 import { AppDispatch } from "@/stores/store";
 
@@ -129,6 +129,68 @@ export const deleteFlat = (flatId: string) => {
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to delete flat");
             console.error("Error deleting flat:", error);
+        }
+    };
+};
+
+export const updateFlat = (flatId: string, flatData: any) => {
+    return async (dispatch: AppDispatch, getState: any) => {
+        try {
+            const state = getState();
+            const token = state.auth?.token;
+
+            const response = await apiConnector({
+                url: adminApis.updateFlat(flatId),
+                method: apiMethods.PUT,
+                data: flatData,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (response.data.success) {
+                toast.success("Flat updated successfully");
+                dispatch(updateFlatAction(response.data.data));
+                dispatch(getFlats());
+                return response.data.data;
+            } else {
+                toast.error(response.data.message || "Failed to update flat");
+                throw new Error(response.data.message);
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || error.message || "Failed to update flat");
+            throw error;
+        }
+    };
+};
+
+export const changeFlatType = (flatId: string, flatType: string) => {
+    return async (dispatch: AppDispatch, getState: any) => {
+        try {
+            const state = getState();
+            const token = state.auth?.token;
+
+            const response = await apiConnector({
+                url: adminApis.changeFlatType(flatId),
+                method: apiMethods.PATCH,
+                data: { flat_type: flatType },
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+
+            if (response.data.success) {
+                toast.success("Flat type changed successfully");
+                dispatch(updateFlatAction(response.data.data));
+                dispatch(getFlats());
+                return response.data.data;
+            } else {
+                toast.error(response.data.message || "Failed to change flat type");
+                throw new Error(response.data.message);
+            }
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || error.message || "Failed to change flat type");
+            throw error;
         }
     };
 };

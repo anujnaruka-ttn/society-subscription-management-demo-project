@@ -26,6 +26,12 @@ const flatSlice = createSlice({
         setFlats: (state, action: PayloadAction<FlatData[]>) => {
             state.flats = action.payload;
         },
+        updateFlat: (state, action: PayloadAction<FlatData>) => {
+            const index = state.flats.findIndex(flat => flat.id === action.payload.id);
+            if (index !== -1) {
+                state.flats[index] = action.payload;
+            }
+        },
         removeFlat: (state, action: PayloadAction<string>) => {
             state.flats = state.flats.filter(flat => flat.id !== action.payload);
         },
@@ -35,5 +41,5 @@ const flatSlice = createSlice({
     },
 });
 
-export const { setResidents, addFlat, setFlats, removeFlat, setLoading } = flatSlice.actions;
+export const { setResidents, addFlat, setFlats, updateFlat, removeFlat, setLoading } = flatSlice.actions;
 export default flatSlice.reducer;
