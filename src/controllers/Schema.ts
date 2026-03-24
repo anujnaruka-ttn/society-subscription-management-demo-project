@@ -6,6 +6,7 @@ import { initSubscriptions } from "../models/ISubscription";
 import { initBilling } from "../models/IBilling";
 import { initPayments } from "../models/IPayment";
 import { initNotifications } from "../models/INotification";
+import { initReportRecords } from "../models/IReport";
 
 export const initEnums = async () => {
     await query(CREATE_ENUMS);
@@ -15,6 +16,7 @@ export const initEnums = async () => {
 export const migrate = async () => {
     console.log("Starting database migration...");
     try {
+        
         await initEnums();
         await initUsers();
         await initFlats();
@@ -22,6 +24,8 @@ export const migrate = async () => {
         await initBilling();
         await initPayments();
         await initNotifications();
+        await initReportRecords();
+
         console.log("Database migration completed successfully");
     } catch (error) {
         console.error("Database migration failed:", error);

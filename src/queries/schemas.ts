@@ -147,3 +147,27 @@ CREATE TABLE IF NOT EXISTS notifications (
 );
 `;
 
+export const CREATE_REPORT_RECORDS_TABLE = `
+-- 9. Create Report Records Table
+CREATE TABLE IF NOT EXISTS report_records (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    format VARCHAR(10) NOT NULL,
+    range VARCHAR(20) NOT NULL,
+    month VARCHAR(20),
+    year VARCHAR(20),
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    generated_by UUID REFERENCES users(id) ON DELETE SET NULL,
+    file_name VARCHAR(255),
+    file_path TEXT,
+    file_size BIGINT,
+    status VARCHAR(20) DEFAULT 'completed',
+    expires_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add indexes for better performance
+CREATE INDEX IF NOT EXISTS idx_report_records_user ON report_records(generated_by);
+CREATE INDEX IF NOT EXISTS idx_report_records_status ON report_records(status);
+CREATE INDEX IF NOT EXISTS idx_report_records_created_at ON report_records(created_at);
+`;

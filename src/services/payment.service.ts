@@ -1,5 +1,5 @@
 import { query } from "../config/db";
-import { GET_PAYMENT_ENTRIES, RECORD_PAYMENT, UPDATE_BILL_PAID, GET_PENDING_PAYMENTS } from "../queries/payment.queries";
+import { GET_PAYMENT_ENTRIES, RECORD_PAYMENT, UPDATE_BILL_PAID, GET_PENDING_PAYMENTS, GET_PENDING_PAYMENTS_FILTERED } from "../queries/payment.queries";
 
 const getPaymentEntries = async () => {
     const result = await query(GET_PAYMENT_ENTRIES);
@@ -28,10 +28,17 @@ const recordPayment = async (data: {
 
     return paymentResult.rows[0];
 };
-
-const getPendingPayments = async () => {
-    const result = await query(GET_PENDING_PAYMENTS);
-    return result.rows;
+// In payment.service.ts, add filtered function
+const getPendingPayments = async (month?: number, year?: number) => {
+    if (month || year) {
+        // Use filtered query when month/year provided
+        const result = await query(GET_PENDING_PAYMENTS_FILTERED, [month, year]);
+        return result.rows;
+    } else {
+        // Use original query when no filters
+        const result = await query(GET_PENDING_PAYMENTS);
+        return result.rows;
+    }
 };
 
 export {

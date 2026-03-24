@@ -86,9 +86,45 @@ const GET_PENDING_PAYMENTS = `
     ORDER BY br.created_at DESC;
 `;
 
+const GET_PENDING_PAYMENTS_FILTERED = `
+    SELECT 
+        br.id,
+        u.name as resident,
+        u.email,
+        u.phone_number as phone,
+        concat('Floor ', f.floor_number, ', ', f.flat_number) as "flatAddress",
+        br.status,
+        br.amount_due as amount,
+        br.billing_month,
+        br.billing_year,
+        f.flat_type,
+        u_owner.name as owner_name,
+        u_owner.email as owner_email,
+        u_owner.phone_number as owner_phone,
+        (
+            SELECT json_agg(json_build_object(
+                'id', ru.id,
+                'name', ru.name,
+                'email', ru.email,
+                'profile_image', ru.profile_image
+            ))
+            FROM users ru
+            WHERE ru.id = ANY(f.resident_ids)
+        ) as residents
+    FROM billing_records br
+    JOIN flats f ON br.flat_id = f.id
+    LEFT JOIN users u ON br.user_id = u.id
+    LEFT JOIN users u_owner ON f.owner_id = u_owner.id
+    WHERE br.status = 'pending'
+    AND ($1::int IS NULL OR br.billing_month = $1)
+    AND ($2::int IS NULL OR br.billing_year = $2)
+    ORDER BY br.created_at DESC;
+`;
+
 export {
     GET_PAYMENT_ENTRIES,
     RECORD_PAYMENT,
     UPDATE_BILL_PAID,
-    GET_PENDING_PAYMENTS
+    GET_PENDING_PAYMENTS,
+    GET_PENDING_PAYMENTS_FILTERED
 };

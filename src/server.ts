@@ -8,6 +8,7 @@ import subscriptionRouter from './routes/subscription.routes';
 import flatRouter from './routes/flat.routes';
 import billingRouter from './routes/billing.routes';
 import paymentRouter from './routes/payment.routes';
+import reportsRouter from './routes/reports.routes';
 import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import { cloudinaryConnecter } from './config/cloudinary';
@@ -38,6 +39,7 @@ app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/flats', flatRouter);
 app.use('/api/v1/billing', billingRouter);
 app.use('/api/v1/payments', paymentRouter);
+app.use('/api/v1/reports', reportsRouter);
 app.use('/api/v1/dashboard',dashboardRouter);
 
 const PORT = ENV.PORT;
