@@ -39,24 +39,25 @@ const GET_BILLING_RECORDS_BY_MONTH = `
         br.created_at,
         br.updated_at,
         br.flat_id,
+        br.user_id,
         f.flat_number,
         f.floor_number,
         f.flat_type,
-        u.name as owner_name,
-        u.email as owner_email,
-        u.phone_number as owner_phone,
-        f.owner_id as owner_id,
+        u.name as user_name,
+        u.email as user_email,
+        u.phone_number as user_phone,
+        u.role as user_role,
         CASE 
             WHEN f.owner_id IS NOT NULL THEN CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
             ELSE CONCAT('Flat ', f.flat_number, ', Floor ', f.floor_number)
         END as flat_address
     FROM billing_records br
     LEFT JOIN flats f ON br.flat_id = f.id
-    LEFT JOIN users u ON f.owner_id = u.id
+    LEFT JOIN users u ON br.user_id = u.id
     WHERE f.is_active = true 
     AND br.billing_month = $1 
     AND br.billing_year = $2
-    ORDER BY f.floor_number, f.flat_number
+    ORDER BY f.floor_number, f.flat_number, u.name
 `;
 
 const UPDATE_BILLING_STATUS = `
@@ -137,10 +138,6 @@ const GET_BILLING_RECORDS_BY_FLAT = `
         f.flat_number,
         f.floor_number,
         f.flat_type,
-        f.owner_id,
-        u_owner.name as owner_name,
-        u_owner.email as owner_email,
-        u_owner.phone_number as owner_phone,
         (
             SELECT json_agg(json_build_object(
                 'id', ru.id,
@@ -159,9 +156,8 @@ const GET_BILLING_RECORDS_BY_FLAT = `
         p.payment_date
     FROM billing_records br
     LEFT JOIN flats f ON br.flat_id = f.id
-    LEFT JOIN users u_owner ON f.owner_id = u_owner.id
     LEFT JOIN payments p ON p.bill_id = br.id AND p.payment_status = 'success'
-    WHERE (f.owner_id = $1 OR br.user_id = $1)
+    WHERE f.owner_id = $1
     ORDER BY br.billing_year DESC, br.billing_month DESC
 `;
 
@@ -177,10 +173,6 @@ const GET_BILLING_RECORDS_BY_FLAT_AND_MONTH = `
         f.flat_number,
         f.floor_number,
         f.flat_type,
-        f.owner_id,
-        u_owner.name as owner_name,
-        u_owner.email as owner_email,
-        u_owner.phone_number as owner_phone,
         (
             SELECT json_agg(json_build_object(
                 'id', ru.id,
@@ -199,9 +191,8 @@ const GET_BILLING_RECORDS_BY_FLAT_AND_MONTH = `
         p.payment_date
     FROM billing_records br
     LEFT JOIN flats f ON br.flat_id = f.id
-    LEFT JOIN users u_owner ON f.owner_id = u_owner.id
     LEFT JOIN payments p ON p.bill_id = br.id AND p.payment_status = 'success'
-    WHERE (f.owner_id = $1 OR br.user_id = $1) AND br.billing_year = $2 AND br.billing_month = $3
+    WHERE f.owner_id = $1 AND br.billing_year = $2 AND br.billing_month = $3
     ORDER BY br.billing_year DESC, br.billing_month DESC
 `;
 

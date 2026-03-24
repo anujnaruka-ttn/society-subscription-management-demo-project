@@ -18,7 +18,8 @@
     "fix:jaya-billing": "ts-node src/scripts/fix-jaya-billing.ts",
     "fix:aditi-billing": "ts-node src/scripts/aditi-billing-fix.ts",
     "reset:database": "ts-node src/scripts/reset-database.ts",
-    "cron": "ts-node src/jobs/billingCron.ts"
+    "cron": "ts-node src/jobs/billingCron.ts",
+    "dashboard": "ts-node src/seed/dashboardSeed.ts"
   },
   "repository": {
     "type": "git",
