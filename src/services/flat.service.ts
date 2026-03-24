@@ -69,7 +69,6 @@ const addFlatDetails = async (
                     currentMonth,
                     currentYear,
                     monthlyRate,
-                    'pending',
                     new Date(currentYear, currentMonth - 1, 0).toISOString().split('T')[0] // Due date: last day of previous month
                 ]);
             }
