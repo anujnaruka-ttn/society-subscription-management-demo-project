@@ -17,6 +17,7 @@ export const apiConnector = ({
         data: data || null,
         headers: headers || null,
         params: params || null,
+        responseType: params?.responseType || null,
     };
     return axiosInstance(config);
 };

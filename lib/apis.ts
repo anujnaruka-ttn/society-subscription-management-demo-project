@@ -6,7 +6,8 @@ const apis = {
     payment: BASE_URL + '/payments',
     flat: BASE_URL + '/flats',
     billing: BASE_URL + '/billing',
-    dashboard: BASE_URL + '/dashboard'
+    dashboard: BASE_URL + '/dashboard',
+    reports: BASE_URL + '/reports'
 }
 
 const apiMethods = {
@@ -44,6 +45,7 @@ const adminApis = {
     recordPayment: apis.payment + '/record',
     getPendingPayments: apis.payment + '/pending',
     getDashboardStats: apis.dashboard + '/stats',
+    generateReport: apis.reports
 }
 
 const residentApis = {

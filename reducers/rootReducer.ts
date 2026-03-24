@@ -5,6 +5,7 @@ import billingReducer from "@/reducers/slices/billingSlice";
 import adminPaymentReducer from "@/reducers/slices/adminPaymentSlice";
 import residentBillingReducer from "@/reducers/slices/residentBillingSlice";
 import dashboardReducer from "@/reducers/slices/dashboardSlice";
+import reportsReducer from "@/reducers/slices/reportSlice";
 import { combineReducers } from "@reduxjs/toolkit";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
@@ -32,13 +33,14 @@ const rootReducer = combineReducers({
     billing: billingReducer,
     adminPayment: adminPaymentReducer,
     residentSubscriptionBilling: residentBillingReducer,
-    dashboard: dashboardReducer
+    dashboard: dashboardReducer,
+    reports: reportsReducer,
 });
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["auth", "billing", "adminPayment", "residentSubscriptionBilling", "dashboard"],
+    whitelist: ["auth", "billing", "adminPayment", "residentSubscriptionBilling", "dashboard", "reports"],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

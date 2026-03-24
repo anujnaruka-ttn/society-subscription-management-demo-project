@@ -18,7 +18,7 @@ export default function DashboardLayoutClient({
             <SidebarProvider>
                 <main className="relative flex h-dvh w-full overflow-hidden">
                     <DashboardSidebar />
-                    <SidebarInset className="flex flex-col">
+                    <SidebarInset className="flex flex-col justify-center items-center">
                         {/* Mobile header */}
                         <HamBurger />
                         {children}

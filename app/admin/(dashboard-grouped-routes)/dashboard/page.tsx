@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CommonDashboard from "@/components/Dashboard/common/CommonDashboard";
 import { getDashboardStatsAction } from "@/lib/dashboardApis";
+import { FadeLoader } from "react-spinners";
 
 export default function AdminDashboardPage() {
     const dispatch = useDispatch();
@@ -15,7 +16,7 @@ export default function AdminDashboardPage() {
     }, [dispatch]);
 
     if (loading) {
-        return <div>Loading dashboard...</div>;
+        return <FadeLoader color="var(--primary)"/>;
     }
 
     if (error) {

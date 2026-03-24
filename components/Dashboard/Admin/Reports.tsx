@@ -10,11 +10,70 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import ReportsHistoryTable from '@/components/Tables/Admin/ReportsHistory'
 import Image from 'next/image'
-import ogImage from "@/public/assets/og-image.png"
+import reportDemoImage from "@/public/assets/demo-preview-report.png"
+import { generateReport, previewReport, getCurrentReportParams } from '@/lib/reportApi';
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '@/stores/store'
 
 const Reports = () => {
-    const [format, setFormat] = useState('pdf')
-    const [range, setRange] = useState('monthly')
+    const [format, setFormat] = useState<'pdf' | 'csv'>('pdf')
+    const [range, setRange] = useState<'monthly' | 'yearly'>('monthly')
+    const [isGenerating, setIsGenerating] = useState(false)
+    const dispatch = useDispatch<AppDispatch>()
+
+    const handleGenerateReport = async () => {
+        try {
+            setIsGenerating(true)
+            const currentParams = getCurrentReportParams()
+        
+            // Just dispatch the action - no token management
+            await dispatch(generateReport({
+                format,
+                range,
+                month: currentParams.month,
+                year: currentParams.year
+            }));
+        } catch (error) {
+            console.error('Report generation failed:', error)
+        } finally {
+            setIsGenerating(false)
+        }
+    }
+
+
+// Update handlePreviewReport function
+const handlePreviewReport = async () => {
+    try {
+        const currentParams = getCurrentReportParams()
+        
+        // Use preview function - opens in new tab
+        await dispatch(previewReport({
+            format,
+            range,
+            month: currentParams.month,
+            year: currentParams.year
+        }))
+    } catch (error) {
+        console.error('Report preview failed:', error)
+    }
+}
+
+// Update handleDownloadReport function  
+const handleDownloadReport = async () => {
+    try {
+        const currentParams = getCurrentReportParams()
+        
+        // Use generateReport function - downloads file
+        await dispatch(generateReport({
+            format,
+            range,
+            month: currentParams.month,
+            year: currentParams.year
+        }))
+    } catch (error) {
+        console.error('Report download failed:', error)
+    }
+}
 
     return (
         <div className="w-full h-full flex flex-col gap-6">
@@ -41,20 +100,28 @@ const Reports = () => {
                                     CSV
                                 </Button>
                             </div>
-                            <Button variant="ghost" size="icon" className="size-8 rounded-full hover:bg-secondary">
+                            <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="size-8 rounded-full bg-background/80"
+                                onClick={handleDownloadReport}
+                                disabled={isGenerating}
+                            >
                                 <Download className="size-4" />
                             </Button>
                         </div>
                         <Button
                             className="group absolute z-10 h-14 px-12 rounded-2xl bg-primary text-primary-foreground font-semibold text-lg hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 overflow-hidden"
                             variant="default"
+                            onClick={handlePreviewReport}
+                            disabled={isGenerating}
                         >
                             <span className="relative z-10 flex items-center gap-2">
                                 <Eye className="size-5 transition-transform group-hover:scale-110" />
-                                Preview Report
+                                {isGenerating ? 'Generating...' : 'Preview Report'}
                             </span>
                         </Button>
-                        <Image src={ogImage} alt="Reports" width={200} height={200}
+                        <Image src={reportDemoImage} alt="Reports" width={200} height={200}
                             className='w-full h-full absolute top-0 left-0 right-0 bottom-0 z-0 rounded-xl object-cover' />
                     </CardContent>
                 </Card>
@@ -110,8 +177,11 @@ const Reports = () => {
                         <Button
                             variant={"outline"}
                             size={"icon-lg"}
-                            className='w-full h-fit px-6 py-3 '>
-                            Generate Report
+                            className='w-full h-fit px-6 py-3'
+                            onClick={handleGenerateReport}
+                            disabled={isGenerating}
+                        >
+                            {isGenerating ? 'Generating...' : 'Generate Report'}
                         </Button>
                     </CardContent>
                 </Card>
