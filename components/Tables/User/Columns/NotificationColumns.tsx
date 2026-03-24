@@ -123,7 +123,7 @@ export const notificationColumns = (
         {
             id: "recipient_name",
             header: "Recipient",
-            cell: ({ row }) => {
+            cell: ({ row }: { row: any }) => {
                 const recipientName = row.getValue("recipient_name") as string;
                 const recipientRole = row.getValue("recipient_role") as string;
                 const recipientEmail = row.getValue("recipient_email") as string;
