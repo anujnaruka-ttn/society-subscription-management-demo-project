@@ -1,4 +1,4 @@
-const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+export const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
 const apis = {
     user: BASE_URL + '/user',
@@ -45,7 +45,8 @@ const adminApis = {
     recordPayment: apis.payment + '/record',
     getPendingPayments: apis.payment + '/pending',
     getDashboardStats: apis.dashboard + '/stats',
-    generateReport: apis.reports
+    generateReport: apis.reports,
+    getReports: apis.reports + '/records'
 }
 
 const residentApis = {
