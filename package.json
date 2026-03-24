@@ -14,9 +14,6 @@
     "seed:flats": "ts-node src/scripts/flats-seed.ts",
     "seed:billing": "ts-node src/scripts/billing-seed.ts",
     "seed:payments": "ts-node src/scripts/payments-seed.ts",
-    "seed:jaya-billing": "ts-node src/jobs/billingCron.ts",
-    "fix:jaya-billing": "ts-node src/scripts/fix-jaya-billing.ts",
-    "fix:aditi-billing": "ts-node src/scripts/aditi-billing-fix.ts",
     "reset:database": "ts-node src/scripts/reset-database.ts",
     "cron": "ts-node src/jobs/billingCron.ts",
     "dashboard": "ts-node src/seed/dashboardSeed.ts"

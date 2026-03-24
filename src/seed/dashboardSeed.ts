@@ -1,6 +1,4 @@
 import { query } from "../config/db";
-import { v4 as uuidv4 } from "uuid";
-
 // Sample data for dashboard seeding
 const samplePayments = [
     // April 2024 payments
