@@ -13,6 +13,7 @@ import fileUpload from 'express-fileupload';
 import cors from 'cors';
 import { cloudinaryConnecter } from './config/cloudinary';
 import dashboardRouter from './routes/dashboard.routes';
+import notificationRouter from './routes/notifications.routes';
 const app = express();
 
 // File upload middleware - MUST come before body parsers
@@ -41,6 +42,7 @@ app.use('/api/v1/billing', billingRouter);
 app.use('/api/v1/payments', paymentRouter);
 app.use('/api/v1/reports', reportsRouter);
 app.use('/api/v1/dashboard',dashboardRouter);
+app.use('/api/v1/notifications',notificationRouter);
 
 const PORT = ENV.PORT;
 

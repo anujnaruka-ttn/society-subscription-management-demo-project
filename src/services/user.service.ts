@@ -4,6 +4,7 @@ import {
     CREATE_USER_QUERY,
     CREATE_USER_QUERY_GOOGLE,
     FIND_BY_MAIL_QUERY,
+    GET_ALL_USERS_QUERY,
     UPDATE_AUTH_ID_QUERY,
     UPDATE_USER_PASSWORD_QUERY,
     UPDATE_USER_PROFILE_QUERY
@@ -74,11 +75,18 @@ const updateUserProfile = async (
     const result = await query(UPDATE_USER_PROFILE_QUERY, [updateName, updatePhoneNumber, updateProfileImage, email]);
     return result.rows[0]
 }
+
+const getAllUsers = async (): Promise<IUser[]> => {
+    const result = await query(GET_ALL_USERS_QUERY);
+    return result.rows
+}
+
 export {
     findUserByEmail,
     updateAuthId,
     createNewUser,
     createNewUserGoogle,
     updateUserPassword,
-    updateUserProfile
+    updateUserProfile,
+    getAllUsers
 }

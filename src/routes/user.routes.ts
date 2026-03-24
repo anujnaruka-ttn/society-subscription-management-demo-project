@@ -13,9 +13,10 @@ import {
     changePassword,
     changeProfile,
     updateProfile,
-    loginGoogle
+    loginGoogle,
+    getAllUsersController
 } from "../controllers/AUTH";
-import { auth } from "../middlewares/auth";
+import { auth, isAdmin } from "../middlewares/auth";
 
 const userRouter = Router();
 
@@ -25,5 +26,6 @@ userRouter.put("/change-password", validate({ body: changePasswordZodSchema }), 
 userRouter.put("/change-profile", auth, changeProfile); // Image upload only
 userRouter.put("/update-profile", validate({ body: updateProfileZodSchema }), auth, updateProfile); // Name and phone number
 userRouter.post("/auth/login-google", validate({ body: loginGoogleZodSchema }), loginGoogle);
+userRouter.get("/all", auth, isAdmin, getAllUsersController); // Add this line
 
 export default userRouter;

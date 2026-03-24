@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { catchAsync } from "../utils/catchAsync";
 import { badRequest, error, notFound, success, unauthorized, validationError } from "../utils/response";
 import { comparePassword, hashPassword } from "../utils/password";
-import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId, updateUserPassword, updateUserProfile } from "../services/user.service";
+import { createNewUser, createNewUserGoogle, findUserByEmail, updateAuthId, updateUserPassword, updateUserProfile, getAllUsers } from "../services/user.service";
 import { IUser } from "../models/IUser";
 import { generateAuthResponse } from "../utils/generateAuthResponse";
 import { CustomRequest } from "../types/CustomRequest";
@@ -210,11 +210,28 @@ const loginGoogle = catchAsync(
     }
 );
 
+const getAllUsersController = catchAsync(
+    async (_req: Request, res: Response) => {
+        const users = await getAllUsers();
+        
+        // Transform user data for frontend
+        const transformedUsers = users.map((user: IUser) => ({
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role || 'resident'
+        }));
+
+        return success(res, "Users fetched successfully", transformedUsers);
+    }
+);
+
 export {
     login,
     residentRegister,
     changePassword,
     changeProfile,
     updateProfile,
-    loginGoogle
+    loginGoogle,
+    getAllUsersController
 }
